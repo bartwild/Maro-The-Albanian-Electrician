@@ -10,7 +10,17 @@ Maro::Maro() {
 }
 
 
-void Maro::draw(sf::RenderWindow& i_window) {
+void Maro::draw(sf::RenderWindow& aWindow) {
 	sprite.setPosition(round(x), round(y));
-	i_window.draw(sprite);
+	aWindow.draw(sprite);
+}
+
+
+void Maro::update() {
+	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		x -= MARO_SPEED;
+	}
+	if (1 == sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		x += MARO_SPEED;
+	}
 }

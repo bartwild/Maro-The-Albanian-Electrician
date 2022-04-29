@@ -10,6 +10,7 @@ class Maro{
 	sf::Texture texture;
 public:
 	Maro();
-	void draw(sf::RenderWindow& i_window);
+	void draw(sf::RenderWindow& aWindow);
+	void update();
 };
 
