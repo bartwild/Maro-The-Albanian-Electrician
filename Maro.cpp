@@ -3,8 +3,8 @@
 
 
 Maro::Maro() {
-	x = (0.5f * SCREEN_RESIZE*SCREEN_WIDTH);
-	y = (0.5f * SCREEN_RESIZE*SCREEN_HEIGHT);
+	x = (0.5f * SCREEN_WIDTH);
+	y = (0.5f * SCREEN_HEIGHT);
 	texture.loadFromFile("BigMarioIdle.png");
 	sprite.setTexture(texture);
 }
@@ -24,3 +24,6 @@ void Maro::update() {
 		x += MARO_SPEED;
 	}
 }
+
+
+float Maro::get_x() const { return x; }

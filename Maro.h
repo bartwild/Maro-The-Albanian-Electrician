@@ -12,5 +12,6 @@ public:
 	Maro();
 	void draw(sf::RenderWindow& aWindow);
 	void update();
+	float get_x() const;
 };
 
