@@ -39,13 +39,13 @@ int main() {
 	}
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	while (window.isOpen()) {
-		//view_x = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-		//view.reset(sf::FloatRect(view_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		//window.setView(view);
+		view_x = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+		view.reset(sf::FloatRect(view_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+		window.setView(view);
 		window.clear(sf::Color(0, 219, 255));
 		draw_map(window, mapTexture, map);
 		maro.draw(window);
-		maro.update();
+		maro.move(map);
 		window.display();
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
