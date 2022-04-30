@@ -2,6 +2,7 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <algorithm>
 #include "Consts.h"
 
 
