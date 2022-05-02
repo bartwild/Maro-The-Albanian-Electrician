@@ -9,21 +9,21 @@
 void draw_map(const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const Map& aMap) {
 	sf::Sprite cellSprite(aMapTexture);
 	sf::Vector2u mapSize = aMapSketch.getSize();
-	unsigned short x = 0;
-	unsigned short y = 0;
 	for (unsigned short i = 0; i < mapSize.x; i++) {
-		for (unsigned short j = 0; j < mapSize.y; j++) {
-			sf::Color pixel = aMapSketch.getPixel(i, j);
+		for (unsigned short j = 0; j < floor(0.5f * mapSize.y/3); j++) {
+			unsigned short x = 0;
+			unsigned short y = 0;
+			sf::Color pixel = aMapSketch.getPixel(i, j + 2*floor(mapSize.y/3));
 			sf::Color pixelDown = sf::Color(0, 0, 0, 0);
 			sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
 			sf::Color pixelRight = sf::Color(0, 0, 0, 0);
 			sf::Color pixelUp = sf::Color(0, 0, 0, 0);
-			if (255 == pixel.a) continue;
-			if (i > 0 ) pixelLeft = aMapSketch.getPixel(i - 1, j);
-			if (j > 0 ) pixelUp = aMapSketch.getPixel(i, j - 1);
-			if (i < mapSize.x - 1 ) pixelRight = aMapSketch.getPixel(i + 1, j);
-			if (j < floor (0.5f * mapSize.y-1) - 1 ) pixelDown = aMapSketch.getPixel(i, j + 1);
 			cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+			if (255 == pixel.a) continue;
+			if (i > 0 ) pixelLeft = aMapSketch.getPixel(i - 1, j + 2 * floor(mapSize.y / 3));
+			if (j > 0 ) pixelUp = aMapSketch.getPixel(i, j - 1 + 2 * floor(mapSize.y / 3));
+			if (i < mapSize.x - 1 ) pixelRight = aMapSketch.getPixel(i + 1, j + 2 * floor(mapSize.y / 3));
+			if (j < floor (0.5f * mapSize.y-1) - 1 ) pixelDown = aMapSketch.getPixel(i, j + 1 + 2 * floor(mapSize.y / 3));
 			if (pixel == sf::Color(255, 255, 255)) {
 				x = 8;
 				if (pixelUp == sf::Color(255, 255, 255)) {
@@ -121,9 +121,9 @@ Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
 	sf::Vector2u mapSize = aMapSketch.getSize();
 	Map finalMap(mapSize.x);
 	for (unsigned short i = 0; i < mapSize.x; i++){
-		for (unsigned short j = 0; j < mapSize.y; j++){
+		for (unsigned short j = 0; j < floor(mapSize.y/3); j++){
 			sf::Color pixel = aMapSketch.getPixel(i,j);
-			if (j < floor(0.5f * mapSize.y)){
+			if (j < floor(mapSize.y/3)){
 				if (pixel == sf::Color(182, 73, 0)){
 					finalMap[i][j] = Cell::Brick;
 				}
@@ -141,7 +141,7 @@ Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
 				}
 			}
 			else if(pixel == sf::Color(255, 0, 0)){
-				aMaro.set_position(CELL_SIZE*i, CELL_SIZE*(j-floor(0.5f*mapSize.y)));
+				aMaro.set_position(CELL_SIZE*i, CELL_SIZE*(j-floor(0.5f*mapSize.y/3)));
 			}
 		}
 	}
@@ -156,14 +156,13 @@ int main() {
 	sf::Event event;
 	sf::Image mapSketch;
 	mapSketch.loadFromFile("MapSketch.png");
-	sketch_to_map(mapSketch, maro);
+	Map map = sketch_to_map(mapSketch, maro);
 	sf::RenderWindow window(sf::VideoMode(SCREEN_RESIZE*SCREEN_WIDTH, SCREEN_RESIZE*SCREEN_HEIGHT), "Maro The Albanian Electrician", sf::Style::Close);
 	window.setPosition(sf::Vector2i(window.getPosition().x, window.getPosition().y - 90));
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	sf::Texture mapTexture;
 	unsigned viewX;
 	mapTexture.loadFromFile("Map.png");
-	Map map(SCREEN_WIDTH / CELL_SIZE);
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	previousTime = std::chrono::steady_clock::now();
 	while (window.isOpen()) {
@@ -180,7 +179,6 @@ int main() {
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-				window.setView(view);
 				window.clear(sf::Color(0, 219, 255));
 				draw_map(mapSketch, window, mapTexture, map);
 				maro.draw(window);
