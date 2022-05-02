@@ -7,14 +7,14 @@
 
 
 void draw_map(sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const Map& aMap) {
-	sf::Sprite cell_sprite(aMapTexture);
+	sf::Sprite cellSprite(aMapTexture);
 	for (unsigned short i = 0; i < aMap.size(); i++) {
 		for (unsigned short j = 0; j < aMap[i].size(); j++) {
 			if (Cell::Empty == aMap[i][j]) continue;
-			cell_sprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+			cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 			if (Cell::Wall == aMap[i][j]) {
-				cell_sprite.setTextureRect(sf::IntRect(CELL_SIZE * 2, CELL_SIZE * 0, CELL_SIZE, CELL_SIZE));
-				aWindow.draw(cell_sprite);
+				cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * 2, CELL_SIZE * 0, CELL_SIZE, CELL_SIZE));
+				aWindow.draw(cellSprite);
 			}
 		}
 	}
