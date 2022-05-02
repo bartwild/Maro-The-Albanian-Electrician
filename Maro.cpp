@@ -63,8 +63,8 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 void Maro::move(const Map& aMap) {
 	bool moving = 0;
 	bool onGround = 0;
-	unsigned char horizontal_collision;
-	unsigned char vertical_collision;
+	unsigned char xCollision;
+	unsigned char yCollision;
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 		moving = 1;
 		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
@@ -81,14 +81,14 @@ void Maro::move(const Map& aMap) {
 			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 		}
 	}
-	horizontal_collision = map_collision(xSpeed + x, y, aMap);
-	if (horizontal_collision != 0) {
+	xCollision = map_collision(xSpeed + x, y, aMap);
+	if (xCollision != 0) {
 		moving = 0;
-		if (5 & ~horizontal_collision && 10 & horizontal_collision)
+		if (5 & ~xCollision && 10 & xCollision)
 		{
 			x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
 		}
-		else if (5 & horizontal_collision && 10 & ~horizontal_collision)
+		else if (5 & xCollision && 10 & ~xCollision)
 		{
 			x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
 		}
@@ -97,9 +97,9 @@ void Maro::move(const Map& aMap) {
 	else {
 		x += xSpeed;
 	}
-	vertical_collision = map_collision(x, 1 + y, aMap);
+	yCollision = map_collision(x, 1 + y, aMap);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		if (ySpeed == 0 && vertical_collision > 0){
+		if (ySpeed == 0 && yCollision > 0){
 			ySpeed = MARO_JUMP_SPEED;
 			jumpTimer = MARO_JUMP_TIMER;
 		}
@@ -115,13 +115,13 @@ void Maro::move(const Map& aMap) {
 		ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
 		jumpTimer = 0;
 	}
-	vertical_collision = map_collision(x, ySpeed + y, aMap);
+	yCollision = map_collision(x, ySpeed + y, aMap);
 
-	if (vertical_collision > 0){
-		if (3 & vertical_collision && 12 & ~vertical_collision){
+	if (yCollision > 0){
+		if (3 & yCollision && 12 & ~yCollision){
 			y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
 		}
-		else if (3 & ~vertical_collision && 12 & vertical_collision){
+		else if (3 & ~yCollision && 12 & yCollision){
 			y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
 		}
 
@@ -130,8 +130,8 @@ void Maro::move(const Map& aMap) {
 	else{
 		y += ySpeed;
 	}
-	vertical_collision = map_collision(x, 1 + y, aMap);
-	if (vertical_collision > 0) {
+	yCollision = map_collision(x, 1 + y, aMap);
+	if (yCollision > 0) {
 		onGround = 1;
 	}
 }
