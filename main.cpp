@@ -21,15 +21,17 @@ void draw_map(sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const M
 
 
 int main() {
+	std::chrono::microseconds lag(0);
+	std::chrono::steady_clock::time_point previousTime;
 	Maro maro;
 	sf::Event event;
-	sf::Image map_sketch;
-	map_sketch.loadFromFile("MapSketch.png");
+	sf::Image mapSketch;
+	mapSketch.loadFromFile("MapSketch.png");
 	sf::RenderWindow window(sf::VideoMode(SCREEN_RESIZE*SCREEN_WIDTH, SCREEN_RESIZE*SCREEN_HEIGHT), "Maro The Albanian Electrician", sf::Style::Close);
 	window.setPosition(sf::Vector2i(window.getPosition().x, window.getPosition().y - 90));
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	sf::Texture mapTexture;
-	unsigned view_x;
+	unsigned viewX;
 	mapTexture.loadFromFile("Map.png");
 	Map map(SCREEN_WIDTH / CELL_SIZE);
 	for (unsigned short i = 0; i < map.size(); i++) {
@@ -38,18 +40,27 @@ int main() {
 		}
 	}
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	previousTime = std::chrono::steady_clock::now();
 	while (window.isOpen()) {
-		view_x = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-		view.reset(sf::FloatRect(view_x, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		window.setView(view);
-		window.clear(sf::Color(0, 219, 255));
-		draw_map(window, mapTexture, map);
-		maro.draw(window);
-		maro.move(map);
-		window.display();
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed)
-				window.close();
+		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
+		lag += deltaTime;
+		previousTime += deltaTime;
+		while (FRAME_DURATION <= lag) {
+			lag -= FRAME_DURATION;
+			while (window.pollEvent(event)) {
+				if (event.type == sf::Event::Closed)
+					window.close();
+			}
+			maro.move(map);
+			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+			if (FRAME_DURATION > lag) {
+				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+				window.setView(view);
+				window.clear(sf::Color(0, 219, 255));
+				draw_map(window, mapTexture, map);
+				maro.draw(window);
+				window.display();
+			}
 		}
 	}
 	return 0;

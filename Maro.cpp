@@ -1,10 +1,12 @@
 #include "Maro.h"
 
 
+
 unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 prawo, 3 gora, 12 dol
-	float cell_x = x / CELL_SIZE;
-	float cell_y = y / CELL_SIZE;
+	float cellX = x / CELL_SIZE;
+	float cellY = y / CELL_SIZE;
 	unsigned char output = 0;
+
 
 	for (unsigned char i = 0; i < 4; i++)
 	{
@@ -12,23 +14,23 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 		short y;
 		switch (i) {
 			case 0: {
-				x = floor(cell_x);
-				y = floor(cell_y);
+				x = floor(cellX);
+				y = floor(cellY);
 				break;
 			}
 			case 1: {
-				x = ceil(cell_x);
-				y = floor(cell_y);
+				x = ceil(cellX);
+				y = floor(cellY);
 				break;
 			}
 			case 2: {
-				x = floor(cell_x);
-				y = ceil(cell_y);
+				x = floor(cellX);
+				y = ceil(cellY);
 				break;
 			}
 			case 3: {
-				x = ceil(cell_x);
-				y = ceil(cell_y);
+				x = ceil(cellX);
+				y = ceil(cellY);
 			}
 		}
 
@@ -50,7 +52,7 @@ Maro::Maro() {
 	ySpeed = 0;
 	xSpeed = 0;
 	jumpTimer = 0;
-	texture.loadFromFile("BigMarioIdle.png");
+	texture.loadFromFile("MarioIdle.png");
 	sprite.setTexture(texture);
 }
 
@@ -74,8 +76,7 @@ void Maro::move(const Map& aMap) {
 		moving = 1;
 		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 	}
-	if (0 == moving)
-	{
+	if (0 == moving){
 		if (0 < xSpeed) {
 			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
 		}
@@ -119,21 +120,17 @@ void Maro::move(const Map& aMap) {
 	}
 	vertical_collision = map_collision(x, ySpeed + y, aMap);
 
-	if (0 < vertical_collision)
-	{
-		if (3 & vertical_collision && 12 & ~vertical_collision)
-		{
+	if (0 < vertical_collision){
+		if (3 & vertical_collision && 12 & ~vertical_collision){
 			y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
 		}
-		else if (3 & ~vertical_collision && 12 & vertical_collision)
-		{
+		else if (3 & ~vertical_collision && 12 & vertical_collision){
 			y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
 		}
 
 		ySpeed = 0;
 	}
-	else
-	{
+	else{
 		y += ySpeed;
 	}
 	vertical_collision = map_collision(x, 1 + y, aMap);

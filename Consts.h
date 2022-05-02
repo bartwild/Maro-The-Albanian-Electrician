@@ -1,15 +1,18 @@
 #pragma once
 #include <vector>
+#include <chrono>
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
 const char CELL_SIZE = 16;
 const char SCREEN_RESIZE = 2;
-const float GRAVITY = 0.0001;
-const float MARO_ACCELERATION = 0.0002;
-const float MARO_SPEED = 0.05 ;
-const float MARO_JUMP_SPEED = -0.12;
-const float MARO_VMAX = 0.25;
+const float GRAVITY = 1.2;
+const float MARO_ACCELERATION = 0.75;
+const float MARO_SPEED = 4 ;
+const float MARO_JUMP_SPEED = -6;
+const float MARO_VMAX = 8;
 const unsigned char MARO_JUMP_TIMER = 8;
+const std::chrono::microseconds FRAME_DURATION(16667);
+
 
 enum Cell {
 	Empty,
