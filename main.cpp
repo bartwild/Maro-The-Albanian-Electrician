@@ -36,10 +36,14 @@ int main() {
 	mapTexture.loadFromFile("Map.png");
 	Map map(SCREEN_WIDTH / CELL_SIZE);
 	for (unsigned short i = 0; i < map.size(); i++) {
-		for (unsigned short j = map[i].size()-2; j < map[i].size(); j++) {
+		for (unsigned short j = map[i].size() - 2; j < map[i].size(); j++) {
 			map[i][j] = Cell::Wall;
 		}
 	}
+	map[12][11] = Cell::Wall;
+	map[6][11] = Cell::Wall;
+	map[12][12] = Cell::Wall;
+	map[6][12] = Cell::Wall;
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	previousTime = std::chrono::steady_clock::now();
 	while (window.isOpen()) {

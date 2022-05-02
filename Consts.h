@@ -5,12 +5,12 @@ const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
 const char CELL_SIZE = 16;
 const char SCREEN_RESIZE = 2;
-const float GRAVITY = 1.2;
-const float MARO_ACCELERATION = 0.75;
-const float MARO_SPEED = 4 ;
-const float MARO_JUMP_SPEED = -6;
-const float MARO_VMAX = 8;
-const unsigned char MARO_JUMP_TIMER = 8;
+const float GRAVITY = 0.5f;
+const float MARO_ACCELERATION = 0.25f;
+const float MARO_SPEED = 2 ;
+const float MARO_JUMP_SPEED = -4;
+const float MARO_VMAX = 3;
+const unsigned char MARO_JUMP_TIMER = 16;
 const std::chrono::microseconds FRAME_DURATION(16667);
 
 
