@@ -79,48 +79,36 @@ void draw_map(const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::
 				cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
 				aWindow.draw(cellSprite);
 			}
-			if (Cell::Empty != aMap[i][j])
-			{
-				if (Cell::Pipe == aMap[i][j])
-				{
-					if (Cell::Pipe == aMap[i][j - 1])
-					{
+			if (aMap[i][j] != Cell::Empty){
+				if (aMap[i][j] == Cell::Pipe){
+					if (aMap[i][j - 1] == Cell::Pipe){
 						y = 1;
 					}
-					else
-					{
+					else{
 						y = 0;
 					}
-
-					if (Cell::Pipe == aMap[i - 1][j])
-					{
+					if (aMap[i - 1][j] == Cell::Pipe){
 						x = 11;
 					}
-					else
-					{
+					else{
 						x = 10;
 					}
 				}
-				else if (Cell::QuestionBlock == aMap[i][j]) //Question blocks
-				{
+				else if (aMap[i][j] == Cell::QuestionBlock){//Question blocks
 					x = 1;
 					y = 0;
 				}
-				else if (Cell::Wall == aMap[i][j])
-				{
+				else if (aMap[i][j] == Cell::Wall){
 					y = 0;
 
-					if (sf::Color(0, 0, 0) == aMapSketch.getPixel(i, j)) //Walls
-					{
+					if (aMapSketch.getPixel(i, j) == sf::Color(0, 0, 0)){ //Walls
 						x = 2;
 					}
-					else //Solid blocks
-					{
+					else{ //Solid blocks
 						x = 3;
 					}
 				}
 				cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-
 				aWindow.draw(cellSprite);
 			}
 		}
