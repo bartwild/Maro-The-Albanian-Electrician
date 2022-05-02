@@ -67,11 +67,11 @@ void Maro::move(const Map& aMap) {
 	unsigned char vertical_collision;
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 		moving = 1;
-		xSpeed = std::max(xSpeed + MARO_ACCELERATION, MARO_SPEED);
+		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 	}
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 		moving = 1;
-		xSpeed = std::min(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
+		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 	}
 	if (moving == 0){
 		if (0 < xSpeed) {
