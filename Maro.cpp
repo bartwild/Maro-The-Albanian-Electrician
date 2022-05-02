@@ -138,4 +138,12 @@ void Maro::move(const Map& aMap) {
 
 
 float Maro::get_x() const { return x; }
+
+
 float Maro::get_y() const { return y; }
+
+
+void Maro::set_position(float x, float y) {
+	x = x;
+	y = y;
+}
