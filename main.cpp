@@ -7,15 +7,15 @@
 
 
 void draw_background(unsigned short i, unsigned short j, unsigned short mapHeight, sf::Sprite& cellSprite, sf::Vector2u& mapSize, const sf::Image& aMapSketch, sf::RenderWindow& aWindow) {
-	unsigned short x;
-	unsigned short y;
+	unsigned short x = 0;
+	unsigned short y = 0;
 	sf::Color pixel = aMapSketch.getPixel(i, j + 2 * mapHeight);
 	sf::Color pixelDown = sf::Color(0, 0, 0, 0);
 	sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
 	sf::Color pixelRight = sf::Color(0, 0, 0, 0);
 	sf::Color pixelUp = sf::Color(0, 0, 0, 0);
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	if (pixel.a == SCREEN_WIDTH - 1) {
+	if (pixel.a == 255) {
 		if (i > 0) pixelLeft = aMapSketch.getPixel(i - 1, j + 2 * mapHeight);
 		if (j > 0) pixelUp = aMapSketch.getPixel(i, j + 2 * mapHeight - 1);
 		if (i < mapSize.x - 1) pixelRight = aMapSketch.getPixel(i + 1, j + 2 * mapHeight);
@@ -33,47 +33,47 @@ void draw_background(unsigned short i, unsigned short j, unsigned short mapHeigh
 			else if (pixelRight == sf::Color(255, 255, 255)) {
 				x = 7;
 			}
-			else if (pixel == sf::Color(146, 219, 0)) { // grass
-				x = 5;
-				if (pixelLeft == sf::Color(146, 219, 0)) {
-					if (pixelRight != sf::Color(146, 219, 0)) {
-						x = 6;
-					}
-				}
-				else if (pixelRight == sf::Color(146, 219, 0)) {
-					x = 4;
-				}
-			}
-			else if (pixel == sf::Color(0, 73, 0)) { // hills outline
-				y = 1;
-				if (pixelLeft == sf::Color(0, 109, 0)) {
-					if (pixelRight != sf::Color(0, 109, 0)) {
-						x = 2;
-					}
-				}
-				else if (pixelRight == sf::Color(0, 109, 0)) {
-					x = 1;
-				}
-			}
-			else if (pixel == sf::Color(0, 109, 0)) { // hills
-				x = 4;
-				y = 1;
-				if (pixelLeft == sf::Color(0, 73, 0)) {
-					x = 3;
-				}
-				else if (pixelRight == sf::Color(0, 73, 0)) {
-					x = 5;
-				}
-			}
-			else if (pixel == sf::Color(109, 255, 85)) { // flagpole
-				x = 12;
-				if (pixelLeft == sf::Color(109, 255, 85)) {
-					y = 1;
-				}
-			}
-			cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-			aWindow.draw(cellSprite);
 		}
+		else if (sf::Color(146, 219, 0) == pixel) { // grass
+			x = 5;
+		}
+		else if (sf::Color(146, 146, 0) == pixel) {
+			x = 4;
+		}
+		else if (sf::Color(146, 182, 0) == pixel) {
+			x = 6;
+		}
+		else if (pixel == sf::Color(0, 73, 0)) { // hills outline
+			y = 1;
+			if (pixelLeft == sf::Color(0, 109, 0)) {
+				if (pixelRight != sf::Color(0, 109, 0)) {
+					x = 2;
+				}
+			}
+			else if (pixelRight == sf::Color(0, 109, 0)) {
+				x = 1;
+			}
+		}
+		else if (pixel == sf::Color(0, 109, 0)) { // hills
+			y = 1;
+			if (pixelLeft == sf::Color(0, 73, 0)) {
+				x = 3;
+			}
+			else if (pixelRight == sf::Color(0, 73, 0)) {
+				x = 5;
+			}
+			else {
+				x = 4;
+			}
+		}
+		else if (pixel == sf::Color(109, 255, 85)) { // flagpole
+			x = 12;
+			if (pixelLeft == sf::Color(109, 255, 85)) {
+				y = 1;
+			}
+		}
+		cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+		aWindow.draw(cellSprite);
 	}
 }
 
@@ -81,36 +81,41 @@ void draw_background(unsigned short i, unsigned short j, unsigned short mapHeigh
 void draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, const sf::Image& aMapSketch, sf::Sprite& questionBlock, sf::RenderWindow& aWindow, const Map& aMap) {
 	unsigned short x = 0;
 	unsigned short y = 0;
-	if (aMap[i][j] == Cell::Pipe) {
-		if (aMap[i][j - 1] == Cell::Pipe) {
-			y = 1;
-		}
-		else {
-			y = 0;
-		}
-		if (aMap[i - 1][j] == Cell::Pipe) {
-			x = 11;
-		}
-		else {
-			x = 10;
-		}
-	}
-	else if (aMap[i][j] == Cell::QuestionBlock) { // Question block
+	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+	questionBlock.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+	if (aMap[i][j] == Cell::QuestionBlock) { // Question block
 		questionBlock.setTextureRect(sf::IntRect(CELL_SIZE * 1, CELL_SIZE * 0, CELL_SIZE, CELL_SIZE));
 		aWindow.draw(questionBlock);
 	}
-	else if (aMap[i][j] == Cell::Wall) {
-		y = 0;
+	else {
+		if (aMap[i][j] == Cell::Pipe) {
+			if (aMap[i][j - 1] == Cell::Pipe) {
+				y = 1;
+			}
+			else {
+				y = 0;
+			}
+			if (aMap[i - 1][j] == Cell::Pipe) {
+				x = 11;
+			}
+			else {
+				x = 10;
+			}
+		}
+		else if (aMap[i][j] == Cell::Wall) {
+			y = 0;
 
-		if (aMapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
-			x = 2;
+			if (aMapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
+				x = 2;
+			}
+			else { // Solid blocks
+				x = 3;
+			}
+
 		}
-		else { // Solid blocks
-			x = 3;
-		}
+		cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+		aWindow.draw(cellSprite);
 	}
-	cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-	aWindow.draw(cellSprite);
 }
 
 
@@ -135,7 +140,7 @@ Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
 	sf::Vector2u mapSize = aMapSketch.getSize();
 	Map finalMap(mapSize.x);
 	for (unsigned short i = 0; i < mapSize.x; i++){
-		for (unsigned short j = 0; j < floor(mapSize.y/3); j++){
+		for (unsigned short j = 0; j < 2 * floor(mapSize.y/3); j++){
 			sf::Color pixel = aMapSketch.getPixel(i,j);
 			if (j < floor(mapSize.y/3)){
 				if (pixel == sf::Color(182, 73, 0)){
@@ -178,7 +183,7 @@ void whole_Game() {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	questionBlock.loadFromFile("QuestionBlock.png");
 	previousTime = std::chrono::steady_clock::now();
-	mapSketch.loadFromFile("MapSketch.png");
+	mapSketch.loadFromFile("LevelSketch0.png");
 	Map map = sketch_to_map(mapSketch, maro);
 	mapTexture.loadFromFile("Map.png");
 	while (window.isOpen()) {
