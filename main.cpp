@@ -20,6 +20,36 @@ void draw_map(sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const M
 	}
 }
 
+Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
+	sf::Vector2u mapSize = aMapSketch.getSize();
+	Map finalMap(mapSize.x);
+	for (unsigned short i = 0; i < mapSize.x; i++){
+		for (unsigned short j = 0; j < mapSize.y; j++){
+			sf::Color pixel = aMapSketch.getPixel(i,j);
+			if (j < floor(0.5f * mapSize.y)){
+				if (pixel == sf::Color(182, 73, 0)){
+					finalMap[i][j] = Cell::Brick;
+				}
+				else if (pixel == sf::Color(0, 182, 0) || pixel == sf::Color(0, 146, 0) || pixel == sf::Color(0, 219, 0)){
+					finalMap[i][j] = Cell::Pipe;
+				}
+				else if (pixel == sf::Color(255, 146, 85) || pixel == sf::Color(255, 73, 85)){
+					finalMap[i][j] = Cell::QuestionBlock;
+				}
+				else if (pixel == sf::Color(0, 0, 0) || pixel == sf::Color(146, 73, 0)){
+					finalMap[i][j] = Cell::Wall;
+				}
+				else{
+					finalMap[i][j] = Cell::Empty;
+				}
+			}
+			else if(pixel == sf::Color(255, 0, 0)){
+				aMaro.set_position(CELL_SIZE*i, CELL_SIZE*(j-floor(0.5f*mapSize.y)));
+			}
+		}
+	}
+}
+
 
 int main() {
 	std::chrono::microseconds lag(0);
