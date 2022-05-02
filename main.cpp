@@ -25,9 +25,59 @@ void draw_map(const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::
 			if (j < floor (0.5f * mapSize.y-1) - 1 ) pixelDown = aMapSketch.getPixel(i, j + 1);
 			cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 			if (pixel == sf::Color(255, 255, 255)) {
-				x = 6;
-
+				x = 8;
+				if (pixelUp == sf::Color(255, 255, 255)) {
+					y = 1;
+				}
+				if (pixelLeft == sf::Color(255, 255, 255)){
+					if (pixelRight != sf::Color(255, 255, 255)){
+						x = 9;
+					}
+				}
+				else if (pixelRight == sf::Color(255, 255, 255)) {
+					x = 7;
+				}
 			}
+			else if (pixel == sf::Color(146, 219, 0)) {
+				x = 5;
+				if (pixelLeft == sf::Color(146, 219, 0)){
+					if (pixelRight != sf::Color(146, 219, 0)){
+						x = 6;
+					}
+				}
+				else if (pixelRight == sf::Color(146, 219, 0)) {
+					x = 4;
+				}
+			}
+			else if (pixel == sf::Color(0, 73, 0)) {
+				y = 1;
+				if (pixelLeft == sf::Color(0, 109, 0)){
+					if (pixelRight != sf::Color(0, 109, 0)){
+						x = 2;
+					}
+				}
+				else if (pixelRight == sf::Color(0, 109, 0)) {
+					x = 1;
+				}
+			}
+			else if (pixel == sf::Color(0, 109, 0)) {
+				x = 4;
+				y = 1;
+				if (pixelLeft == sf::Color(0, 73, 0)){
+					x = 3;
+				}
+				else if (pixelRight == sf::Color(0, 73, 0)) {
+					x = 5;
+				}
+			}
+			else if (pixel == sf::Color(109, 255, 85)) {
+				x = 12;
+				if (pixelLeft == sf::Color(109, 255, 85)){
+					y = 1;
+				}
+			}
+			cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+			aWindow.draw(cellSprite);
 		}
 	}
 }
