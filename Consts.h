@@ -14,7 +14,7 @@ const unsigned char MARO_JUMP_TIMER = 8;
 const std::chrono::microseconds FRAME_DURATION(16667);
 
 
-enum Cell {
+const enum Cell {
 	Empty,
 	Brick,
 	Pipe,
