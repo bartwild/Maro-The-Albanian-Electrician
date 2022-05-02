@@ -7,7 +7,6 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 	float cellY = y / CELL_SIZE;
 	unsigned char output = 0;
 
-
 	for (unsigned char i = 0; i < 4; i++)
 	{
 		short x;
@@ -33,15 +32,13 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 				y = ceil(cellY);
 			}
 		}
-
-		if (0 <= x && x < aMap.size()){
+		if (x >= 0 && x < aMap.size()){
 			if (0 <= y && y < aMap[0].size()){
 				if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y])) output += pow(2, i);
 			}
 		}
 		else if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), Cell::Wall)) output += pow(2, i);
 	}
-
 	return output;
 }
 
@@ -76,7 +73,7 @@ void Maro::move(const Map& aMap) {
 		moving = 1;
 		xSpeed = std::min(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 	}
-	if (0 == moving){
+	if (moving == 0){
 		if (0 < xSpeed) {
 			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
 		}
@@ -102,11 +99,11 @@ void Maro::move(const Map& aMap) {
 	}
 	vertical_collision = map_collision(x, 1 + y, aMap);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		if (0 == ySpeed && 0 < vertical_collision){
+		if (ySpeed == 0 && vertical_collision > 0){
 			ySpeed = MARO_JUMP_SPEED;
 			jumpTimer = MARO_JUMP_TIMER;
 		}
-		else if (0 < jumpTimer){
+		else if (jumpTimer > 0){
 			ySpeed = MARO_JUMP_SPEED;
 			jumpTimer--;
 		}
@@ -120,7 +117,7 @@ void Maro::move(const Map& aMap) {
 	}
 	vertical_collision = map_collision(x, ySpeed + y, aMap);
 
-	if (0 < vertical_collision){
+	if (vertical_collision > 0){
 		if (3 & vertical_collision && 12 & ~vertical_collision){
 			y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
 		}
@@ -134,7 +131,7 @@ void Maro::move(const Map& aMap) {
 		y += ySpeed;
 	}
 	vertical_collision = map_collision(x, 1 + y, aMap);
-	if (0 < vertical_collision) {
+	if (vertical_collision > 0) {
 		onGround = 1;
 	}
 }
