@@ -11,13 +11,13 @@ void draw_map(const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::
 	sf::Vector2u mapSize = aMapSketch.getSize();
 	unsigned short x = 0;
 	unsigned short y = 0;
-	sf::Color pixelDown = sf::Color(0, 0, 0, 0);
-	sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
-	sf::Color pixelRight = sf::Color(0, 0, 0, 0);
-	sf::Color pixelUp = sf::Color(0, 0, 0, 0);
 	for (unsigned short i = 0; i < mapSize.x; i++) {
 		for (unsigned short j = 0; j < mapSize.y; j++) {
 			sf::Color pixel = aMapSketch.getPixel(i, j);
+			sf::Color pixelDown = sf::Color(0, 0, 0, 0);
+			sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
+			sf::Color pixelRight = sf::Color(0, 0, 0, 0);
+			sf::Color pixelUp = sf::Color(0, 0, 0, 0);
 			if (255 == pixel.a) continue;
 			if (i > 0 ) pixelLeft = aMapSketch.getPixel(i - 1, j);
 			if (j > 0 ) pixelUp = aMapSketch.getPixel(i, j - 1);
@@ -29,55 +29,100 @@ void draw_map(const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::
 				if (pixelUp == sf::Color(255, 255, 255)) {
 					y = 1;
 				}
-				if (pixelLeft == sf::Color(255, 255, 255)){
-					if (pixelRight != sf::Color(255, 255, 255)){
+				if (pixelLeft == sf::Color(255, 255, 255)) {
+					if (pixelRight != sf::Color(255, 255, 255)) {
 						x = 9;
 					}
 				}
 				else if (pixelRight == sf::Color(255, 255, 255)) {
 					x = 7;
 				}
-			}
-			else if (pixel == sf::Color(146, 219, 0)) {
-				x = 5;
-				if (pixelLeft == sf::Color(146, 219, 0)){
-					if (pixelRight != sf::Color(146, 219, 0)){
-						x = 6;
+
+				else if (pixel == sf::Color(146, 219, 0)) {
+					x = 5;
+					if (pixelLeft == sf::Color(146, 219, 0)) {
+						if (pixelRight != sf::Color(146, 219, 0)) {
+							x = 6;
+						}
+					}
+					else if (pixelRight == sf::Color(146, 219, 0)) {
+						x = 4;
 					}
 				}
-				else if (pixelRight == sf::Color(146, 219, 0)) {
-					x = 4;
+				else if (pixel == sf::Color(0, 73, 0)) {
+					y = 1;
+					if (pixelLeft == sf::Color(0, 109, 0)) {
+						if (pixelRight != sf::Color(0, 109, 0)) {
+							x = 2;
+						}
+					}
+					else if (pixelRight == sf::Color(0, 109, 0)) {
+						x = 1;
+					}
 				}
+				else if (pixel == sf::Color(0, 109, 0)) {
+					x = 4;
+					y = 1;
+					if (pixelLeft == sf::Color(0, 73, 0)) {
+						x = 3;
+					}
+					else if (pixelRight == sf::Color(0, 73, 0)) {
+						x = 5;
+					}
+				}
+				else if (pixel == sf::Color(109, 255, 85)) {
+					x = 12;
+					if (pixelLeft == sf::Color(109, 255, 85)) {
+						y = 1;
+					}
+				}
+				cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+				aWindow.draw(cellSprite);
 			}
-			else if (pixel == sf::Color(0, 73, 0)) {
-				y = 1;
-				if (pixelLeft == sf::Color(0, 109, 0)){
-					if (pixelRight != sf::Color(0, 109, 0)){
+			if (Cell::Empty != aMap[i][j])
+			{
+				if (Cell::Pipe == aMap[i][j])
+				{
+					if (Cell::Pipe == aMap[i][j - 1])
+					{
+						y = 1;
+					}
+					else
+					{
+						y = 0;
+					}
+
+					if (Cell::Pipe == aMap[i - 1][j])
+					{
+						x = 11;
+					}
+					else
+					{
+						x = 10;
+					}
+				}
+				else if (Cell::QuestionBlock == aMap[i][j]) //Question blocks
+				{
+					x = 1;
+					y = 0;
+				}
+				else if (Cell::Wall == aMap[i][j])
+				{
+					y = 0;
+
+					if (sf::Color(0, 0, 0) == aMapSketch.getPixel(i, j)) //Walls
+					{
 						x = 2;
 					}
+					else //Solid blocks
+					{
+						x = 3;
+					}
 				}
-				else if (pixelRight == sf::Color(0, 109, 0)) {
-					x = 1;
-				}
+				cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+
+				aWindow.draw(cellSprite);
 			}
-			else if (pixel == sf::Color(0, 109, 0)) {
-				x = 4;
-				y = 1;
-				if (pixelLeft == sf::Color(0, 73, 0)){
-					x = 3;
-				}
-				else if (pixelRight == sf::Color(0, 73, 0)) {
-					x = 5;
-				}
-			}
-			else if (pixel == sf::Color(109, 255, 85)) {
-				x = 12;
-				if (pixelLeft == sf::Color(109, 255, 85)){
-					y = 1;
-				}
-			}
-			cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-			aWindow.draw(cellSprite);
 		}
 	}
 }
@@ -131,15 +176,6 @@ int main() {
 	unsigned viewX;
 	mapTexture.loadFromFile("Map.png");
 	Map map(SCREEN_WIDTH / CELL_SIZE);
-	for (unsigned short i = 0; i < map.size(); i++) {
-		for (unsigned short j = map[i].size() - 2; j < map[i].size(); j++) {
-			map[i][j] = Cell::Wall;
-		}
-	}
-	map[12][11] = Cell::Wall;
-	map[6][11] = Cell::Wall;
-	map[12][12] = Cell::Wall;
-	map[6][12] = Cell::Wall;
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 	previousTime = std::chrono::steady_clock::now();
 	while (window.isOpen()) {
