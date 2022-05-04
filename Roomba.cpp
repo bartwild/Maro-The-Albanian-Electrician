@@ -1,7 +1,6 @@
 #include "Roomba.h"
 
 
-
 unsigned char map_collision_Roomba(float x, float y, const Map& aMap) { //5-lewo. 10 prawo, 3 gora, 12 dol
 	float cellX = x / CELL_SIZE;
 	float cellY = y / CELL_SIZE;
@@ -47,8 +46,7 @@ Roomba::Roomba() {
 	y = 100;
 	ySpeed = 0;
 	xSpeed = ROOMBA_SPEED;
-	jumpTimer = 0;
-	texture.loadFromFile("GoombaWalk.png");
+	texture.loadFromFile("GoombaDeath1.png");
 	sprite.setTexture(texture);
 }
 
@@ -60,42 +58,44 @@ void Roomba::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Roomba::move(const Map& aMap) {
-	bool moving = 0;
-	unsigned char xCollision;
-	unsigned char yCollision;
-	xCollision = map_collision_Roomba(xSpeed + x, y, aMap);
-	if (xCollision != 0) {
-		if (5 & ~xCollision && 10 & xCollision)
-		{
-			x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
-		}
-		else if (5 & xCollision && 10 & ~xCollision)
-		{
-			x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
-		}
-		xSpeed *= -1;
-	}
-	else {
-		x += xSpeed;
-	}
-	yCollision = map_collision_Roomba(x, 1 + y, aMap);
-    if (yCollision == 0){
-		ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-	}
-	yCollision = map_collision_Roomba(x, ySpeed + y, aMap);
-	if (yCollision > 0){
-		if (3 & yCollision && 12 & ~yCollision){
-			y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
-		}
-		else if (3 & ~yCollision && 12 & yCollision){
-			y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-		}
-		ySpeed = 0;
-	}
-	else{
-		y += ySpeed;
-	}
+void Roomba::move(const Map& aMap, const unsigned aViewX){
+    if (-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - ENTITY_UPDATE_AREA && x < ENTITY_UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT){
+        bool moving = 0;
+        unsigned char xCollision;
+        unsigned char yCollision;
+        xCollision = map_collision_Roomba(xSpeed + x, y, aMap);
+        if (xCollision != 0) {
+            if (5 & ~xCollision && 10 & xCollision)
+            {
+                x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+            }
+            else if (5 & xCollision && 10 & ~xCollision)
+            {
+                x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+            }
+            xSpeed *= -1;
+        }
+        else {
+            x += xSpeed;
+        }
+        yCollision = map_collision_Roomba(x, 1 + y, aMap);
+        if (yCollision == 0){
+            ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+        }
+        yCollision = map_collision_Roomba(x, ySpeed + y, aMap);
+        if (yCollision > 0){
+            if (3 & yCollision && 12 & ~yCollision){
+                y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+            }
+            else if (3 & ~yCollision && 12 & yCollision){
+                y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+            }
+            ySpeed = 0;
+        }
+        else{
+            y += ySpeed;
+        }
+    }
 }
 
 
