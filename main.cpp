@@ -19,7 +19,7 @@ void draw_background(unsigned short i, unsigned short j, unsigned short mapHeigh
 		if (i > 0) pixelLeft = aMapSketch.getPixel(i - 1, j + 2 * mapHeight);
 		if (j > 0) pixelUp = aMapSketch.getPixel(i, j + 2 * mapHeight - 1);
 		if (i < mapSize.x - 1) pixelRight = aMapSketch.getPixel(i + 1, j + 2 * mapHeight);
-		if (j < floor(mapSize.y / 3) - 1) pixelDown = aMapSketch.getPixel(i, j + 2 * mapHeight + 1);
+		if (j < mapHeight - 1) pixelDown = aMapSketch.getPixel(i, j + 2 * mapHeight + 1);
 		if (pixel == sf::Color(255, 255, 255)) { // clouds
 			x = 8;
 			if (pixelUp == sf::Color(255, 255, 255)) {
