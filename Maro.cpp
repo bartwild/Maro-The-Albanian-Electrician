@@ -143,7 +143,7 @@ float Maro::get_x() const { return x; }
 float Maro::get_y() const { return y; }
 
 
-void Maro::set_position(float x, float y) {
-	x = x;
-	y = y;
+void Maro::set_position(float newX, float newY) {
+	x = newX;
+	y = newY;
 }
