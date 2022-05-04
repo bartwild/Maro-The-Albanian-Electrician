@@ -74,10 +74,10 @@ void Maro::move(const Map& aMap) {
 		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 	}
 	if (moving == 0){
-		if (0 < xSpeed) {
+		if (xSpeed > 0) {
 			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
 		}
-		else if (0 > xSpeed) {
+		else if (xSpeed < 0) {
 			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 		}
 	}
