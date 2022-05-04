@@ -46,7 +46,7 @@ Roomba::Roomba() {
 	x = 100;
 	y = 100;
 	ySpeed = 0;
-	xSpeed = 1;
+	xSpeed = ROOMBA_SPEED;
 	jumpTimer = 0;
 	texture.loadFromFile("GoombaWalk.png");
 	sprite.setTexture(texture);
