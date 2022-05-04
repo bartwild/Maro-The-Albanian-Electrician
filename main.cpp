@@ -1,8 +1,9 @@
-#include "Maro.h"
 #include <array>
 #include <chrono>
 #include <cmath>
 #include <algorithm>
+#include "Maro.h"
+#include "Roomba.h"
 #include "Consts.h"
 
 
@@ -136,7 +137,7 @@ void draw_map(unsigned viewX, const sf::Image& aMapSketch, sf::RenderWindow& aWi
 
 
 
-Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
+Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::vector<Roomba>& aRoombas){
 	sf::Vector2u mapSize = aMapSketch.getSize();
 	Map finalMap(mapSize.x);
 	for (unsigned short i = 0; i < mapSize.x; i++){
@@ -159,8 +160,15 @@ Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
 					finalMap[i][j] = Cell::Empty;
 				}
 			}
-			else if(pixel == sf::Color(255, 0, 0)){
-				aMaro.set_position(CELL_SIZE*i, CELL_SIZE*(j-floor(mapSize.y/3)));
+			else{
+				if(pixel == sf::Color(255, 0, 0)){
+					aMaro.set_position(CELL_SIZE*i, CELL_SIZE*(j-floor(mapSize.y/3)));
+				}
+				else if(pixel == (sf::Color(182, 73, 0))){
+					Roomba roomba;
+					roomba.set_position(CELL_SIZE * i, CELL_SIZE * (j-floor(mapSize.y/3)));
+					aRoombas.push_back(roomba);
+				}
 			}
 		}
 	}
@@ -170,6 +178,7 @@ Map sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro){
 
 void whole_Game() {
 	Maro maro;
+	std::vector<Roomba> roombas;
 	unsigned viewX;
 	sf::Event event;
 	sf::Image mapSketch;
@@ -184,7 +193,7 @@ void whole_Game() {
 	questionBlock.loadFromFile("QuestionBlock.png");
 	previousTime = std::chrono::steady_clock::now();
 	mapSketch.loadFromFile("LevelSketch0.png");
-	Map map = sketch_to_map(mapSketch, maro);
+	Map map = sketch_to_map(mapSketch, maro, roombas);
 	mapTexture.loadFromFile("Map.png");
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
@@ -199,12 +208,19 @@ void whole_Game() {
 			}
 			maro.move(map);
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+			for (Roomba& roomba : roombas){
+				roomba.move(map);
+			}
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
 				window.clear(sf::Color(0, 219, 255));
 				draw_map(viewX, mapSketch, window, mapTexture, questionBlock, map);
 				maro.draw(window);
+				for (Roomba& roomba : roombas)
+				{
+					roomba.draw(window);
+				}
 				window.display();
 			}
 		}
