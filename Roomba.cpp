@@ -59,7 +59,7 @@ void Roomba::draw(sf::RenderWindow& aWindow) {
 
 
 void Roomba::move(const Map& aMap, const unsigned aViewX){
-    if (-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - ENTITY_UPDATE_AREA && x < ENTITY_UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT){
+    if (-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT){
         bool moving = 0;
         unsigned char xCollision;
         unsigned char yCollision;
