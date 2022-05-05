@@ -42,14 +42,13 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 	return output;
 }
 
-Maro::Maro() {
+Maro::Maro() walkAnimation(MARIO_WALK_ANIMATION_SPEED, CELL_SIZE, "Resources/Images/MarioWalk.png") {
 	onGround = 0;
 	x = 100;
 	y = 100;
 	ySpeed = 0;
 	xSpeed = 0;
 	jumpTimer = 0;
-	walkAnimation = Animation(MARIO_WALK_ANIMATION_SPEED, CELL_SIZE, "Resources/Images/MarioWalk.png");
 	texture.loadFromFile("MarioIdle.png");
 	sprite.setTexture(texture);
 }
