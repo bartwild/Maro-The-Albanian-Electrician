@@ -58,8 +58,8 @@ Maro::Maro() {
 
 void Maro::draw(sf::RenderWindow& aWindow) {
 	bool drawSprite = 1;
+	sprite.setPosition(round(x), round(y));
 	if (!onGround){
-		sprite.setPosition(round(x), round(y));
 		texture.loadFromFile("MarioJump.png");
 	}
 	else {
@@ -70,6 +70,8 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
 			(xSpeed < 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
 				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
+			if (xSpeed > 0) flipped = 0;
+			else flipped = 1;
 			texture.loadFromFile("MarioBrake.png");
 		}
 		else {
@@ -81,7 +83,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 	}
 	if (drawSprite) {
 		if (!flipped){
-			sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+			sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
 		else{
 			sprite.setTextureRect(sf::IntRect(texture.getSize().x, 0, -static_cast<int>(texture.getSize().x), texture.getSize().y));
