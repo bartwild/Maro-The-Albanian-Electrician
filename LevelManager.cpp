@@ -15,17 +15,17 @@ void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned 
 		if (j > 0) pixelUp = aMapSketch.getPixel(i, j + 2 * mapHeight - 1);
 		if (i < mapSize.x - 1) pixelRight = aMapSketch.getPixel(i + 1, j + 2 * mapHeight);
 		if (j < mapHeight - 1) pixelDown = aMapSketch.getPixel(i, j + 2 * mapHeight + 1);
-		if (pixel == sf::Color(255, 255, 255)) { // clouds
+		if (pixel == LevelManager::Object_to_color("clouds")) {
 			x = 8;
-			if (pixelUp == sf::Color(255, 255, 255)) {
+			if (pixelUp == LevelManager::Object_to_color("clouds")) {
 				y = 1;
 			}
-			if (pixelLeft == sf::Color(255, 255, 255)) {
-				if (pixelRight != sf::Color(255, 255, 255)) {
+			if (pixelLeft == LevelManager::Object_to_color("clouds")) {
+				if (pixelRight != LevelManager::Object_to_color("clouds")) {
 					x = 9;
 				}
 			}
-			else if (pixelRight == sf::Color(255, 255, 255)) {
+			else if (pixelRight == LevelManager::Object_to_color("clouds")) {
 				x = 7;
 			}
 		}
@@ -63,7 +63,7 @@ void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned 
 		}
 		else if (pixel == sf::Color(109, 255, 85)) { // flagpole
 			x = 12;
-			if (pixelLeft == sf::Color(109, 255, 85)) {
+			if (pixelUp == sf::Color(109, 255, 85)) {
 				y = 1;
 			}
 		}
@@ -78,7 +78,7 @@ void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& 
 	unsigned short y = 0;
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 	questionBlock.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	if (aMap[i][j] == Cell::QuestionBlock) { // Question block
+	if (aMap[i][j] == Cell::QuestionBlock) {
 		questionBlock.setTextureRect(sf::IntRect(CELL_SIZE * 1, CELL_SIZE * 0, CELL_SIZE, CELL_SIZE));
 		aWindow.draw(questionBlock);
 	}
@@ -112,6 +112,19 @@ void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& 
 		aWindow.draw(cellSprite);
 	}
 }
+
+
+
+
+sf::Color LevelManager::Object_to_color(std::string objectName){
+	if (objectName == "clouds") {
+		return sf::Color(255, 255, 255);
+	}
+	else if (objectName == "grass"){
+	}
+
+}
+
 
 
 void LevelManager::draw_map(unsigned viewX, const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {

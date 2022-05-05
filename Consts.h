@@ -34,7 +34,7 @@ enum Cell {
 	Wall
 };
 
-enum Colors;
+
 
 const std::vector<Cell> colisionCell = { Brick, Pipe, QuestionBlock, Wall };
 typedef std::vector <std::array<Cell, SCREEN_HEIGHT / CELL_SIZE>> Map;
