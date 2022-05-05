@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include "Consts.h"
+#include "Animation.h"
 
 
 class Maro{
@@ -13,6 +14,7 @@ class Maro{
 	float xSpeed;
 	float ySpeed;
 	unsigned char jumpTimer;
+	Animation walkAnimation;
 	sf::Sprite sprite;
 	sf::Texture texture;
 public:
@@ -20,6 +22,7 @@ public:
 	void draw(sf::RenderWindow& aWindow);
 	void move(const Map& aMap);
 	void set_position(float x, float y);
+	void animate();
 	float get_x() const;
 	float get_y() const;
 };
