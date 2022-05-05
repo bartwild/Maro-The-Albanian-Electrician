@@ -1,10 +1,18 @@
 #pragma once
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <vector>
 #include <chrono>
+#include <array>
+#include <chrono>
+#include <cmath>
+#include <algorithm>
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
 const char CELL_SIZE = 16;
-const char SCREEN_RESIZE = 2;
+const char SCREEN_RESIZE = 4;
 const float GRAVITY = 0.25f;
 const float MARO_ACCELERATION = 0.1f;
 const unsigned short MARO_WALK_ANIMATION_SPEED = 5;
@@ -25,6 +33,8 @@ enum Cell {
 	QuestionBlock,
 	Wall
 };
+
+enum Colors;
 
 const std::vector<Cell> colisionCell = { Brick, Pipe, QuestionBlock, Wall };
 typedef std::vector <std::array<Cell, SCREEN_HEIGHT / CELL_SIZE>> Map;

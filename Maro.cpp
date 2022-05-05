@@ -82,10 +82,10 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 		}
 	}
 	if (drawSprite) {
-		if (!flipped){
+		if (!flipped) {
 			sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
-		else{
+		else {
 			sprite.setTextureRect(sf::IntRect(texture.getSize().x, 0, -static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
 		aWindow.draw(sprite);

@@ -1,8 +1,5 @@
 #pragma once
-#include <SFMl/Graphics.hpp>
-#include <SFMl/Window.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+#include "Consts.h"
 
 class Animation{
 	bool flipped;
