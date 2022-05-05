@@ -3,14 +3,17 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include <vector>
 #include <chrono>
 #include <array>
 #include <chrono>
 #include <cmath>
 #include <algorithm>
+
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
+const char MARO_DEATH_TIMER = 64;
 const char CELL_SIZE = 16;
 const char SCREEN_RESIZE = 4;
 const float GRAVITY = 0.25f;

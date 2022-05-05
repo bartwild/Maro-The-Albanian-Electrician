@@ -1,5 +1,4 @@
 #include "Maro.h"
-#include "Animation.h"
 
 
 unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 prawo, 3 gora, 12 dol
@@ -47,8 +46,10 @@ Maro::Maro() {
 	onGround = 0;
 	x = 100;
 	y = 100;
+	dead = 0;
 	ySpeed = 0;
 	xSpeed = 0;
+	deathTimer = MARO_DEATH_TIMER;
 	jumpTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
 	texture.loadFromFile("MarioIdle.png");
@@ -59,7 +60,10 @@ Maro::Maro() {
 void Maro::draw(sf::RenderWindow& aWindow) {
 	bool drawSprite = 1;
 	sprite.setPosition(round(x), round(y));
-	if (!onGround){
+	if (dead) {
+		texture.loadFromFile("MarioDeath.png");
+	}
+	else if (!onGround){
 		texture.loadFromFile("MarioJump.png");
 	}
 	else {
@@ -98,76 +102,92 @@ void Maro::move(const Map& aMap) {
 	onGround = 0;
 	unsigned char xCollision;
 	unsigned char yCollision;
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		moving = 1;
-		flipped = 0;
-		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
-	}
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		moving = 1;
-		flipped = 1;
-		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
-	}
-	if (moving == 0){
-		if (xSpeed > 0) {
-			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
+	if (!dead) {
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			moving = 1;
+			flipped = 0;
+			xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 		}
-		else if (xSpeed < 0) {
-			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+			moving = 1;
+			flipped = 1;
+			xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 		}
-	}
-	xCollision = map_collision(xSpeed + x, y, aMap);
-	if (xCollision != 0) {
-		moving = 0;
-		if (5 & ~xCollision && 10 & xCollision)
+		if (moving == 0) {
+			if (xSpeed > 0) {
+				xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
+			}
+			else if (xSpeed < 0) {
+				xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
+			}
+		}
+		xCollision = map_collision(xSpeed + x, y, aMap);
+		if (xCollision != 0) {
+			moving = 0;
+			if (5 & ~xCollision && 10 & xCollision)
+			{
+				x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+			}
+			else if (5 & xCollision && 10 & ~xCollision)
+			{
+				x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+			}
+			xSpeed = 0;
+		}
+		else {
+			x += xSpeed;
+		}
+		yCollision = map_collision(x, 1 + y, aMap);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			if (ySpeed == 0 && yCollision > 0) {
+				ySpeed = MARO_JUMP_SPEED;
+				jumpTimer = MARO_JUMP_TIMER;
+			}
+			else if (jumpTimer > 0) {
+				ySpeed = MARO_JUMP_SPEED;
+				jumpTimer--;
+			}
+			else {
+				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+			}
+		}
+		else {
+			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+			jumpTimer = 0;
+		}
+		yCollision = map_collision(x, ySpeed + y, aMap);
+
+		if (yCollision > 0) {
+			if (3 & yCollision && 12 & ~yCollision) {
+				y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+			}
+			else if (3 & ~yCollision && 12 & yCollision) {
+				y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+			}
+
+			ySpeed = 0;
+		}
+		else {
+			y += ySpeed;
+		}
+		yCollision = map_collision(x, 1 + y, aMap);
+		if (yCollision > 0) {
+			onGround = 1;
+		}
+		if (y >= SCREEN_HEIGHT - get_hit_box().height)
 		{
-			x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+			die();
 		}
-		else if (5 & xCollision && 10 & ~xCollision)
-		{
-			x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
-		}
-		xSpeed = 0;
 	}
 	else {
-		x += xSpeed;
-	}
-	yCollision = map_collision(x, 1 + y, aMap);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		if (ySpeed == 0 && yCollision > 0){
-			ySpeed = MARO_JUMP_SPEED;
-			jumpTimer = MARO_JUMP_TIMER;
-		}
-		else if (jumpTimer > 0){
-			ySpeed = MARO_JUMP_SPEED;
-			jumpTimer--;
-		}
-		else{
+		if (0 == deathTimer){
 			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+			y += ySpeed;
 		}
-	}
-	else{
-		ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-		jumpTimer = 0;
-	}
-	yCollision = map_collision(x, ySpeed + y, aMap);
-
-	if (yCollision > 0){
-		if (3 & yCollision && 12 & ~yCollision){
-			y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+		else if (1 == deathTimer){
+			ySpeed = MARO_JUMP_SPEED;
 		}
-		else if (3 & ~yCollision && 12 & yCollision){
-			y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-		}
-
-		ySpeed = 0;
-	}
-	else{
-		y += ySpeed;
-	}
-	yCollision = map_collision(x, 1 + y, aMap);
-	if (yCollision > 0) {
-		onGround = 1;
+		deathTimer = std::max(0, deathTimer - 1);
 	}
 	walkAnimation.step();
 }
@@ -182,4 +202,18 @@ float Maro::get_y() const { return y; }
 void Maro::set_position(float newX, float newY) {
 	x = newX;
 	y = newY;
+}
+
+
+void Maro::die() {
+	dead = 1;
+}
+
+
+sf::FloatRect Maro::get_hit_box() const {
+	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
+}
+
+char Maro::get_death_timer() {
+	return deathTimer;
 }
