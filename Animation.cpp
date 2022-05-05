@@ -13,7 +13,7 @@ void Animation::draw(sf::RenderWindow& window){
 		sprite.setTextureRect(sf::IntRect(width * (1 + frame), 0, -width, texture.getSize().y));
 	}
 	else {
-		sprite.setTextureRect(sf::IntRect(width * (1 + frame), 0, width, texture.getSize().y));
+		sprite.setTextureRect(sf::IntRect(width * (frame), 0, width, texture.getSize().y));
 	}
 	window.draw(sprite);
 }
@@ -27,7 +27,7 @@ void Animation::set_flipped(bool value){
 void Animation::step() {
 	while (iterator >= speed) {
 		iterator -= speed;
-		frame = (1 + frame) % totalFrames;
+		frame = (2 + frame) % totalFrames;
 	}
 	iterator++;
 }
