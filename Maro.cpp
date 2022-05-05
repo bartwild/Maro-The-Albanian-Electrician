@@ -1,5 +1,5 @@
 #include "Maro.h"
-
+#include "Animation.h"
 
 
 unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 prawo, 3 gora, 12 dol
@@ -42,27 +42,58 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 	return output;
 }
 
-Maro::Maro() walkAnimation(MARIO_WALK_ANIMATION_SPEED, CELL_SIZE, "Resources/Images/MarioWalk.png") {
+Maro::Maro() {
+	flipped = 0;
 	onGround = 0;
 	x = 100;
 	y = 100;
 	ySpeed = 0;
 	xSpeed = 0;
 	jumpTimer = 0;
+	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
 	texture.loadFromFile("MarioIdle.png");
 	sprite.setTexture(texture);
 }
 
 
 void Maro::draw(sf::RenderWindow& aWindow) {
-	sprite.setPosition(round(x), round(y));
-	aWindow.draw(sprite);
+	bool drawSprite = 1;
+	if (!onGround){
+		sprite.setPosition(round(x), round(y));
+		texture.loadFromFile("MarioJump.png");
+	}
+	else {
+		if (!xSpeed){
+			texture.loadFromFile("MarioIdle.png");
+		}
+		else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
+			sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
+			(xSpeed < 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
+			texture.loadFromFile("MarioBrake.png");
+		}
+		else {
+			drawSprite = 0;
+			walkAnimation.set_flipped(flipped);
+			walkAnimation.set_position(round(x), round(y));
+			walkAnimation.draw(aWindow);
+		}
+	}
+	if (drawSprite) {
+		if (!flipped){
+			sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+		}
+		else{
+			sprite.setTextureRect(sf::IntRect(texture.getSize().x, 0, -static_cast<int>(texture.getSize().x), texture.getSize().y));
+		}
+		aWindow.draw(sprite);
+	}
 }
 
 
 void Maro::move(const Map& aMap) {
 	bool moving = 0;
-	bool onGround = 0;
+	onGround = 0;
 	unsigned char xCollision;
 	unsigned char yCollision;
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
@@ -134,6 +165,7 @@ void Maro::move(const Map& aMap) {
 	if (yCollision > 0) {
 		onGround = 1;
 	}
+	walkAnimation.step();
 }
 
 

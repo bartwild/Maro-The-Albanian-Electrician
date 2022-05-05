@@ -8,6 +8,7 @@
 
 
 class Maro{
+	bool flipped;
 	bool onGround;
 	float x;
 	float y;
@@ -22,7 +23,6 @@ public:
 	void draw(sf::RenderWindow& aWindow);
 	void move(const Map& aMap);
 	void set_position(float x, float y);
-	void animate();
 	float get_x() const;
 	float get_y() const;
 };

@@ -1,6 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+#include <SFMl/Graphics.hpp>
+#include <SFMl/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 class Animation{
 	bool flipped;
@@ -12,9 +14,11 @@ class Animation{
 	sf::Sprite sprite;
 	sf::Texture texture;
 public:
-	Animation(unsigned short aSpeed, unsigned short aWidth, const std::string& aTextureLocation);
-	void draw(short x, short y, sf::RenderWindow& window);
+	Animation() {};
+	Animation(const  unsigned short aWidth, const std::string& aTextureLocation, const unsigned short aSpeed);
+	void draw(sf::RenderWindow& window);
 	void set_flipped(bool value);
 	void step();
+	void set_position(const short i_x, const short i_y);
 };
 
