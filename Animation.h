@@ -15,7 +15,7 @@ public:
 	Animation(const  unsigned short aWidth, const std::string& aTextureLocation, const unsigned short aSpeed);
 	void draw(sf::RenderWindow& window);
 	void set_flipped(bool value);
-	void step();
+	void step(bool isBig);
 	void set_position(const short i_x, const short i_y);
 };
 

@@ -281,7 +281,20 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 		}
 		deathTimer = std::max(0, deathTimer - 1);
 	}
-	walkAnimation.step();
+	for (Mushroom& mushroom : mushrooms) {
+		if (get_hit_box().intersects(mushroom.get_hit_box())) {
+			mushroom.die(1);
+			become_big();
+			y -= CELL_SIZE;
+		}
+		if (mushroom.get_dead()) {
+		}
+	}
+	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
+		return 1 == i_mushroom.get_dead();
+	}), mushrooms.end());
+	if (big) bigWalkAnimation.step(1);
+	walkAnimation.step(0);
 }
 
 

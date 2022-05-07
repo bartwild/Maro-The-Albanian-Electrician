@@ -198,7 +198,7 @@ Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
 }
 
 void LevelManager::update() {
-	questionBlockAnimation.step();
+	questionBlockAnimation.step(0);
 }
 
 

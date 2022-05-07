@@ -24,10 +24,18 @@ void Animation::set_flipped(bool value){
 }
 
 
-void Animation::step() {
-	while (iterator >= speed) {
-		iterator -= speed;
-		frame = (2 + frame) % totalFrames;
+void Animation::step(bool isBig) {
+	if (isBig) {
+		while (iterator >= speed) {
+			iterator -= speed;
+			frame = (1 + frame) % totalFrames;
+		}
+	}
+	else {
+		while (iterator >= speed) {
+			iterator -= speed;
+			frame = (2 + frame) % totalFrames;
+		}
 	}
 	iterator++;
 }
