@@ -92,9 +92,11 @@ Maro::Maro() {
 	dead = 0;
 	ySpeed = 0;
 	xSpeed = 0;
+	big = 0;
 	deathTimer = MARO_DEATH_TIMER;
 	jumpTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
+	bigWalkAnimation = Animation(CELL_SIZE, "BigMarioWalk.png", MARO_WALK_ANIMATION_SPEED);
 	texture.loadFromFile("MarioIdle.png");
 	sprite.setTexture(texture);
 }
@@ -104,14 +106,29 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 	bool drawSprite = 1;
 	sprite.setPosition(round(x), round(y));
 	if (dead) {
-		texture.loadFromFile("MarioDeath.png");
+		if (!big) {
+			texture.loadFromFile("MarioDeath.png");
+		}
+		else {
+			texture.loadFromFile("BigMarioDeath.png");
+		}
 	}
 	else if (!onGround){
-		texture.loadFromFile("MarioJump.png");
+		if (!big) {
+			texture.loadFromFile("MarioJump.png");
+		}
+		else {
+			texture.loadFromFile("BigMarioJump.png");
+		}
 	}
 	else {
 		if (!xSpeed){
-			texture.loadFromFile("MarioIdle.png");
+			if (!big) {
+				texture.loadFromFile("MarioIdle.png");
+			}
+			else {
+				texture.loadFromFile("BigMarioIdle.png");
+			}
 		}
 		else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
@@ -119,13 +136,25 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
 			if (xSpeed > 0) flipped = 0;
 			else flipped = 1;
-			texture.loadFromFile("MarioBrake.png");
+			if (!big) {
+				texture.loadFromFile("MarioBrake.png");
+			}
+			else {
+				texture.loadFromFile("BigMarioBrake.png");
+			}
 		}
 		else {
 			drawSprite = 0;
-			walkAnimation.set_flipped(flipped);
-			walkAnimation.set_position(round(x), round(y));
-			walkAnimation.draw(aWindow);
+			if (!big) {
+				walkAnimation.set_flipped(flipped);
+				walkAnimation.set_position(round(x), round(y));
+				walkAnimation.draw(aWindow);
+			}
+			else {
+				bigWalkAnimation.set_flipped(flipped);
+				bigWalkAnimation.set_position(round(x), round(y));
+				bigWalkAnimation.draw(aWindow);
+			}
 		}
 	}
 	if (drawSprite) {
@@ -239,7 +268,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 		}
 		if (y >= SCREEN_HEIGHT - get_hit_box().height)
 		{
-			die();
+			die(1);
 		}
 	}
 	else {
@@ -268,15 +297,38 @@ void Maro::set_position(float newX, float newY) {
 }
 
 
-void Maro::die() {
-	dead = 1;
+void Maro::die(bool instant) {
+	if (instant) { dead = 1; }
+	else {
+		if (!big) {
+			dead = 1;
+		}
+		else {
+			become_small();
+		}
+	}
 }
 
 
 sf::FloatRect Maro::get_hit_box() const {
-	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
+	if (!big) {
+		return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
+	}
+	else {
+		return sf::FloatRect(x, y, CELL_SIZE, 2 * CELL_SIZE);
+	}
 }
 
 char Maro::get_death_timer() {
 	return deathTimer;
+}
+
+
+void Maro::become_small() {
+	big = 0;
+}
+
+
+void Maro::become_big() {
+	big = 1;
 }
