@@ -1,6 +1,11 @@
 #include "LevelManager.h"
 
 
+LevelManager::LevelManager() {
+	questionBlockAnimation = Animation(CELL_SIZE, "QuestionBlock.png", MARO_WALK_ANIMATION_SPEED);
+}
+
+
 void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned short mapHeight, sf::Sprite& cellSprite, sf::Vector2u& mapSize, const sf::Image& aMapSketch, sf::RenderWindow& aWindow) {
 	unsigned short x = 0;
 	unsigned short y = 0;
@@ -73,14 +78,13 @@ void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned 
 }
 
 
-void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, const sf::Image& aMapSketch, sf::Sprite& questionBlock, sf::RenderWindow& aWindow, const Map& aMap) {
+void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const Map& aMap) {
 	unsigned short x = 0;
 	unsigned short y = 0;
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	questionBlock.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	if (aMap[i][j] == Cell::QuestionBlock) {
-		questionBlock.setTextureRect(sf::IntRect(CELL_SIZE * 1, CELL_SIZE * 0, CELL_SIZE, CELL_SIZE));
-		aWindow.draw(questionBlock);
+	if (aMap[i][j] == Cell::QUESTION_BLOCK) {
+		questionBlockAnimation.set_position(CELL_SIZE * i, CELL_SIZE * j);
+		questionBlockAnimation.draw(aWindow);
 	}
 	else {
 		if (aMap[i][j] == Cell::Pipe) {
@@ -137,7 +141,7 @@ void LevelManager::draw_map(unsigned viewX, const sf::Image& aMapSketch, sf::Ren
 	for (unsigned short i = mapStart; i < mapEnd; i++) {
 		for (unsigned short j = 0; j < mapHeight; j++) {
 			draw_background(i, j, mapHeight, cellSprite, mapSize, aMapSketch, aWindow);
-			if (aMap[i][j] != Cell::Empty)	draw_objects(i, j, cellSprite, aMapSketch, questionBlock, aWindow, aMap);
+			if (aMap[i][j] != Cell::Empty)	draw_objects(i, j, cellSprite, aMapSketch, aWindow, aMap);
 		}
 	}
 }
@@ -158,7 +162,7 @@ Map LevelManager::sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::v
 					finalMap[i][j] = Cell::Pipe;
 				}
 				else if (pixel == sf::Color(255, 146, 85) || pixel == sf::Color(255, 73, 85)) {
-					finalMap[i][j] = Cell::QuestionBlock;
+					finalMap[i][j] = Cell::QUESTION_BLOCK;
 				}
 				else if (pixel == sf::Color(0, 0, 0) || pixel == sf::Color(146, 73, 0)) {
 					finalMap[i][j] = Cell::Wall;
@@ -180,4 +184,8 @@ Map LevelManager::sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::v
 		}
 	}
 	return finalMap;
+}
+
+void LevelManager::update() {
+	questionBlockAnimation.step();
 }
