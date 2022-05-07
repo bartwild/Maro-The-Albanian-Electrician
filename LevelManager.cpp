@@ -1,25 +1,26 @@
 #include "LevelManager.h"
 
 
-LevelManager::LevelManager() {
-	questionBlockAnimation = Animation(CELL_SIZE, "QuestionBlock.png", MARO_WALK_ANIMATION_SPEED);
+LevelManager::LevelManager(sf::Image& aMapSketch) {
+	questionBlockAnimation = Animation(CELL_SIZE, "QuestionBlock.png", QUESTION_BLOCK_ANIMATION_SPEED);
+	mapSketch = aMapSketch;
 }
 
 
-void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned short mapHeight, sf::Sprite& cellSprite, sf::Vector2u& mapSize, const sf::Image& aMapSketch, sf::RenderWindow& aWindow) {
+void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned short mapHeight, sf::Sprite& cellSprite, sf::Vector2u& mapSize, sf::RenderWindow& aWindow) {
 	unsigned short x = 0;
 	unsigned short y = 0;
-	sf::Color pixel = aMapSketch.getPixel(i, j + 2 * mapHeight);
+	sf::Color pixel = mapSketch.getPixel(i, j + 2 * mapHeight);
 	sf::Color pixelDown = sf::Color(0, 0, 0, 0);
 	sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
 	sf::Color pixelRight = sf::Color(0, 0, 0, 0);
 	sf::Color pixelUp = sf::Color(0, 0, 0, 0);
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 	if (pixel.a == 255) {
-		if (i > 0) pixelLeft = aMapSketch.getPixel(i - 1, j + 2 * mapHeight);
-		if (j > 0) pixelUp = aMapSketch.getPixel(i, j + 2 * mapHeight - 1);
-		if (i < mapSize.x - 1) pixelRight = aMapSketch.getPixel(i + 1, j + 2 * mapHeight);
-		if (j < mapHeight - 1) pixelDown = aMapSketch.getPixel(i, j + 2 * mapHeight + 1);
+		if (i > 0) pixelLeft = mapSketch.getPixel(i - 1, j + 2 * mapHeight);
+		if (j > 0) pixelUp = mapSketch.getPixel(i, j + 2 * mapHeight - 1);
+		if (i < mapSize.x - 1) pixelRight = mapSketch.getPixel(i + 1, j + 2 * mapHeight);
+		if (j < mapHeight - 1) pixelDown = mapSketch.getPixel(i, j + 2 * mapHeight + 1);
 		if (pixel == LevelManager::Object_to_color("clouds")) {
 			x = 8;
 			if (pixelUp == LevelManager::Object_to_color("clouds")) {
@@ -78,16 +79,21 @@ void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned 
 }
 
 
-void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const Map& aMap) {
+void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, sf::RenderWindow& aWindow, const Map& aMap) {
 	unsigned short x = 0;
 	unsigned short y = 0;
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	if (aMap[i][j] == Cell::QUESTION_BLOCK) {
+	if (aMap[i][j] == Cell::QuestionBlock) {
 		questionBlockAnimation.set_position(CELL_SIZE * i, CELL_SIZE * j);
 		questionBlockAnimation.draw(aWindow);
 	}
 	else {
-		if (aMap[i][j] == Cell::Pipe) {
+		if (Cell::ActivatedQuestionBlock == aMap[i][j])
+		{
+			x = 6;
+			y++;
+		}
+		else if (aMap[i][j] == Cell::Pipe) {
 			if (aMap[i][j - 1] == Cell::Pipe) {
 				y = 1;
 			}
@@ -104,7 +110,7 @@ void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& 
 		else if (aMap[i][j] == Cell::Wall) {
 			y = 0;
 
-			if (aMapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
+			if (mapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
 				x = 2;
 			}
 			else { // Solid blocks
@@ -131,29 +137,29 @@ sf::Color LevelManager::Object_to_color(std::string objectName){
 
 
 
-void LevelManager::draw_map(unsigned viewX, const sf::Image& aMapSketch, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {
+void LevelManager::draw_map(unsigned viewX, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {
 	unsigned short mapEnd = ceil((viewX + SCREEN_WIDTH) / static_cast<float>(CELL_SIZE));
-	unsigned short mapHeight = floor(aMapSketch.getSize().y / 3.f);
+	unsigned short mapHeight = floor(mapSketch.getSize().y / 3.f);
 	unsigned short mapStart = floor(viewX / static_cast<float>(CELL_SIZE));
 	sf::Sprite cellSprite(aMapTexture);
 	sf::Sprite questionBlock(aQuestionBlock);
-	sf::Vector2u mapSize = aMapSketch.getSize();
+	sf::Vector2u mapSize = mapSketch.getSize();
 	for (unsigned short i = mapStart; i < mapEnd; i++) {
 		for (unsigned short j = 0; j < mapHeight; j++) {
-			draw_background(i, j, mapHeight, cellSprite, mapSize, aMapSketch, aWindow);
-			if (aMap[i][j] != Cell::Empty)	draw_objects(i, j, cellSprite, aMapSketch, aWindow, aMap);
+			draw_background(i, j, mapHeight, cellSprite, mapSize, aWindow);
+			if (aMap[i][j] != Cell::Empty)	draw_objects(i, j, cellSprite, aWindow, aMap);
 		}
 	}
 }
 
 
 
-Map LevelManager::sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::vector<Roomba>& aRoombas) {
-	sf::Vector2u mapSize = aMapSketch.getSize();
+Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
+	sf::Vector2u mapSize = mapSketch.getSize();
 	Map finalMap(mapSize.x);
 	for (unsigned short i = 0; i < mapSize.x; i++) {
 		for (unsigned short j = 0; j < 2 * floor(mapSize.y / 3); j++) {
-			sf::Color pixel = aMapSketch.getPixel(i, j);
+			sf::Color pixel = mapSketch.getPixel(i, j);
 			if (j < floor(mapSize.y / 3)) {
 				if (pixel == sf::Color(182, 73, 0)) {
 					finalMap[i][j] = Cell::Brick;
@@ -162,7 +168,7 @@ Map LevelManager::sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::v
 					finalMap[i][j] = Cell::Pipe;
 				}
 				else if (pixel == sf::Color(255, 146, 85) || pixel == sf::Color(255, 73, 85)) {
-					finalMap[i][j] = Cell::QUESTION_BLOCK;
+					finalMap[i][j] = Cell::QuestionBlock;
 				}
 				else if (pixel == sf::Color(0, 0, 0) || pixel == sf::Color(146, 73, 0)) {
 					finalMap[i][j] = Cell::Wall;
@@ -188,4 +194,13 @@ Map LevelManager::sketch_to_map(const sf::Image& aMapSketch, Maro& aMaro, std::v
 
 void LevelManager::update() {
 	questionBlockAnimation.step();
+}
+
+
+void LevelManager::set_map_cell(Map& aMap, unsigned short aX, unsigned short aY, const Cell& aCell) {
+	aMap[aX][aY] = aCell;
+}
+
+sf::Color LevelManager::get_map_sketch_pixel(const unsigned short aX, const unsigned short aY) const {
+	return mapSketch.getPixel(aX, aY);
 }

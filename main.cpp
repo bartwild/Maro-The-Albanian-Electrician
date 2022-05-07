@@ -11,7 +11,8 @@ void whole_Game() {
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
 	sf::Texture questionBlock;
-	LevelManager levelManager;
+	mapSketch.loadFromFile("LevelSketch0.png");
+	LevelManager levelManager(mapSketch);
 	std::chrono::microseconds lag(0);
 	std::chrono::steady_clock::time_point previousTime;
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -19,9 +20,8 @@ void whole_Game() {
 	window.setPosition(sf::Vector2i(window.getPosition().x, window.getPosition().y - 90));
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	questionBlock.loadFromFile("QuestionBlock.png");
-	previousTime = std::chrono::steady_clock::now();
-	mapSketch.loadFromFile("LevelSketch0.png");
-	Map map = levelManager.sketch_to_map(mapSketch, maro, roombas);
+	previousTime = std::chrono::steady_clock::now();;
+	Map map = levelManager.sketch_to_map(maro, roombas);
 	mapTexture.loadFromFile("Map.png");
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
@@ -34,8 +34,8 @@ void whole_Game() {
 					window.close();
 				}
 			}
-			maro.move(map);
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+			maro.move(levelManager, viewX, map);
 			for (Roomba& roomba : roombas) {
 				roomba.move(map, viewX);
 			}
@@ -43,8 +43,9 @@ void whole_Game() {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
 				window.clear(sf::Color(0, 219, 255));
-				levelManager.draw_map(viewX, mapSketch, window, mapTexture, questionBlock, map);
+				levelManager.draw_map(viewX, window, mapTexture, questionBlock, map);
 				levelManager.update();
+				maro.draw_mushrooms(viewX, window);
 				maro.draw(window);
 				for (Roomba& roomba : roombas){
 					roomba.draw(window);

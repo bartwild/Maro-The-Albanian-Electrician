@@ -41,6 +41,27 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 	return output;
 }
 
+
+void get_collision_cells(std::vector<sf::Vector2i>& aCollisionCells, const sf::FloatRect& aHitbox, const Map& aMap)
+{
+	aCollisionCells.clear();
+
+	for (short i = floor(aHitbox.top / CELL_SIZE); i <= floor((ceil(aHitbox.height + aHitbox.top) - 1) / CELL_SIZE); i++)
+	{
+		for (short j = floor(aHitbox.left / CELL_SIZE); j <= floor((ceil(aHitbox.left + aHitbox.width) - 1) / CELL_SIZE); j++)
+		{
+			if (j >= 0 && j < aMap.size())
+			{
+				if ( i >= 0 && i < aMap[0].size())
+				{
+						aCollisionCells.push_back(sf::Vector2i(j, i));
+				}
+			}
+		}
+	}
+}
+
+
 Maro::Maro() {
 	flipped = 0;
 	onGround = 0;
@@ -97,9 +118,22 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Maro::move(const Map& aMap) {
+void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow)
+{
+	for (Mushroom& mushroom : mushrooms)
+	{
+		mushroom.draw(aViewX, aWindow);
+	}
+}
+
+
+void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
+	for (Mushroom& mushroom : mushrooms) {
+		mushroom.move(aViewX, aMap);
+	}
 	bool moving = 0;
 	onGround = 0;
+	std::vector<sf::Vector2i> cells;
 	unsigned char xCollision;
 	unsigned char yCollision;
 	if (!dead) {
@@ -156,7 +190,17 @@ void Maro::move(const Map& aMap) {
 			jumpTimer = 0;
 		}
 		yCollision = map_collision(x, ySpeed + y, aMap);
-
+		get_collision_cells(cells, get_hit_box(), aMap);
+		if (ySpeed < 0) {
+			for (const sf::Vector2i& cell : cells)
+			{
+				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
+				if (sf::Color(255, 73, 85) == levelManager.get_map_sketch_pixel(cell.x, cell.y))
+				{
+					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+				}
+			}
+		}
 		if (yCollision > 0) {
 			if (3 & yCollision && 12 & ~yCollision) {
 				y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
