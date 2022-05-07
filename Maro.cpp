@@ -1,7 +1,7 @@
 #include "Maro.h"
 
 
-unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 prawo, 3 gora, 12 dol
+unsigned char map_collision(float x, float y, const Map& aMap, bool isBig) { //5-lewo. 10 prawo, 3 gora, 12 dol
 	float cellX = x / CELL_SIZE;
 	float cellY = y / CELL_SIZE;
 	unsigned char output = 0;
@@ -24,11 +24,13 @@ unsigned char map_collision(float x, float y, const Map& aMap) { //5-lewo. 10 pr
 			case 2: {
 				x = floor(cellX);
 				y = ceil(cellY);
+				if (isBig)	y = ceil(cellY + 1);
 				break;
 			}
 			case 3: {
 				x = ceil(cellX);
 				y = ceil(cellY);
+				if (isBig)	y = ceil(cellY + 1);
 			}
 		}
 		if (x >= 0 && x < aMap.size()){
@@ -206,69 +208,137 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 				xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 			}
 		}
-		xCollision = map_collision(xSpeed + x, y, aMap);
-		if (xCollision != 0) {
-			moving = 0;
-			if (5 & ~xCollision && 10 & xCollision)
-			{
-				x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+		if (!big) {
+			xCollision = map_collision(xSpeed + x, y, aMap, 0);
+			if (xCollision != 0) {
+				moving = 0;
+				if (5 & ~xCollision && 10 & xCollision)
+				{
+					x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+				}
+				else if (5 & xCollision && 10 & ~xCollision)
+				{
+					x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+				}
+				xSpeed = 0;
 			}
-			else if (5 & xCollision && 10 & ~xCollision)
-			{
-				x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+			else {
+				x += xSpeed;
 			}
-			xSpeed = 0;
-		}
-		else {
-			x += xSpeed;
-		}
-		yCollision = map_collision(x, 1 + y, aMap);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-			if (ySpeed == 0 && yCollision > 0) {
-				ySpeed = MARO_JUMP_SPEED;
-				jumpTimer = MARO_JUMP_TIMER;
-			}
-			else if (jumpTimer > 0) {
-				ySpeed = MARO_JUMP_SPEED;
-				jumpTimer--;
+			yCollision = map_collision(x, 1 + y, aMap, 0);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				if (ySpeed == 0 && yCollision > 0) {
+					ySpeed = MARO_JUMP_SPEED;
+					jumpTimer = MARO_JUMP_TIMER;
+				}
+				else if (jumpTimer > 0) {
+					ySpeed = MARO_JUMP_SPEED;
+					jumpTimer--;
+				}
+				else {
+					ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+				}
 			}
 			else {
 				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+				jumpTimer = 0;
 			}
-		}
-		else {
-			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-			jumpTimer = 0;
-		}
-		yCollision = map_collision(x, ySpeed + y, aMap);
-		get_collision_question_block(cells, x, y+ySpeed, aMap);
-		if (ySpeed <= 0) {
-			for (const sf::Vector2i& cell : cells)
-			{
-				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-				mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+			yCollision = map_collision(x, ySpeed + y, aMap, 0);
+			get_collision_question_block(cells, x, y + ySpeed, aMap);
+			if (ySpeed <= 0) {
+				for (const sf::Vector2i& cell : cells)
+				{
+					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
+					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+				}
 			}
-		}
-		if (yCollision > 0) {
-			if (3 & yCollision && 12 & ~yCollision) {
-				y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
-			}
-			else if (3 & ~yCollision && 12 & yCollision) {
-				y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-			}
+			if (yCollision > 0) {
+				if (3 & yCollision && 12 & ~yCollision) {
+					y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+				}
+				else if (3 & ~yCollision && 12 & yCollision) {
+					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+				}
 
-			ySpeed = 0;
+				ySpeed = 0;
+			}
+			else {
+				y += ySpeed;
+			}
+			yCollision = map_collision(x, 1 + y, aMap, 0);
+			if (yCollision > 0) {
+				onGround = 1;
+			}
+			if (y >= SCREEN_HEIGHT - get_hit_box().height)
+			{
+				die(1);
+			}
 		}
-		else {
-			y += ySpeed;
-		}
-		yCollision = map_collision(x, 1 + y, aMap);
-		if (yCollision > 0) {
-			onGround = 1;
-		}
-		if (y >= SCREEN_HEIGHT - get_hit_box().height)
-		{
-			die(1);
+		else{
+			xCollision = map_collision(xSpeed + x, y, aMap, 1);
+			if (xCollision != 0) {
+				moving = 0;
+				if (5 & ~xCollision && 10 & xCollision)
+				{
+					x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+				}
+				else if (5 & xCollision && 10 & ~xCollision)
+				{
+					x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+				}
+				xSpeed = 0;
+			}
+			else {
+				x += xSpeed;
+			}
+			yCollision = map_collision(x, 1 + y, aMap, 1);
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+				if (ySpeed == 0 && yCollision > 0) {
+					ySpeed = MARO_JUMP_SPEED;
+					jumpTimer = MARO_JUMP_TIMER;
+				}
+				else if (jumpTimer > 0) {
+					ySpeed = MARO_JUMP_SPEED;
+					jumpTimer--;
+				}
+				else {
+					ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+				}
+			}
+			else {
+				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+				jumpTimer = 0;
+			}
+			yCollision = map_collision(x, ySpeed + y, aMap, 1);
+			get_collision_question_block(cells, x, y + ySpeed, aMap);
+			if (ySpeed <= 0) {
+				for (const sf::Vector2i& cell : cells)
+				{
+					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
+					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+				}
+			}
+			if (yCollision > 0) {
+				if (3 & yCollision && 12 & ~yCollision) {
+					y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+				}
+				else if (3 & ~yCollision && 12 & yCollision) {
+					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+				}
+
+				ySpeed = 0;
+			}
+			else {
+				y += ySpeed;
+			}
+			yCollision = map_collision(x, 1 + y, aMap, 1);
+			if (yCollision > 0) {
+				onGround = 1;
+			}
+			if (y >= SCREEN_HEIGHT - get_hit_box().height)
+			{
+				die(1);
+			}
 		}
 	}
 	else {
@@ -285,7 +355,6 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 		if (get_hit_box().intersects(mushroom.get_hit_box())) {
 			mushroom.die(1);
 			become_big();
-			y -= CELL_SIZE;
 		}
 		if (mushroom.get_dead()) {
 		}
