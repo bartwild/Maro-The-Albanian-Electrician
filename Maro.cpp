@@ -75,8 +75,7 @@ void get_collision_question_block(std::vector<sf::Vector2i>& aCollisionCells, fl
 		}
 		if (x >= 0 && x < aMap.size()) {
 			if (0 <= y && y < aMap[0].size()) {
-				if (aMap[x][y] == Cell::QuestionBlock)
-				{
+				if (aMap[x][y] == Cell::QuestionBlock) {
 					aCollisionCells.push_back(sf::Vector2i(x, y));
 				}
 			}

@@ -80,49 +80,50 @@ void LevelManager::draw_background(unsigned short i, unsigned short j, unsigned 
 
 
 void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& cellSprite, sf::RenderWindow& aWindow, const Map& aMap) {
-	unsigned short x = 0;
-	unsigned short y = 0;
-	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
-	if (aMap[i][j] == Cell::QuestionBlock) {
-		questionBlockAnimation.set_position(CELL_SIZE * i, CELL_SIZE * j);
-		questionBlockAnimation.draw(aWindow);
-	}
-	else {
-		if (Cell::ActivatedQuestionBlock == aMap[i][j])
-		{
-			x = 6;
-			y++;
+	if (aMap[i][j] != Cell::Empty) {
+		unsigned short x = 0;
+		unsigned short y = 0;
+		cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+		if (aMap[i][j] == Cell::QuestionBlock) {
+			questionBlockAnimation.set_position(CELL_SIZE * i, CELL_SIZE * j);
+			questionBlockAnimation.draw(aWindow);
 		}
-		else if (aMap[i][j] == Cell::Pipe) {
-			if (aMap[i][j - 1] == Cell::Pipe) {
-				y = 1;
+		else {
+			if (Cell::ActivatedQuestionBlock == aMap[i][j])
+			{
+				x = 6;
+				y++;
 			}
-			else {
+			else if (aMap[i][j] == Cell::Pipe) {
+				if (aMap[i][j - 1] == Cell::Pipe) {
+					y = 1;
+				}
+				else {
+					y = 0;
+				}
+				if (aMap[i - 1][j] == Cell::Pipe) {
+					x = 11;
+				}
+				else {
+					x = 10;
+				}
+			}
+			else if (aMap[i][j] == Cell::Wall) {
 				y = 0;
-			}
-			if (aMap[i - 1][j] == Cell::Pipe) {
-				x = 11;
-			}
-			else {
-				x = 10;
-			}
-		}
-		else if (aMap[i][j] == Cell::Wall) {
-			y = 0;
 
-			if (mapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
-				x = 2;
-			}
-			else { // Solid blocks
-				x = 3;
-			}
+				if (mapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
+					x = 2;
+				}
+				else { // Solid blocks
+					x = 3;
+				}
 
+			}
+			cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+			aWindow.draw(cellSprite);
 		}
-		cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-		aWindow.draw(cellSprite);
 	}
 }
-
 
 
 
@@ -137,7 +138,7 @@ sf::Color LevelManager::Object_to_color(std::string objectName){
 
 
 
-void LevelManager::draw_map(unsigned viewX, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {
+void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {
 	unsigned short mapEnd = ceil((viewX + SCREEN_WIDTH) / static_cast<float>(CELL_SIZE));
 	unsigned short mapHeight = floor(mapSketch.getSize().y / 3.f);
 	unsigned short mapStart = floor(viewX / static_cast<float>(CELL_SIZE));
@@ -146,8 +147,12 @@ void LevelManager::draw_map(unsigned viewX, sf::RenderWindow& aWindow, const sf:
 	sf::Vector2u mapSize = mapSketch.getSize();
 	for (unsigned short i = mapStart; i < mapEnd; i++) {
 		for (unsigned short j = 0; j < mapHeight; j++) {
-			draw_background(i, j, mapHeight, cellSprite, mapSize, aWindow);
-			if (aMap[i][j] != Cell::Empty)	draw_objects(i, j, cellSprite, aWindow, aMap);
+			if (!background) {
+				draw_objects(i, j, cellSprite, aWindow, aMap);
+			}
+			else {
+				draw_background(i, j, mapHeight, cellSprite, mapSize, aWindow);
+			}
 		}
 	}
 }

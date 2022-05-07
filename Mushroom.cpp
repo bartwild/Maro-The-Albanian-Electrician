@@ -46,7 +46,7 @@ Mushroom::Mushroom(const float aX, const float aY) {
 	x = aX;
 	y = aY;
 	direction = 1;
-	xSpeed = 0;
+	xSpeed = MUSHROOM_SPEED;
 	startY = y;
 	ySpeed = 0;
 	texture.loadFromFile("Mushroom.png");

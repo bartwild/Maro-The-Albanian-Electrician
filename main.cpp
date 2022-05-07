@@ -43,9 +43,10 @@ void whole_Game() {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
 				window.clear(sf::Color(0, 219, 255));
-				levelManager.draw_map(viewX, window, mapTexture, questionBlock, map);
-				levelManager.update();
+				levelManager.draw_map(1, viewX, window, mapTexture, questionBlock, map);
 				maro.draw_mushrooms(viewX, window);
+				levelManager.draw_map(0, viewX, window, mapTexture, questionBlock, map);
+				levelManager.update();
 				maro.draw(window);
 				for (Roomba& roomba : roombas){
 					roomba.draw(window);
