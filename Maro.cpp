@@ -354,7 +354,10 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 	for (Mushroom& mushroom : mushrooms) {
 		if (get_hit_box().intersects(mushroom.get_hit_box())) {
 			mushroom.die(1);
-			become_big();
+			if (!big) {
+				become_big();
+				y -= CELL_SIZE;
+			}
 		}
 		if (mushroom.get_dead()) {
 		}
