@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "Mushroom.h"
 #include "LevelManager.h"
+#include "Roomba.h"
 
 class Mushroom;
 class LevelManager;
@@ -28,7 +29,7 @@ public:
 	void become_small();
 	void become_big();
 	void draw(sf::RenderWindow& aWindow);
-	void move(LevelManager& levelManager, unsigned int aViewX, Map& aMap);
+	void move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas);
 	void set_position(float x, float y);
 	float get_x() const;
 	float get_y() const;
