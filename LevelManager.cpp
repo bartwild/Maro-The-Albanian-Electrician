@@ -126,16 +126,11 @@ void LevelManager::draw_objects(unsigned short i, unsigned short j, sf::Sprite& 
 }
 
 
-
 sf::Color LevelManager::Object_to_color(std::string objectName){
 	if (objectName == "clouds") {
 		return sf::Color(255, 255, 255);
 	}
-	else if (objectName == "grass"){
-	}
-
 }
-
 
 
 void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWindow& aWindow, const sf::Texture& aMapTexture, const sf::Texture& aQuestionBlock, const Map& aMap) {
@@ -156,7 +151,6 @@ void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWin
 		}
 	}
 }
-
 
 
 Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
@@ -197,6 +191,7 @@ Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
 	return finalMap;
 }
 
+
 void LevelManager::update() {
 	questionBlockAnimation.step(0);
 }
@@ -205,6 +200,7 @@ void LevelManager::update() {
 void LevelManager::set_map_cell(Map& aMap, unsigned short aX, unsigned short aY, const Cell& aCell) {
 	aMap[aX][aY] = aCell;
 }
+
 
 sf::Color LevelManager::get_map_sketch_pixel(const unsigned short aX, const unsigned short aY) const {
 	return mapSketch.getPixel(aX, aY);
