@@ -125,10 +125,10 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 	}
 	else {
 		if (!xSpeed){
-			if (!big) {
+			if (!big){
 				texture.loadFromFile("MarioIdle.png");
 			}
-			else {
+			else{
 				texture.loadFromFile("BigMarioIdle.png");
 			}
 		}
@@ -138,10 +138,10 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
 			if (xSpeed > 0) flipped = 0;
 			else flipped = 1;
-			if (!big) {
+			if (!big){
 				texture.loadFromFile("MarioBrake.png");
 			}
-			else {
+			else{
 				texture.loadFromFile("BigMarioBrake.png");
 			}
 		}
@@ -171,17 +171,15 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow)
-{
-	for (Mushroom& mushroom : mushrooms)
-	{
+void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
+	for (Mushroom& mushroom : mushrooms){
 		mushroom.draw(aViewX, aWindow);
 	}
 }
 
 
-void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
-	for (Mushroom& mushroom : mushrooms) {
+void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas){
+	for (Mushroom& mushroom : mushrooms){
 		mushroom.move(aViewX, aMap);
 	}
 	bool moving = 0;
@@ -189,28 +187,28 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 	std::vector<sf::Vector2i> cells;
 	unsigned char xCollision;
 	unsigned char yCollision;
-	if (!dead) {
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+	if (!dead){
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
 			moving = 1;
 			flipped = 0;
 			xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 		}
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 			moving = 1;
 			flipped = 1;
 			xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 		}
-		if (moving == 0) {
-			if (xSpeed > 0) {
+		if (moving == 0){
+			if (xSpeed > 0){
 				xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
 			}
-			else if (xSpeed < 0) {
+			else if (xSpeed < 0){
 				xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 			}
 		}
-		if (!big) {
+		if (!big){
 			xCollision = map_collision(xSpeed + x, y, aMap, 0);
-			if (xCollision != 0) {
+			if (xCollision != 0){
 				moving = 0;
 				if (5 & ~xCollision && 10 & xCollision)
 				{
@@ -222,8 +220,19 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 				}
 				xSpeed = 0;
 			}
-			else {
-				x += xSpeed;
+			else{
+				sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
+				bool hit = 0;
+				for (Roomba& roomba : aRoombas){ //const nie dziala???
+					if (xHitBox.intersects(roomba.get_hit_box()) == 1){ // xHitBox potrzebne?
+						die(0);
+						hit = 1;
+						break;
+					}
+				}
+				if (hit == 0){
+					x += xSpeed;
+				}
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 0);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
@@ -239,7 +248,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 					ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
 				}
 			}
-			else {
+			else{
 				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
 				jumpTimer = 0;
 			}
@@ -351,15 +360,15 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap) {
 		}
 		deathTimer = std::max(0, deathTimer - 1);
 	}
-	for (Mushroom& mushroom : mushrooms) {
-		if (get_hit_box().intersects(mushroom.get_hit_box())) {
+	for (Mushroom& mushroom : mushrooms){
+		if (get_hit_box().intersects(mushroom.get_hit_box())){
 			mushroom.die(1);
-			if (!big) {
+			if (!big){
 				become_big();
 				y -= CELL_SIZE;
 			}
 		}
-		if (mushroom.get_dead()) {
+		if (mushroom.get_dead()){
 		}
 	}
 	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
@@ -376,26 +385,26 @@ float Maro::get_x() const { return x; }
 float Maro::get_y() const { return y; }
 
 
-void Maro::set_position(float newX, float newY) {
+void Maro::set_position(float newX, float newY){
 	x = newX;
 	y = newY;
 }
 
 
-void Maro::die(bool instant) {
+void Maro::die(bool instant){
 	if (instant) { dead = 1; }
 	else {
-		if (!big) {
+		if (!big){
 			dead = 1;
 		}
-		else {
+		else{
 			become_small();
 		}
 	}
 }
 
 
-sf::FloatRect Maro::get_hit_box() const {
+sf::FloatRect Maro::get_hit_box() const{
 	if (!big) {
 		return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
 	}
