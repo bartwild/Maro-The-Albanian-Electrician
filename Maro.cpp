@@ -220,19 +220,16 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				}
 				xSpeed = 0;
 			}
-			else{
-				sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
-				bool hit = 0;
-				for (Roomba& roomba : aRoombas){ //const nie dziala???
-					if (xHitBox.intersects(roomba.get_hit_box()) == 1){ // xHitBox potrzebne?
-						die(0);
-						hit = 1;
-						break;
-					}
+			bool hit = 0;
+			for (Roomba& roomba : aRoombas){ //const nie dziala???
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1){ // xHitBox potrzebne?
+					die(0);
+					hit = 1;
+					break;
 				}
-				if (hit == 0){
-					x += xSpeed;
-				}
+			}
+			if (hit == 0){
+				x += xSpeed;
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 0);
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
@@ -297,7 +294,16 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				}
 				xSpeed = 0;
 			}
-			else {
+			bool hit = 0;
+			for (Roomba& roomba : aRoombas){ //const nie dziala???
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1){ // xHitBox potrzebne?
+					become_small();
+					die(0);
+					hit = 1;
+					break;
+				}
+			}
+			if (hit == 0){
 				x += xSpeed;
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 1);
@@ -368,7 +374,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				y -= CELL_SIZE;
 			}
 		}
-		if (mushroom.get_dead()){
+		if (mushroom.get_dead()){ //??
 		}
 	}
 	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
