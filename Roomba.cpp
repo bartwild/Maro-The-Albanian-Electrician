@@ -46,15 +46,15 @@ Roomba::Roomba(){
 	xSpeed = ROOMBA_SPEED;
 	texture.loadFromFile("GoombaDeath1.png");
 	sprite.setTexture(texture);
-	animation = Animation(CELL_SIZE, "GoombaWalk.png", MARO_WALK_ANIMATION_SPEED);
+	walkAnimation = Animation(CELL_SIZE, "GoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	dead = 0;
 }
 
 
 void Roomba::draw(sf::RenderWindow& aWindow){
-	sprite.setPosition(round(x), round(y));
-    sprite.setTexture(texture);
-	aWindow.draw(sprite);
+	walkAnimation.set_position(round(x), round(y));
+	walkAnimation.step(1);
+	walkAnimation.draw(aWindow);
 }
 
 
