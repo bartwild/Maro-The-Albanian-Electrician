@@ -46,6 +46,7 @@ Roomba::Roomba(){
 	xSpeed = ROOMBA_SPEED;
 	texture.loadFromFile("GoombaDeath1.png");
 	sprite.setTexture(texture);
+	animation = Animation(CELL_SIZE, "GoombaWalk.png", MARO_WALK_ANIMATION_SPEED);
 	dead = 0;
 }
 
