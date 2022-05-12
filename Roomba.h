@@ -4,6 +4,7 @@
 #include <array>
 #include <cmath>
 #include "Consts.h"
+#include "Animation.h"
 
 class Roomba{
 	float x;
@@ -12,6 +13,7 @@ class Roomba{
 	float ySpeed;
 	sf::Sprite sprite;
 	sf::Texture texture;
+	Animation animation;
 	bool dead;
 	unsigned char deathTimer;
 
