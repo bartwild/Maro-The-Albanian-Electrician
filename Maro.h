@@ -19,6 +19,8 @@ class Maro{
 	float ySpeed;
 	unsigned char deathTimer;
 	unsigned char jumpTimer;
+	unsigned char hitTimer;
+	bool hit;
 	Animation walkAnimation;
 	Animation bigWalkAnimation;
 	sf::Sprite sprite;
