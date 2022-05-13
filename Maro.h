@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "Consts.h"
 #include "Animation.h"
 #include "Mushroom.h"
