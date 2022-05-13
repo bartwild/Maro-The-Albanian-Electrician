@@ -26,4 +26,5 @@ public:
 	float get_y() const;
 	sf::FloatRect get_hit_box() const;
 	void die();
+	unsigned char get_death_timer() const;
 };
