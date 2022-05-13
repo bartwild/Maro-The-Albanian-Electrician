@@ -268,13 +268,13 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				die(1);
 			}
 			for (Roomba& roomba : aRoombas){
-				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_death_timer() == 0){
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_dead() == 0){
 					hitRoomba = &roomba;
 					hit = 1;
 					break;
 				}
 			}
-			if (onGround == 0 && hit == 1){
+			if (ySpeed > 0 && hit == 1){
 				hitRoomba->die();
 				hit = 0;
 			}
@@ -349,18 +349,18 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				die(1);
 			}
 			for (Roomba& roomba : aRoombas){
-				if (get_hit_box().intersects(roomba.get_hit_box()) == 1){
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_dead() == 0){
 					hitRoomba = &roomba;
 					hit = 1;
 					break;
 				}
 			}
-			if (onGround == 0 && hit == 1){
+			if (ySpeed > 0 && hit == 1){
 				hitRoomba->die();
 				hit = 0;
 			}
 			else if (onGround == 1 && hit == 1 && hitTimer == 0){
-				hitTimer = 32;
+				hitTimer = MARO_HIT_TIMER;
 				die(0);
 				hit = 0;
 			}
