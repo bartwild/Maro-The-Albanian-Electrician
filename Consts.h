@@ -24,6 +24,7 @@ const float MARO_SPEED = 2 ;
 const float MARO_JUMP_SPEED = -4;
 const float MARO_VMAX = 8;
 const unsigned char MARO_JUMP_TIMER = 9;
+const unsigned char MARO_HIT_TIMER = 128;
 const float ROOMBA_SPEED = 1;
 const float MUSHROOM_SPEED = 1;
 const float UPDATE_AREA = 64;
