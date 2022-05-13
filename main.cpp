@@ -36,8 +36,14 @@ void whole_Game() {
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.move(levelManager, viewX, map, roombas);
-			for (Roomba& roomba : roombas) {
+			for (Roomba& roomba : roombas){
 				roomba.move(map, viewX, roombas);
+			}
+			for (unsigned short i = 0; i < roombas.size(); i++){
+				if (roombas[i].get_death_timer() == 0){
+					roombas.erase(i+roombas.begin());
+					i--;
+				}
 			}
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
