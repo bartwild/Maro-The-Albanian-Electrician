@@ -96,6 +96,7 @@ Maro::Maro() {
 	xSpeed = 0;
 	big = 0;
 	hit = 0;
+	hitTimer = 0;
 	deathTimer = MARO_DEATH_TIMER;
 	jumpTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
@@ -188,6 +189,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 	std::vector<sf::Vector2i> cells;
 	unsigned char xCollision;
 	unsigned char yCollision;
+	Roomba* hitRoomba = nullptr;
 	if (!dead){
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
 			moving = 1;
@@ -265,25 +267,21 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			{
 				die(1);
 			}
-			if (hitTimer == 0){
-				Roomba* hitRoomba;
-				for (Roomba& roomba : aRoombas){
-					if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_death_timer() == 0){
-						hitRoomba = &roomba;
-						hit = 1;
-						break;
-					}
-				}
-				if (onGround == 0 && hit == 1){
-					hitRoomba->die();
-					hit = 0;
-				}
-				else if (onGround == 1 && hit == 1){
-					die(1);
-					hit = 0;
+			for (Roomba& roomba : aRoombas){
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_death_timer() == 0){
+					hitRoomba = &roomba;
+					hit = 1;
+					break;
 				}
 			}
-			else{
+			if (onGround == 0 && hit == 1){
+				hitRoomba->die();
+				hit = 0;
+			}
+			else if (onGround == 1 && hit == 1 && hitTimer == 0){
+				die(1);
+			}
+			if (hitTimer > 0){
 				hitTimer = std::max(0, hitTimer-1);
 			}
 			if (hit == 0){
@@ -350,25 +348,23 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			{
 				die(1);
 			}
-			if (hitTimer == 0){
-				Roomba* hitRoomba;
-				for (Roomba& roomba : aRoombas){
-					if (get_hit_box().intersects(roomba.get_hit_box()) == 1){
-						hitRoomba = &roomba;
-						hit = 1;
-						break;
-					}
-				}
-				if (onGround == 0 && hit == 1){
-					hitRoomba->die();
-					hit = 0;
-				}
-				else if (onGround == 1 && hit == 1){
-					die(0);
-					hit = 0;
+			for (Roomba& roomba : aRoombas){
+				if (get_hit_box().intersects(roomba.get_hit_box()) == 1){
+					hitRoomba = &roomba;
+					hit = 1;
+					break;
 				}
 			}
-			else{
+			if (onGround == 0 && hit == 1){
+				hitRoomba->die();
+				hit = 0;
+			}
+			else if (onGround == 1 && hit == 1 && hitTimer == 0){
+				hitTimer = 32;
+				die(0);
+				hit = 0;
+			}
+			if (hitTimer > 0){
 				hitTimer = std::max(0, hitTimer-1);
 			}
 			if (hit == 0){
@@ -425,7 +421,6 @@ void Maro::die(bool instant){
 			dead = 1;
 		}
 		else{
-			hitTimer = MARO_DEATH_TIMER;
 			become_small();
 		}
 	}
