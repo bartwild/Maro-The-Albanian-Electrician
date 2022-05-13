@@ -44,8 +44,6 @@ Roomba::Roomba(){
 	y = 100;
 	ySpeed = 0;
 	xSpeed = ROOMBA_SPEED;
-	texture.loadFromFile("GoombaDeath1.png");
-	sprite.setTexture(texture);
 	walkAnimation = Animation(CELL_SIZE, "GoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	dead = 0;
 }
@@ -60,7 +58,7 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 
 void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas){
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
-		&& (dead==0)){
+		&& (dead == 0)){
         bool moving = 0;
         unsigned char xCollision;
         unsigned char yCollision;
@@ -100,10 +98,11 @@ void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& a
             }
             ySpeed = 0;
         }
-        else{
-            y += ySpeed;
-        }
+        y += ySpeed;
     }
+	else if(dead == 1){
+		deathTimer = std::max(0, deathTimer-1);
+	}
 }
 
 
@@ -124,5 +123,11 @@ sf::FloatRect Roomba::get_hit_box() const{
 
 void Roomba::die(){
 	dead = 1;
+	deathTimer = MARO_DEATH_TIMER;
 	texture.loadFromFile("GoombaDeath.png");
+	sprite.setTexture(texture);
+}
+
+unsigned char Roomba::get_death_timer() const{
+	return deathTimer;
 }
