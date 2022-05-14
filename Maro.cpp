@@ -508,7 +508,7 @@ void Maro::check_collision_with_Roombas(std::vector<Roomba>& aRoombas){
 			break;
 		}
 	}
-	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0){
+	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0 && hitTimer == 0){
 		hitRoomba->die();
 		ySpeed = MARO_VKILL;
 	}
