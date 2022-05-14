@@ -13,6 +13,7 @@ void whole_Game() {
 	sf::Texture questionBlock;
 	unsigned char levelFinish = 0;
 	unsigned char currentLevel = 0;
+	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
 	LevelManager levelManager(mapSketch);
 	std::chrono::microseconds lag(0);
@@ -23,7 +24,7 @@ void whole_Game() {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	questionBlock.loadFromFile("QuestionBlock.png");
 	previousTime = std::chrono::steady_clock::now();;
-	Map map = levelManager.sketch_to_map(maro, levelFinish, roombas);
+	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 	mapTexture.loadFromFile("Map.png");
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
@@ -42,7 +43,7 @@ void whole_Game() {
 				maro.reset();
 				mapSketch.loadFromFile("LevelSketch" + std::to_string(currentLevel) + ".png");
 				levelManager.set_sketch(mapSketch);
-				map = levelManager.sketch_to_map(maro, levelFinish, roombas);
+				map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.update(levelManager, viewX, map, roombas);
@@ -58,10 +59,10 @@ void whole_Game() {
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
-				window.clear(sf::Color(0, 219, 255));
-				levelManager.draw_map(1, viewX, window, mapTexture, questionBlock, map);
+				window.clear(backgroundColor);
+				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, questionBlock, map);
 				maro.draw_mushrooms(viewX, window);
-				levelManager.draw_map(0, viewX, window, mapTexture, questionBlock, map);
+				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, questionBlock, map);
 				levelManager.update();
 				maro.draw(window);
 				for (Roomba& roomba : roombas){
