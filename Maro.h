@@ -42,5 +42,6 @@ public:
 	char get_death_timer();
 	void draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow);
 	sf::FloatRect get_hit_box() const;
+	void check_collision_with_Roombas(std::vector<Roomba>& aRoombas);
 };
 
