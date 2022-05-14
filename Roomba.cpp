@@ -119,6 +119,9 @@ float Roomba::get_x() const { return x; }
 
 float Roomba::get_y() const { return y; }
 
+float Roomba::get_ySpeed() const { return ySpeed; }
+
+bool Roomba::get_whether_dead() const { return dead; }
 
 void Roomba::set_position(float newX, float newY){
 	x = newX;
@@ -138,9 +141,4 @@ void Roomba::die(){
 
 unsigned char Roomba::get_death_timer() const{
 	return deathTimer;
-}
-
-
-bool Roomba::get_dead() const{
-	return dead;
 }
