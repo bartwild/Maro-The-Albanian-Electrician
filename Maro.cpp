@@ -235,7 +235,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			walkAnimation.draw(aWindow);
 		}
 	}
-	if (drawSprite && invincible) {
+	if (drawSprite && invincible || drawSprite && dead) {
 		if (!flipped) {
 			sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
