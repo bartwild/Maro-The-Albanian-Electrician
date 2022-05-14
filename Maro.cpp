@@ -297,23 +297,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			{
 				die(1);
 			}
-			for (Roomba& roomba : aRoombas){
-				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_dead() == 0){
-					hitRoomba = &roomba;
-					hit = 1;
-					break;
-				}
-			}
-			if (ySpeed > 0 && hit == 1){
-				hitRoomba->die();
-				ySpeed = MARO_VKILL;
-			}
-			else if (onGround == 1 && hit == 1 && hitTimer == 0){
-				die(1);
-			}
-			if (hitTimer > 0){
-				hitTimer = std::max(0, hitTimer-1);
-			}
+			check_collision_with_Roombas(aRoombas);
 			x += xSpeed;
 			y += ySpeed;
 		}
@@ -376,24 +360,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			{
 				die(1);
 			}
-			for (Roomba& roomba : aRoombas){
-				if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_dead() == 0){
-					hitRoomba = &roomba;
-					hit = 1;
-					break;
-				}
-			}
-			if (ySpeed > 0 && hit == 1){
-				hitRoomba->die();
-				ySpeed = MARO_VKILL;
-			}
-			else if (onGround == 1 && hit == 1 && hitTimer == 0){
-				hitTimer = MARO_HIT_TIMER;
-				die(0);
-			}
-			if (hitTimer > 0){
-				hitTimer = std::max(0, hitTimer-1);
-			}
+			check_collision_with_Roombas(aRoombas);
 			x += xSpeed;
 			y += ySpeed;
 		}
@@ -495,4 +462,27 @@ void Maro::reset() {
 	sprite.setTexture(texture);
 	bigWalkAnimation.set_flipped(0);
 	walkAnimation.set_flipped(0);
+}
+
+
+void Maro::check_collision_with_Roombas(std::vector<Roomba>& aRoombas){
+	Roomba* hitRoomba = nullptr;
+	for (Roomba& roomba : aRoombas){
+		if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_whether_dead() == 0){
+			hitRoomba = &roomba;
+			hit = 1;
+			break;
+		}
+	}
+	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() >= 0){
+		hitRoomba->die();
+		ySpeed = MARO_VKILL;
+	}
+	else if (onGround == 1 && hit == 1 && hitTimer == 0 || ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0){
+		hitTimer = MARO_HIT_TIMER;
+		die(0);
+	}
+	if (hitTimer > 0){
+		hitTimer = std::max(0, hitTimer-1);
+	}
 }
