@@ -154,6 +154,7 @@ Maro::Maro() {
 void Maro::draw(sf::RenderWindow& aWindow) {
 	bool drawSprite = 1;
 	bool drawBig = 0 == growthTimer / MARO_BLINK % 2;
+	bool invincible = 0 == hitTimer / MARO_BLINK % 2;
 	sprite.setPosition(round(x), round(y));
 	if (dead) {
 		if (!big) {
@@ -212,7 +213,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			}
 		}
 	}
-	else {
+	else if (invincible) {
 		if (!onGround) {
 			texture.loadFromFile("MarioJump.png");
 		}
@@ -234,7 +235,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			walkAnimation.draw(aWindow);
 		}
 	}
-	if (drawSprite) {
+	if (drawSprite && invincible) {
 		if (!flipped) {
 			sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
