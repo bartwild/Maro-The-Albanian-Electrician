@@ -10,7 +10,6 @@ void whole_Game() {
 	sf::Event event;
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
-	sf::Texture questionBlock;
 	unsigned char levelFinish = 0;
 	unsigned char currentLevel = 0;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
@@ -22,7 +21,6 @@ void whole_Game() {
 	sf::RenderWindow window(sf::VideoMode(SCREEN_RESIZE * SCREEN_WIDTH, SCREEN_RESIZE * SCREEN_HEIGHT), "Maro The Albanian Electrician", sf::Style::Close);
 	window.setPosition(sf::Vector2i(window.getPosition().x, window.getPosition().y - 90));
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
-	questionBlock.loadFromFile("QuestionBlock.png");
 	previousTime = std::chrono::steady_clock::now();;
 	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 	mapTexture.loadFromFile("Map.png");
@@ -60,9 +58,9 @@ void whole_Game() {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
 				window.clear(backgroundColor);
-				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, questionBlock, map);
+				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, map);
 				maro.draw_mushrooms(viewX, window);
-				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, questionBlock, map);
+				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
 				levelManager.update();
 				maro.draw(window);
 				for (Roomba& roomba : roombas){

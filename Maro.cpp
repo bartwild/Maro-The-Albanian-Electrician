@@ -44,6 +44,50 @@ unsigned char map_collision(float x, float y, const Map& aMap, bool isBig) { //5
 }
 
 
+void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, Map& aMap, bool isBig) {
+	{
+		float cellX = x / CELL_SIZE;
+		float cellY = y / CELL_SIZE;
+		aCollisionCells.clear();
+
+		for (unsigned char i = 0; i < 4; i++)
+		{
+			short x;
+			short y;
+			switch (i) {
+			case 0: {
+				x = floor(cellX);
+				y = floor(cellY);
+				break;
+			}
+			case 1: {
+				x = ceil(cellX);
+				y = floor(cellY);
+				break;
+			}
+			case 2: {
+				x = floor(cellX);
+				y = ceil(cellY);
+				break;
+			}
+			case 3: {
+				x = ceil(cellX);
+				y = ceil(cellY);
+			}
+			}
+			if (x >= 0 && x < aMap.size()) {
+				if (0 <= y && y < aMap[0].size()) {
+					if (aMap[x][y] == Cell::Coin) {
+						aCollisionCells.push_back(sf::Vector2i(x, y));
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
 void get_collision_question_block(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, const Map& aMap)
 {
 	float cellX = x / CELL_SIZE;
@@ -243,7 +287,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells){
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
+						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+					else
+						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
 				}
 			}
 			if (yCollision > 0) {
@@ -262,6 +309,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			if (y >= SCREEN_HEIGHT - get_hit_box().height)
 			{
 				die(1);
+			}
+			coin_collision(cells, x, y, aMap, big);
+			for (const sf::Vector2i& cell : cells) {
+				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
 			check_collision_with_Roombas(aRoombas);
 			x += xSpeed;
@@ -286,10 +337,12 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			yCollision = map_collision(x, ySpeed + y, aMap, 1);
 			get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
-				for (const sf::Vector2i& cell : cells)
-				{
+				for (const sf::Vector2i& cell : cells){
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
+						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+					else
+						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
 				}
 			}
 			if (yCollision > 0) {
@@ -299,16 +352,18 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				else if (3 & ~yCollision && 12 & yCollision) {
 					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
 				}
-
 				ySpeed = 0;
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 1);
 			if (yCollision > 0) {
 				onGround = 1;
 			}
-			if (y >= SCREEN_HEIGHT - get_hit_box().height)
-			{
+			if (y >= SCREEN_HEIGHT - get_hit_box().height){
 				die(1);
+			}
+			coin_collision(cells, x, y, aMap, big);
+			for (const sf::Vector2i& cell : cells) {
+				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
 			check_collision_with_Roombas(aRoombas);
 			x += xSpeed;

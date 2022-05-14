@@ -20,6 +20,7 @@ const float GRAVITY = 0.25f;
 const float MARO_ACCELERATION = 0.1f;
 const unsigned short MARO_WALK_ANIMATION_SPEED = 5;
 const unsigned short QUESTION_BLOCK_ANIMATION_SPEED = 10;
+const float COIN_JUMP_SPEED = -6;
 const float MARO_SPEED = 2 ;
 const float MARO_JUMP_SPEED = -4;
 const float MARO_VMAX = 8;
@@ -40,8 +41,24 @@ enum Cell {
 	Brick,
 	Pipe,
 	QuestionBlock,
+	Coin,
 	Wall,
 	ActivatedQuestionBlock
+};
+
+
+struct Object {
+	float xSpeed;
+	float ySpeed;
+	float x;
+	float y;
+
+	Object(const float aX, const float aY, const float aXSpeed = 0, const float aYSpeed = 0) {
+		xSpeed = aXSpeed;
+		ySpeed = aYSpeed;
+		x = aX;
+		y = aY;
+	}
 };
 
 
