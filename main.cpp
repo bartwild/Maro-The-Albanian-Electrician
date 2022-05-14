@@ -50,7 +50,7 @@ void whole_Game() {
 				roomba.move(map, viewX, roombas);
 			}
 			for (unsigned short i = 0; i < roombas.size(); i++){
-				if (roombas[i].get_y() == 0){
+				if (roombas[i].get_death_timer() == 0){
 					roombas.erase(i+roombas.begin());
 					i--;
 				}
