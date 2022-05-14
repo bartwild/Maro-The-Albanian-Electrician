@@ -23,6 +23,7 @@ const unsigned short QUESTION_BLOCK_ANIMATION_SPEED = 10;
 const float MARO_SPEED = 2 ;
 const float MARO_JUMP_SPEED = -4;
 const float MARO_VMAX = 8;
+const float MARO_VKILL = -4;
 const unsigned char MARO_JUMP_TIMER = 9;
 const unsigned char MARO_HIT_TIMER = 128;
 const unsigned char MARO_BLINK = 4;
