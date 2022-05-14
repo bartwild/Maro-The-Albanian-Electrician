@@ -219,6 +219,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 	unsigned char xCollision;
 	unsigned char yCollision;
 	Roomba* hitRoomba = nullptr;
+	hit = 0;
 	if (!dead){
 		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
 			moving = 1;
@@ -305,7 +306,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			}
 			if (ySpeed > 0 && hit == 1){
 				hitRoomba->die();
-				hit = 0;
+				ySpeed = MARO_VKILL;
 			}
 			else if (onGround == 1 && hit == 1 && hitTimer == 0){
 				die(1);
@@ -313,10 +314,8 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			if (hitTimer > 0){
 				hitTimer = std::max(0, hitTimer-1);
 			}
-			if (hit == 0){
-				x += xSpeed;
-				y += ySpeed;
-			}
+			x += xSpeed;
+			y += ySpeed;
 		}
 		else{
 			xCollision = map_collision(xSpeed + x, y, aMap, 1);
@@ -386,20 +385,17 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 			}
 			if (ySpeed > 0 && hit == 1){
 				hitRoomba->die();
-				hit = 0;
+				ySpeed = MARO_VKILL;
 			}
 			else if (onGround == 1 && hit == 1 && hitTimer == 0){
 				hitTimer = MARO_HIT_TIMER;
 				die(0);
-				hit = 0;
 			}
 			if (hitTimer > 0){
 				hitTimer = std::max(0, hitTimer-1);
 			}
-			if (hit == 0){
-				x += xSpeed;
-				y += ySpeed;
-			}
+			x += xSpeed;
+			y += ySpeed;
 		}
 	}
 	else {
