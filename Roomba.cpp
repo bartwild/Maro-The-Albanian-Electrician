@@ -50,7 +50,7 @@ Roomba::Roomba(){
 
 
 void Roomba::draw(sf::RenderWindow& aWindow){
-	if (!dead) {
+	if (!dead){
 		walkAnimation.set_position(round(x), round(y));
 		walkAnimation.step(1);
 		walkAnimation.draw(aWindow);
@@ -64,7 +64,7 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 }
 
 
-void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas){
+void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas){
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
 		&& (dead == 0)){
         bool moving = 0;
@@ -83,7 +83,7 @@ void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& a
 		sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
 		bool hit = 0;
 		for (Roomba& roomba : aRoombas){ //const nie dziala???
-			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1){
+			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1 && roomba.get_whether_dead() == 0){
 				hit = 1;
 				xSpeed *= -1;
 				break;
@@ -134,7 +134,7 @@ sf::FloatRect Roomba::get_hit_box() const{
 
 void Roomba::die(){
 	dead = 1;
-	deathTimer = MARO_DEATH_TIMER/2;
+	deathTimer = MARO_DEATH_TIMER*2;
 	texture.loadFromFile("GoombaDeath.png");
 	sprite.setTexture(texture);
 }
