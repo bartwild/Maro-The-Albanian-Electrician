@@ -20,7 +20,7 @@ class Roomba{
 public:
 	Roomba();
 	void draw(sf::RenderWindow& aWindow);
-	void move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas);
+	void update(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas);
 	void set_position(float x, float y);
 	float get_x() const;
 	float get_y() const;
