@@ -34,7 +34,9 @@ public:
 	void become_small();
 	void become_big();
 	void draw(sf::RenderWindow& aWindow);
-	void move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas);
+	void update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas);
+	bool xMove(bool moving);
+	void yMove(unsigned char yCollision);
 	void set_position(float x, float y);
 	float get_x() const;
 	float get_y() const;
@@ -43,5 +45,6 @@ public:
 	void draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow);
 	sf::FloatRect get_hit_box() const;
 	void check_collision_with_Roombas(std::vector<Roomba>& aRoombas);
+	void check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms);
 };
 
