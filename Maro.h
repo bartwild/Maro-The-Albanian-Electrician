@@ -19,6 +19,7 @@ class Maro{
 	float xSpeed;
 	float ySpeed;
 	unsigned char deathTimer;
+	unsigned char growthTimer;
 	unsigned char jumpTimer;
 	unsigned char hitTimer;
 	bool hit;

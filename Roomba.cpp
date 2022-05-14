@@ -132,6 +132,7 @@ unsigned char Roomba::get_death_timer() const{
 	return deathTimer;
 }
 
+
 bool Roomba::get_dead() const{
 	return dead;
 }

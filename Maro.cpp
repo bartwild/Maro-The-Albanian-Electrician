@@ -98,6 +98,7 @@ Maro::Maro() {
 	hit = 0;
 	hitTimer = 0;
 	deathTimer = MARO_DEATH_TIMER;
+	growthTimer = 0;
 	jumpTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
 	bigWalkAnimation = Animation(CELL_SIZE, "BigMarioWalk.png", MARO_WALK_ANIMATION_SPEED);
@@ -108,6 +109,7 @@ Maro::Maro() {
 
 void Maro::draw(sf::RenderWindow& aWindow) {
 	bool drawSprite = 1;
+	bool drawBig = 0 == growthTimer / MARO_BLINK % 2;
 	sprite.setPosition(round(x), round(y));
 	if (dead) {
 		if (!big) {
@@ -117,22 +119,61 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			texture.loadFromFile("BigMarioDeath.png");
 		}
 	}
-	else if (!onGround){
-		if (!big) {
-			texture.loadFromFile("MarioJump.png");
+	else if (big) {
+		if (!onGround) {
+			if (!drawBig) {
+				sprite.setPosition(round(x), CELL_SIZE + round(y));
+				texture.loadFromFile("MarioJump.png");
+			}
+			else {
+				texture.loadFromFile("BigMarioJump.png");
+			}
 		}
 		else {
-			texture.loadFromFile("BigMarioJump.png");
+			if (!xSpeed) {
+				if (!drawBig) {
+					sprite.setPosition(round(x), CELL_SIZE + round(y));
+					texture.loadFromFile("MarioIdle.png");
+				}
+				else {
+					texture.loadFromFile("BigMarioIdle.png");
+				}
+			}
+			else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
+				sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
+				(xSpeed < 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+					sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
+				if (xSpeed > 0) flipped = 0;
+				else flipped = 1;
+				if (!drawBig) {
+					sprite.setPosition(round(x), CELL_SIZE + round(y));
+					texture.loadFromFile("MarioBrake.png");
+				}
+				else {
+					texture.loadFromFile("BigMarioBrake.png");
+				}
+			}
+			else {
+				drawSprite = 0;
+				if (!drawBig) {
+					walkAnimation.set_flipped(flipped);
+					walkAnimation.set_position(round(x), round(y));
+					walkAnimation.draw(aWindow);
+				}
+				else {
+					bigWalkAnimation.set_flipped(flipped);
+					bigWalkAnimation.set_position(round(x), round(y));
+					bigWalkAnimation.draw(aWindow);
+				}
+			}
 		}
 	}
 	else {
-		if (!xSpeed){
-			if (!big){
-				texture.loadFromFile("MarioIdle.png");
-			}
-			else{
-				texture.loadFromFile("BigMarioIdle.png");
-			}
+		if (!onGround) {
+			texture.loadFromFile("MarioJump.png");
+		}
+		else if (!xSpeed) {
+			texture.loadFromFile("MarioIdle.png");
 		}
 		else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
@@ -140,25 +181,13 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
 			if (xSpeed > 0) flipped = 0;
 			else flipped = 1;
-			if (!big){
-				texture.loadFromFile("MarioBrake.png");
-			}
-			else{
-				texture.loadFromFile("BigMarioBrake.png");
-			}
+			texture.loadFromFile("MarioBrake.png");
 		}
 		else {
 			drawSprite = 0;
-			if (!big) {
-				walkAnimation.set_flipped(flipped);
-				walkAnimation.set_position(round(x), round(y));
-				walkAnimation.draw(aWindow);
-			}
-			else {
-				bigWalkAnimation.set_flipped(flipped);
-				bigWalkAnimation.set_position(round(x), round(y));
-				bigWalkAnimation.draw(aWindow);
-			}
+			walkAnimation.set_flipped(flipped);
+			walkAnimation.set_position(round(x), round(y));
+			walkAnimation.draw(aWindow);
 		}
 	}
 	if (drawSprite) {
@@ -387,12 +416,14 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 		if (get_hit_box().intersects(mushroom.get_hit_box())){
 			mushroom.die(1);
 			if (!big){
+				growthTimer = MARO_GROWTH_DURATION;
 				become_big();
 				y -= CELL_SIZE;
 			}
 		}
-		if (mushroom.get_dead()){ //??
-		}
+	}
+	if (0 < growthTimer) {
+		growthTimer--;
 	}
 	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
 		return 1 == i_mushroom.get_dead();
