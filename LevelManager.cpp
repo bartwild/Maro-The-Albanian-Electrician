@@ -153,7 +153,7 @@ void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWin
 }
 
 
-Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
+Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, std::vector<Roomba>& aRoombas) {
 	sf::Vector2u mapSize = mapSketch.getSize();
 	Map finalMap(mapSize.x);
 	for (unsigned short i = 0; i < mapSize.x; i++) {
@@ -174,6 +174,10 @@ Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
 				}
 				else {
 					finalMap[i][j] = Cell::Empty;
+					if (sf::Color(0, 255, 255) == pixel)
+					{
+						finish = i;
+					}
 				}
 			}
 			else {
@@ -194,6 +198,10 @@ Map LevelManager::sketch_to_map(Maro& aMaro, std::vector<Roomba>& aRoombas) {
 
 void LevelManager::update() {
 	questionBlockAnimation.step(0);
+}
+
+void LevelManager::set_sketch(const sf::Image& sketch){
+	mapSketch = sketch;
 }
 
 

@@ -11,6 +11,8 @@ void whole_Game() {
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
 	sf::Texture questionBlock;
+	unsigned char levelFinish = 0;
+	unsigned char currentLevel = 0;
 	mapSketch.loadFromFile("LevelSketch0.png");
 	LevelManager levelManager(mapSketch);
 	std::chrono::microseconds lag(0);
@@ -21,7 +23,7 @@ void whole_Game() {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	questionBlock.loadFromFile("QuestionBlock.png");
 	previousTime = std::chrono::steady_clock::now();;
-	Map map = levelManager.sketch_to_map(maro, roombas);
+	Map map = levelManager.sketch_to_map(maro, levelFinish, roombas);
 	mapTexture.loadFromFile("Map.png");
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
@@ -33,6 +35,14 @@ void whole_Game() {
 				if (event.type == sf::Event::Closed){
 					window.close();
 				}
+			}
+			if (CELL_SIZE * levelFinish <= maro.get_x()) {
+				currentLevel++;
+				roombas.clear();
+				maro.reset();
+				mapSketch.loadFromFile("LevelSketch" + std::to_string(currentLevel) + ".png");
+				levelManager.set_sketch(mapSketch);
+				map = levelManager.sketch_to_map(maro, levelFinish, roombas);
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.move(levelManager, viewX, map, roombas);

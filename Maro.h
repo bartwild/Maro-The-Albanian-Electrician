@@ -30,6 +30,7 @@ class Maro{
 	std::vector<Mushroom> mushrooms;
 public:
 	Maro();
+	void reset();
 	void become_small();
 	void become_big();
 	void draw(sf::RenderWindow& aWindow);

@@ -480,3 +480,23 @@ void Maro::become_small() {
 void Maro::become_big() {
 	big = 1;
 }
+
+
+void Maro::reset() {
+	dead = 0;
+	flipped = 0;
+	onGround = 0;
+	xSpeed = 0;
+	ySpeed = 0;
+	x = 0;
+	y = 0;
+	jumpTimer = 0;
+	big = 0;
+	deathTimer = MARO_DEATH_TIMER;
+	growthTimer = 0;
+	mushrooms.clear();
+	texture.loadFromFile("MarioIdle.png");
+	sprite.setTexture(texture);
+	bigWalkAnimation.set_flipped(0);
+	walkAnimation.set_flipped(0);
+}
