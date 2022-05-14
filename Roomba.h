@@ -27,5 +27,6 @@ public:
 	sf::FloatRect get_hit_box() const;
 	void die();
 	unsigned char get_death_timer() const;
-	bool get_dead() const;
+	bool get_whether_dead() const;
+	float get_ySpeed() const;
 };
