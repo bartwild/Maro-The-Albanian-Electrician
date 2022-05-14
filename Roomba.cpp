@@ -57,7 +57,7 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 	}
 	else {
 		sprite.setPosition(round(x), round(y));
-		texture.loadFromFile("GoombaDeath1.png");
+		texture.loadFromFile("GoombaDeath.png");
 		sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		aWindow.draw(sprite);
 	}
@@ -84,7 +84,7 @@ void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& a
 		bool hit = 0;
 		for (Roomba& roomba : aRoombas){ //const nie dziala???
 			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1){
-					hit = 1;
+				hit = 1;
 				xSpeed *= -1;
 				break;
 			}
@@ -109,13 +109,6 @@ void Roomba::move(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& a
         y += ySpeed;
     }
 	else if(dead == 1){
-		if (0 == deathTimer) {
-			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-			y += ySpeed;
-		}
-		else if (1 == deathTimer) {
-			ySpeed = MARO_JUMP_SPEED/2;
-		}
 		deathTimer = std::max(0, deathTimer-1);
 	}
 }
@@ -139,7 +132,7 @@ sf::FloatRect Roomba::get_hit_box() const{
 void Roomba::die(){
 	dead = 1;
 	deathTimer = MARO_DEATH_TIMER/2;
-	texture.loadFromFile("GoombaDeath1.png");
+	texture.loadFromFile("GoombaDeath.png");
 	sprite.setTexture(texture);
 }
 
