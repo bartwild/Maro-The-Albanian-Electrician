@@ -209,7 +209,7 @@ void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
 }
 
 
-void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas){
+void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas){
 	for (Mushroom& mushroom : mushrooms){
 		mushroom.move(aViewX, aMap);
 	}
@@ -221,24 +221,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 	Roomba* hitRoomba = nullptr;
 	hit = 0;
 	if (!dead){
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-			moving = 1;
-			flipped = 0;
-			xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
-		}
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-			moving = 1;
-			flipped = 1;
-			xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
-		}
-		if (moving == 0){
-			if (xSpeed > 0){
-				xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
-			}
-			else if (xSpeed < 0){
-				xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
-			}
-		}
+		moving = xMove(moving);
 		if (!big){
 			xCollision = map_collision(xSpeed + x, y, aMap, 0);
 			if (xCollision != 0){
@@ -254,28 +237,11 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				xSpeed = 0;
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 0);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				if (ySpeed == 0 && yCollision > 0) {
-					ySpeed = MARO_JUMP_SPEED;
-					jumpTimer = MARO_JUMP_TIMER;
-				}
-				else if (jumpTimer > 0) {
-					ySpeed = MARO_JUMP_SPEED;
-					jumpTimer--;
-				}
-				else {
-					ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-				}
-			}
-			else{
-				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-				jumpTimer = 0;
-			}
+			yMove(yCollision);
 			yCollision = map_collision(x, ySpeed + y, aMap, 0);
 			get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
-				for (const sf::Vector2i& cell : cells)
-				{
+				for (const sf::Vector2i& cell : cells){
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
 					mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
 				}
@@ -316,23 +282,7 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 				xSpeed = 0;
 			}
 			yCollision = map_collision(x, 1 + y, aMap, 1);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				if (ySpeed == 0 && yCollision > 0) {
-					ySpeed = MARO_JUMP_SPEED;
-					jumpTimer = MARO_JUMP_TIMER;
-				}
-				else if (jumpTimer > 0) {
-					ySpeed = MARO_JUMP_SPEED;
-					jumpTimer--;
-				}
-				else {
-					ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-				}
-			}
-			else {
-				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-				jumpTimer = 0;
-			}
+			yMove(yCollision);
 			yCollision = map_collision(x, ySpeed + y, aMap, 1);
 			get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
@@ -366,33 +316,61 @@ void Maro::move(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std:
 		}
 	}
 	else {
-		if (0 == deathTimer){
+		if (deathTimer == 0){
 			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
 			y += ySpeed;
 		}
-		else if (1 == deathTimer){
+		else if (deathTimer == 1){
 			ySpeed = MARO_JUMP_SPEED;
 		}
 		deathTimer = std::max(0, deathTimer - 1);
 	}
-	for (Mushroom& mushroom : mushrooms){
-		if (get_hit_box().intersects(mushroom.get_hit_box())){
-			mushroom.die(1);
-			if (!big){
-				growthTimer = MARO_GROWTH_DURATION;
-				become_big();
-				y -= CELL_SIZE;
-			}
+	check_collision_with_Mushrooms(mushrooms);
+	if (big) { bigWalkAnimation.step(1); }
+	walkAnimation.step(0);
+}
+
+
+bool Maro::xMove(bool moving){
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+		moving = 1;
+		flipped = 0;
+		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
+	}
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+		moving = 1;
+		flipped = 1;
+		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
+	}
+	if (moving == 0){
+		if (xSpeed > 0){
+			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
+		}
+		else if (xSpeed < 0){
+			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 		}
 	}
-	if (0 < growthTimer) {
-		growthTimer--;
+	return moving;
+}
+
+void Maro::yMove(unsigned char yCollision){
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		if (ySpeed == 0 && yCollision > 0) {
+			ySpeed = MARO_JUMP_SPEED;
+			jumpTimer = MARO_JUMP_TIMER;
+		}
+		else if (jumpTimer > 0) {
+			ySpeed = MARO_JUMP_SPEED;
+			jumpTimer--;
+		}
+		else {
+			ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+		}
 	}
-	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
-		return 1 == i_mushroom.get_dead();
-	}), mushrooms.end());
-	if (big) bigWalkAnimation.step(1);
-	walkAnimation.step(0);
+	else {
+		ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+		jumpTimer = 0;
+	}
 }
 
 
@@ -474,7 +452,7 @@ void Maro::check_collision_with_Roombas(std::vector<Roomba>& aRoombas){
 			break;
 		}
 	}
-	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() >= 0){
+	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0){
 		hitRoomba->die();
 		ySpeed = MARO_VKILL;
 	}
@@ -485,4 +463,23 @@ void Maro::check_collision_with_Roombas(std::vector<Roomba>& aRoombas){
 	if (hitTimer > 0){
 		hitTimer = std::max(0, hitTimer-1);
 	}
+}
+
+void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms){
+	for (Mushroom& mushroom : mushrooms){
+		if (get_hit_box().intersects(mushroom.get_hit_box())){
+			mushroom.die(1);
+			if (!big){
+				growthTimer = MARO_GROWTH_DURATION;
+				become_big();
+				y -= CELL_SIZE;
+			}
+		}
+	}
+	if (0 < growthTimer) {
+		growthTimer--;
+	}
+	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
+		return i_mushroom.get_dead() == 1;
+	}), mushrooms.end());
 }
