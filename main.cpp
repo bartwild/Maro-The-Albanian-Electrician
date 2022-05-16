@@ -24,7 +24,7 @@ void whole_Game() {
 	previousTime = std::chrono::steady_clock::now();;
 	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 	mapTexture.loadFromFile("Map.png");
-	while (window.isOpen()) {
+	while (window.isOpen()){
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
 		lag += deltaTime;
 		previousTime += deltaTime;
@@ -45,14 +45,16 @@ void whole_Game() {
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.update(levelManager, viewX, map, roombas);
+			std::vector<Roomba> updatedRoombas = {};
+			for (Roomba& roomba : roombas){
+				if (roomba.get_death_timer() != 0){
+					updatedRoombas.push_back(roomba);
+				}
+			}
+			roombas.clear();
+			roombas = updatedRoombas;
 			for (Roomba& roomba : roombas){
 				roomba.update(map, viewX, roombas);
-			}
-			for (unsigned short i = 0; i < roombas.size(); i++){
-				if (roombas[i].get_death_timer() == 0){
-					roombas.erase(i+roombas.begin());
-					i--;
-				}
 			}
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
