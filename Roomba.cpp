@@ -83,7 +83,7 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<Roomba>&
 		sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
 		bool hit = 0;
 		for (Roomba& roomba : aRoombas){ //const nie dziala???
-			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1 && roomba.get_whether_dead() == 0){
+			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1){
 				hit = 1;
 				xSpeed *= -1;
 				break;
