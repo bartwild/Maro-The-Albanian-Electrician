@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include <array>
 #include <cmath>
+#include <memory>
 #include "Consts.h"
 #include "Animation.h"
 
@@ -12,7 +13,7 @@ class Roomba{
 	float xSpeed;
 	float ySpeed;
 	sf::Sprite sprite;
-	sf::Texture texture;
+	sf::Texture *texture;
 	Animation walkAnimation;
 	bool dead;
 	unsigned char deathTimer;

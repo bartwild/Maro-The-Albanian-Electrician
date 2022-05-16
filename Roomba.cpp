@@ -46,6 +46,8 @@ Roomba::Roomba(){
 	xSpeed = ROOMBA_SPEED;
 	walkAnimation = Animation(CELL_SIZE, "GoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	dead = 0;
+	texture = new sf::Texture;
+	deathTimer = MARO_DEATH_TIMER/2;
 }
 
 
@@ -55,10 +57,10 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 		walkAnimation.step(1);
 		walkAnimation.draw(aWindow);
 	}
-	else {
+	else{
 		sprite.setPosition(round(x), round(y));
-		texture.loadFromFile("GoombaDeath.png");
-		sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
+		texture->loadFromFile("GoombaDeath.png");
+		sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture->getSize().x), texture->getSize().y));
 		aWindow.draw(sprite);
 	}
 }
@@ -134,9 +136,8 @@ sf::FloatRect Roomba::get_hit_box() const{
 
 void Roomba::die(){
 	dead = 1;
-	deathTimer = MARO_DEATH_TIMER*2;
-	texture.loadFromFile("GoombaDeath.png");
-	sprite.setTexture(texture);
+	texture->loadFromFile("GoombaDeath.png");
+	sprite.setTexture(*texture);
 }
 
 unsigned char Roomba::get_death_timer() const{
