@@ -263,7 +263,6 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 	std::vector<sf::Vector2i> cells;
 	unsigned char xCollision;
 	unsigned char yCollision;
-	Roomba* hitRoomba = nullptr;
 	hit = 0;
 	if (!dead){
 		moving = xMove(moving);

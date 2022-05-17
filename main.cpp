@@ -46,13 +46,11 @@ void whole_Game() {
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.update(levelManager, viewX, map, roombas);
 			std::vector<Roomba> updatedRoombas = {};
-			for (Roomba& roomba : roombas){
-				if (roomba.get_death_timer() != 0){
-					updatedRoombas.push_back(roomba);
+			for (unsigned short i = 0; i < roombas.size(); i++) {
+				if (roombas[i].get_death_timer() == 0) {
+					roombas.erase(roombas.begin() + i);
 				}
 			}
-			roombas.clear();
-			roombas = updatedRoombas;
 			for (Roomba& roomba : roombas){
 				roomba.update(map, viewX, roombas);
 			}

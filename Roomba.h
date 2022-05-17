@@ -13,7 +13,7 @@ class Roomba{
 	float xSpeed;
 	float ySpeed;
 	sf::Sprite sprite;
-	sf::Texture *texture;
+	std::shared_ptr<sf::Texture> texture;
 	Animation walkAnimation;
 	bool dead;
 	unsigned char deathTimer;

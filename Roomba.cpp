@@ -46,7 +46,7 @@ Roomba::Roomba(){
 	xSpeed = ROOMBA_SPEED;
 	walkAnimation = Animation(CELL_SIZE, "GoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	dead = 0;
-	texture = new sf::Texture;
+	texture = std::make_shared<sf::Texture>();
 	deathTimer = MARO_DEATH_TIMER/2;
 }
 
