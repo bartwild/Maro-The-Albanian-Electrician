@@ -68,11 +68,13 @@ void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y
 			case 2: {
 				x = floor(cellX);
 				y = ceil(cellY);
+				if (isBig)	y = ceil(cellY + 1);
 				break;
 			}
 			case 3: {
 				x = ceil(cellX);
 				y = ceil(cellY);
+				if (isBig)	y = ceil(cellY + 1);
 			}
 			}
 			if (x >= 0 && x < aMap.size()) {
@@ -86,6 +88,47 @@ void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y
 	}
 }
 
+
+void get_collision_brick(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, const Map& aMap)
+{
+	float cellX = x / CELL_SIZE;
+	float cellY = y / CELL_SIZE;
+	aCollisionCells.clear();
+
+	for (unsigned char i = 0; i < 4; i++)
+	{
+		short x;
+		short y;
+		switch (i) {
+		case 0: {
+			x = floor(cellX);
+			y = floor(cellY);
+			break;
+		}
+		case 1: {
+			x = ceil(cellX);
+			y = floor(cellY);
+			break;
+		}
+		case 2: {
+			x = floor(cellX);
+			y = ceil(cellY);
+			break;
+		}
+		case 3: {
+			x = ceil(cellX);
+			y = ceil(cellY);
+		}
+		}
+		if (x >= 0 && x < aMap.size()) {
+			if (0 <= y && y < aMap[0].size()) {
+				if (aMap[x][y] == Cell::Brick) {
+					aCollisionCells.push_back(sf::Vector2i(x, y));
+				}
+			}
+		}
+	}
+}
 
 
 void get_collision_question_block(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, const Map& aMap)
@@ -343,6 +386,12 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
 					else
 						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
+				}
+			}
+			get_collision_brick(cells, x, y + ySpeed, aMap);
+			if (ySpeed <= 0) {
+				for (const sf::Vector2i& cell : cells) {
+					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 				}
 			}
 			if (yCollision > 0) {
