@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "Consts.h"
+#include "Collisions.h"
 #include "Animation.h"
 #include "Mushroom.h"
 #include "LevelManager.h"
@@ -8,6 +9,7 @@
 
 class Mushroom;
 class LevelManager;
+class Collisions;
 
 class Maro{
 	bool flipped;

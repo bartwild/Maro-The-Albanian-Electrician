@@ -1,179 +1,6 @@
 #include "Maro.h"
 
 
-unsigned char map_collision(float x, float y, const Map& aMap, bool isBig) { //5-lewo. 10 prawo, 3 gora, 12 dol
-	float cellX = x / CELL_SIZE;
-	float cellY = y / CELL_SIZE;
-	unsigned char output = 0;
-
-	for (unsigned char i = 0; i < 4; i++)
-	{
-		short x;
-		short y;
-		switch (i) {
-			case 0: {
-				x = floor(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 1: {
-				x = ceil(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 2: {
-				x = floor(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-				break;
-			}
-			case 3: {
-				x = ceil(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-			}
-		}
-		if (x >= 0 && x < aMap.size()){
-			if (0 <= y && y < aMap[0].size()){
-				if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y])) output += pow(2, i);
-			}
-		}
-		else if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), Cell::Wall)) output += pow(2, i);
-	}
-	return output;
-}
-
-
-void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, Map& aMap, bool isBig, unsigned int& count) {
-	{
-		float cellX = x / CELL_SIZE;
-		float cellY = y / CELL_SIZE;
-		aCollisionCells.clear();
-
-		for (unsigned char i = 0; i < 4; i++)
-		{
-			short x;
-			short y;
-			switch (i) {
-			case 0: {
-				x = floor(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 1: {
-				x = ceil(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 2: {
-				x = floor(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-				break;
-			}
-			case 3: {
-				x = ceil(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-			}
-			}
-			if (x >= 0 && x < aMap.size()) {
-				if (0 <= y && y < aMap[0].size()) {
-					if (aMap[x][y] == Cell::Coin) {
-						aCollisionCells.push_back(sf::Vector2i(x, y));
-						count += 100;
-					}
-				}
-			}
-		}
-	}
-}
-
-
-void get_collision_brick(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, const Map& aMap)
-{
-	float cellX = x / CELL_SIZE;
-	float cellY = y / CELL_SIZE;
-	aCollisionCells.clear();
-
-	for (unsigned char i = 0; i < 4; i++)
-	{
-		short x;
-		short y;
-		switch (i) {
-		case 0: {
-			x = floor(cellX);
-			y = floor(cellY);
-			break;
-		}
-		case 1: {
-			x = ceil(cellX);
-			y = floor(cellY);
-			break;
-		}
-		case 2: {
-			x = floor(cellX);
-			y = ceil(cellY);
-			break;
-		}
-		case 3: {
-			x = ceil(cellX);
-			y = ceil(cellY);
-		}
-		}
-		if (x >= 0 && x < aMap.size()) {
-			if (0 <= y && y < aMap[0].size()) {
-				if (aMap[x][y] == Cell::Brick) {
-					aCollisionCells.push_back(sf::Vector2i(x, y));
-				}
-			}
-		}
-	}
-}
-
-
-void get_collision_question_block(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, const Map& aMap)
-{
-	float cellX = x / CELL_SIZE;
-	float cellY = y / CELL_SIZE;
-	aCollisionCells.clear();
-
-	for (unsigned char i = 0; i < 4; i++)
-	{
-		short x;
-		short y;
-		switch (i) {
-		case 0: {
-			x = floor(cellX);
-			y = floor(cellY);
-			break;
-		}
-		case 1: {
-			x = ceil(cellX);
-			y = floor(cellY);
-			break;
-		}
-		case 2: {
-			x = floor(cellX);
-			y = ceil(cellY);
-			break;
-		}
-		case 3: {
-			x = ceil(cellX);
-			y = ceil(cellY);
-		}
-		}
-		if (x >= 0 && x < aMap.size()) {
-			if (0 <= y && y < aMap[0].size()) {
-				if (aMap[x][y] == Cell::QuestionBlock) {
-					aCollisionCells.push_back(sf::Vector2i(x, y));
-				}
-			}
-		}
-	}
-}
-
-
 Maro::Maro() {
 	flipped = 0;
 	onGround = 0;
@@ -311,7 +138,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 	if (!dead){
 		moving = xMove(moving);
 		if (!big){
-			xCollision = map_collision(xSpeed + x, y, aMap, 0);
+			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
 			if (xCollision != 0){
 				moving = 0;
 				if (5 & ~xCollision && 10 & xCollision)
@@ -324,10 +151,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				}
 				xSpeed = 0;
 			}
-			yCollision = map_collision(x, 1 + y, aMap, 0);
+			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
 			yMove(yCollision);
-			yCollision = map_collision(x, ySpeed + y, aMap, 0);
-			get_collision_question_block(cells, x, y + ySpeed, aMap);
+			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
+			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells){
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
@@ -348,7 +175,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				}
 				ySpeed = 0;
 			}
-			yCollision = map_collision(x, 1 + y, aMap, 0);
+			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
 			if (yCollision > 0) {
 				onGround = 1;
 			}
@@ -356,7 +183,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			{
 				die(1);
 			}
-			coin_collision(cells, x, y, aMap, big, count);
+			Collisions::coin_collision(cells, x, y, aMap, big, count);
 			for (const sf::Vector2i& cell : cells) {
 				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
@@ -365,7 +192,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			y += ySpeed;
 		}
 		else{
-			xCollision = map_collision(xSpeed + x, y, aMap, 1);
+			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 1);
 			if (xCollision != 0) {
 				moving = 0;
 				if (5 & ~xCollision && 10 & xCollision)
@@ -378,10 +205,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				}
 				xSpeed = 0;
 			}
-			yCollision = map_collision(x, 1 + y, aMap, 1);
+			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
 			yMove(yCollision);
-			yCollision = map_collision(x, ySpeed + y, aMap, 1);
-			get_collision_question_block(cells, x, y + ySpeed, aMap);
+			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 1);
+			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells){
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
@@ -393,7 +220,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 					}
 				}
 			}
-			get_collision_brick(cells, x, y + ySpeed, aMap);
+			Collisions::get_collision_brick(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells) {
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
@@ -408,14 +235,14 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				}
 				ySpeed = 0;
 			}
-			yCollision = map_collision(x, 1 + y, aMap, 1);
+			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
 			if (yCollision > 0) {
 				onGround = 1;
 			}
 			if (y >= SCREEN_HEIGHT - get_hit_box().height){
 				die(1);
 			}
-			coin_collision(cells, x, y, aMap, big, count);
+			Collisions::coin_collision(cells, x, y, aMap, big, count);
 			for (const sf::Vector2i& cell : cells) {
 				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
