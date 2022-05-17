@@ -5,7 +5,7 @@
 
 void whole_Game() {
 	Maro maro;
-	std::vector<Roomba> roombas;
+	std::vector<std::shared_ptr<Roomba>> roombas;
 	unsigned viewX;
 	sf::Event event;
 	sf::Image mapSketch;
@@ -45,14 +45,13 @@ void whole_Game() {
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			maro.update(levelManager, viewX, map, roombas);
-			std::vector<Roomba> updatedRoombas = {};
 			for (unsigned short i = 0; i < roombas.size(); i++) {
-				if (roombas[i].get_death_timer() == 0) {
+				if (roombas[i]->get_death_timer() == 0) {
 					roombas.erase(roombas.begin() + i);
 				}
 			}
-			for (Roomba& roomba : roombas){
-				roomba.update(map, viewX, roombas);
+			for (std::shared_ptr<Roomba> roomba : roombas){
+				roomba->update(map, viewX, roombas);
 			}
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -63,8 +62,8 @@ void whole_Game() {
 				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
 				levelManager.update();
 				maro.draw(window);
-				for (Roomba& roomba : roombas){
-					roomba.draw(window);
+				for (std::shared_ptr<Roomba> roomba : roombas){
+					roomba->draw(window);
 				}
 				if (!maro.get_death_timer()) {
 					std::string message = "You lost, press\n enter to reset.";

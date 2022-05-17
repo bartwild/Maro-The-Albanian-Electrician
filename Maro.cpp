@@ -254,7 +254,7 @@ void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
 }
 
 
-void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<Roomba>& aRoombas){
+void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas){
 	for (Mushroom& mushroom : mushrooms){
 		mushroom.move(aViewX, aMap);
 	}
@@ -498,11 +498,11 @@ void Maro::reset() {
 }
 
 
-void Maro::check_collision_with_Roombas(std::vector<Roomba>& aRoombas){
-	Roomba* hitRoomba = nullptr;
-	for (Roomba& roomba : aRoombas){
-		if (get_hit_box().intersects(roomba.get_hit_box()) == 1 && roomba.get_whether_dead() == 0){
-			hitRoomba = &roomba;
+void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas){
+	std::shared_ptr<Roomba> hitRoomba = nullptr;
+	for (std::shared_ptr<Roomba> roomba : aRoombas) {
+		if (get_hit_box().intersects(roomba->get_hit_box()) == 1 && roomba->get_whether_dead() == 0){
+			hitRoomba = std::move(roomba);
 			hit = 1;
 			break;
 		}

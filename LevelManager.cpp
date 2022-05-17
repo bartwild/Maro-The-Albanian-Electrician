@@ -193,7 +193,7 @@ void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWin
 }
 
 
-Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& backgroundColor, std::vector<Roomba>& aRoombas) {
+Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& backgroundColor, std::vector<std::shared_ptr<Roomba>>& aRoombas) {
 	sf::Vector2u mapSize = mapSketch.getSize();
 	Map finalMap(mapSize.x);
 	backgroundColor = mapSketch.getPixel(0, mapSize.y - 1);
@@ -228,8 +228,8 @@ Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& b
 					aMaro.set_position(CELL_SIZE * i, CELL_SIZE * (j - floor(mapSize.y / 3)));
 				}
 				else if (pixel == (sf::Color(182, 73, 0))) {
-					Roomba roomba;
-					roomba.set_position(CELL_SIZE * i, CELL_SIZE * (j - floor(mapSize.y / 3)));
+					std::shared_ptr<Roomba> roomba = std::make_shared<Roomba>();
+					roomba->set_position(CELL_SIZE * i, CELL_SIZE * (j - floor(mapSize.y / 3)));
 					aRoombas.push_back(roomba);
 				}
 			}

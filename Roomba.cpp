@@ -66,7 +66,7 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 }
 
 
-void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<Roomba>& aRoombas){
+void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::shared_ptr<Roomba>> aRoombas){
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
 		&& (dead == 0)){
         bool moving = 0;
@@ -84,8 +84,8 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<Roomba>&
         }
 		sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
 		bool hit = 0;
-		for (Roomba& roomba : aRoombas){ //const nie dziala???
-			if (&roomba != this && xHitBox.intersects(roomba.get_hit_box()) == 1){
+		for (std::shared_ptr<Roomba> roomba : aRoombas){ //const nie dziala???
+			if (roomba != getRoomba() && xHitBox.intersects(roomba->get_hit_box()) == 1) {
 				hit = 1;
 				xSpeed *= -1;
 				break;
