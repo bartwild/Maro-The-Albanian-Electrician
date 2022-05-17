@@ -10,6 +10,7 @@ void whole_Game() {
 	sf::Event event;
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
+	unsigned int count = 0;
 	unsigned char levelFinish = 0;
 	unsigned char currentLevel = 0;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
@@ -44,7 +45,7 @@ void whole_Game() {
 				map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-			maro.update(levelManager, viewX, map, roombas);
+			maro.update(levelManager, viewX, map, roombas, count);
 			for (unsigned short i = 0; i < roombas.size(); i++) {
 				if (roombas[i]->get_death_timer() == 0) {
 					roombas.erase(roombas.begin() + i);
@@ -78,6 +79,13 @@ void whole_Game() {
 						whole_Game();
 					}
 				}
+				std::string message = "Points: " + std::to_string(count);
+				sf::Font font;
+				if (!font.loadFromFile("arial.ttf")) {}
+				sf::Text text(message, font, 12);
+				text.setPosition(sf::Vector2f(viewX + (3*SCREEN_WIDTH/4), 0));
+				text.setFillColor(sf::Color(0, 0, 0));
+				window.draw(text);
 				window.display();
 			}
 		}

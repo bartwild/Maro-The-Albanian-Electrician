@@ -44,7 +44,7 @@ unsigned char map_collision(float x, float y, const Map& aMap, bool isBig) { //5
 }
 
 
-void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, Map& aMap, bool isBig) {
+void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, Map& aMap, bool isBig, unsigned int& count) {
 	{
 		float cellX = x / CELL_SIZE;
 		float cellY = y / CELL_SIZE;
@@ -81,6 +81,7 @@ void coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y
 				if (0 <= y && y < aMap[0].size()) {
 					if (aMap[x][y] == Cell::Coin) {
 						aCollisionCells.push_back(sf::Vector2i(x, y));
+						count += 100;
 					}
 				}
 			}
@@ -297,7 +298,7 @@ void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
 }
 
 
-void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas){
+void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count){
 	for (Mushroom& mushroom : mushrooms){
 		mushroom.move(aViewX, aMap);
 	}
@@ -332,8 +333,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
 					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
 						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
-					else
+					else {
 						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
+						count += 100;
+					}
 				}
 			}
 			if (yCollision > 0) {
@@ -353,11 +356,11 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			{
 				die(1);
 			}
-			coin_collision(cells, x, y, aMap, big);
+			coin_collision(cells, x, y, aMap, big, count);
 			for (const sf::Vector2i& cell : cells) {
 				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
-			check_collision_with_Roombas(aRoombas);
+			check_collision_with_Roombas(aRoombas, count);
 			x += xSpeed;
 			y += ySpeed;
 		}
@@ -384,8 +387,10 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
 					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
 						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
-					else
+					else {
 						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
+						count += 100;
+					}
 				}
 			}
 			get_collision_brick(cells, x, y + ySpeed, aMap);
@@ -410,11 +415,11 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			if (y >= SCREEN_HEIGHT - get_hit_box().height){
 				die(1);
 			}
-			coin_collision(cells, x, y, aMap, big);
+			coin_collision(cells, x, y, aMap, big, count);
 			for (const sf::Vector2i& cell : cells) {
 				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 			}
-			check_collision_with_Roombas(aRoombas);
+			check_collision_with_Roombas(aRoombas, count);
 			x += xSpeed;
 			y += ySpeed;
 		}
@@ -429,7 +434,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 		}
 		deathTimer = std::max(0, deathTimer - 1);
 	}
-	check_collision_with_Mushrooms(mushrooms);
+	check_collision_with_Mushrooms(mushrooms, count);
 	if (big) { bigWalkAnimation.step(1); }
 	walkAnimation.step(0);
 }
@@ -547,7 +552,7 @@ void Maro::reset() {
 }
 
 
-void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas){
+void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count){
 	std::shared_ptr<Roomba> hitRoomba = nullptr;
 	for (std::shared_ptr<Roomba> roomba : aRoombas) {
 		if (get_hit_box().intersects(roomba->get_hit_box()) == 1 && roomba->get_whether_dead() == 0){
@@ -558,6 +563,7 @@ void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRo
 	}
 	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0 && hitTimer == 0){
 		hitRoomba->die();
+		count += 200;;
 		ySpeed = MARO_VKILL;
 	}
 	else if (onGround == 1 && hit == 1 && hitTimer == 0 || ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0){
@@ -569,10 +575,11 @@ void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRo
 	}
 }
 
-void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms){
+void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, unsigned int& count){
 	for (Mushroom& mushroom : mushrooms){
 		if (get_hit_box().intersects(mushroom.get_hit_box())){
 			mushroom.die(1);
+			count += 200;
 			if (!big){
 				growthTimer = MARO_GROWTH_DURATION;
 				become_big();
