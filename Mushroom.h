@@ -1,7 +1,9 @@
 #pragma once
 #include "Consts.h"
 #include "LevelManager.h"
+#include "Collisions.h"
 
+class Collisions;
 
 class Mushroom {
 	bool dead;
