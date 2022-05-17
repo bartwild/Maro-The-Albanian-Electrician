@@ -1,44 +1,6 @@
 #include "Roomba.h"
 
 
-unsigned char map_collision_Roomba(float x, float y, const Map& aMap){ //5-lewo. 10 prawo, 3 gora, 12 dol
-	float cellX = x / CELL_SIZE;
-	float cellY = y / CELL_SIZE;
-	unsigned char output = 0;
-	for (unsigned char i = 0; i < 4; i++){
-		short x;
-		short y;
-		switch (i) {
-			case 0: {
-				x = floor(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 1: {
-				x = ceil(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 2: {
-				x = floor(cellX);
-				y = ceil(cellY);
-				break;
-			}
-			case 3: {
-				x = ceil(cellX);
-				y = ceil(cellY);
-			}
-		}
-		if (x >= 0 && x < aMap.size()){
-			if (0 <= y && y < aMap[0].size()){
-				if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y])) output += pow(2, i);
-			}
-		}
-		else if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), Cell::Wall)) output += pow(2, i);
-	}
-	return output;
-}
-
 Roomba::Roomba(){
 	x = 100;
 	y = 100;
@@ -72,7 +34,7 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
         bool moving = 0;
         unsigned char xCollision;
         unsigned char yCollision;
-        xCollision = map_collision_Roomba(xSpeed + x, y, aMap);
+        xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
         if (xCollision != 0){
             if (5 & ~xCollision && 10 & xCollision){
                 x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
@@ -94,11 +56,11 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
 		if (hit == 0){
         	x += xSpeed;
 		}
-        yCollision = map_collision_Roomba(x, 1 + y, aMap);
+        yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
         if (yCollision == 0){
             ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
         }
-        yCollision = map_collision_Roomba(x, ySpeed + y, aMap);
+        yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
         if (yCollision > 0){
             if (3 & yCollision && 12 & ~yCollision){
                 y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));

@@ -6,6 +6,7 @@
 #include <memory>
 #include "Consts.h"
 #include "Animation.h"
+#include "Collisions.h"
 
 class Roomba : public std::enable_shared_from_this <Roomba>{
 	float x;
