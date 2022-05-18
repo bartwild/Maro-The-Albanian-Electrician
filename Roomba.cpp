@@ -10,6 +10,7 @@ Roomba::Roomba(){
 	dead = 0;
 	texture = std::make_shared<sf::Texture>();
 	deathTimer = MARO_DEATH_TIMER/2;
+	walkingOnRoomba = 0;
 }
 
 
@@ -44,33 +45,48 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
             }
             xSpeed *= -1;
         }
-		sf::FloatRect xHitBox(xSpeed + x, y, CELL_SIZE, CELL_SIZE);
+		sf::FloatRect HitBox(x + xSpeed, y + ySpeed, CELL_SIZE, CELL_SIZE);
 		bool hit = 0;
 		for (std::shared_ptr<Roomba> roomba : aRoombas){ //const nie dziala???
-			if (roomba != getRoomba() && xHitBox.intersects(roomba->get_hit_box()) == 1) {
-				hit = 1;
-				xSpeed *= -1;
+			if (roomba != shared_from_this() && HitBox.intersects(roomba->get_hit_box()) == 1){
+				if (ySpeed > 0 || walkingOnRoomba == 1){
+					y = -roomba->get_hit_box().height + roomba->get_hit_box().top;
+					ySpeed = 0;
+					walkingOnRoomba = 1;
+				}
+				else if (roomba->get_walkingOnRoomba() == 0){
+					hit = 1;
+					xSpeed *= -1;
+				}
 				break;
+			}
+			else{
+				walkingOnRoomba = 0;
 			}
 		}
 		if (hit == 0){
         	x += xSpeed;
 		}
-        yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
-        if (yCollision == 0){
-            ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
-        }
-        yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
-        if (yCollision > 0){
-            if (3 & yCollision && 12 & ~yCollision){
-                y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
-            }
-            else if (3 & ~yCollision && 12 & yCollision){
-                y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-            }
-            ySpeed = 0;
-        }
-        y += ySpeed;
+		if (walkingOnRoomba == 0){
+			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
+			if (yCollision == 0){
+				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
+			}
+			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
+			if (yCollision > 0){
+				if (3 & yCollision && 12 & ~yCollision){
+					y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+				}
+				else if (3 & ~yCollision && 12 & yCollision){
+					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+				}
+				ySpeed = 0;
+			}
+		}
+		y += ySpeed;
+		if (y > SCREEN_WIDTH - 2*CELL_SIZE){
+			die(1);
+		}
     }
 	else if(dead == 1){
 		deathTimer = std::max(0, deathTimer-1);
@@ -96,12 +112,21 @@ sf::FloatRect Roomba::get_hit_box() const{
 	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
 }
 
-void Roomba::die(){
-	dead = 1;
-	texture->loadFromFile("GoombaDeath.png");
-	sprite.setTexture(*texture);
+void Roomba::die(bool instant){
+	if (instant == 1){
+		deathTimer = 0;
+	}
+	else{
+		dead = 1;
+		texture->loadFromFile("GoombaDeath.png");
+		sprite.setTexture(*texture);
+	}
 }
 
 unsigned char Roomba::get_death_timer() const{
 	return deathTimer;
+}
+
+bool Roomba::get_walkingOnRoomba() const{
+	return walkingOnRoomba;
 }

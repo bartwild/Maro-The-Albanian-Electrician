@@ -18,6 +18,7 @@ class Roomba : public std::enable_shared_from_this <Roomba>{
 	Animation walkAnimation;
 	bool dead;
 	unsigned char deathTimer;
+	bool walkingOnRoomba;
 	std::shared_ptr<Roomba> getRoomba() { return shared_from_this(); }
 public:
 	Roomba();
@@ -27,8 +28,9 @@ public:
 	float get_x() const;
 	float get_y() const;
 	sf::FloatRect get_hit_box() const;
-	void die();
+	void die(bool instant);
 	unsigned char get_death_timer() const;
 	bool get_whether_dead() const;
 	float get_ySpeed() const;
+	bool get_walkingOnRoomba() const;
 };
