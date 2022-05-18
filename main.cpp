@@ -11,6 +11,7 @@ void whole_Game() {
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
 	unsigned int count = 0;
+	unsigned short timer = 0;
 	unsigned char levelFinish = 0;
 	unsigned char currentLevel = 0;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
@@ -66,12 +67,29 @@ void whole_Game() {
 				for (std::shared_ptr<Roomba> roomba : roombas){
 					roomba->draw(window);
 				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
+					timer = 1;
+					std::string message = "\t   Are you sure? \n    press enter if yes\npress anything else if no";
+					sf::Font font;
+					if (!font.loadFromFile("arial.ttf")) {}
+					sf::Text text(message, font, 20);
+					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
+					text.setFillColor(sf::Color(0, 0, 0));
+					window.draw(text);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+						window.close();
+						whole_Game();
+					}
+					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+						for( auto& element : keysNoEscAndEnt)
+							if (sf::Keyboard::isKeyPressed(element)) timer = 0;
+				}
 				if (!maro.get_death_timer()) {
 					std::string message = "You lost, press\n enter to reset.";
 					sf::Font font;
 					if (!font.loadFromFile("arial.ttf")) {}
 					sf::Text text(message, font, 30);
-					text.setPosition(sf::Vector2f(maro.get_x()-((SCREEN_WIDTH)/SCREEN_RESIZE), 0));
+					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE), 0));
 					text.setFillColor(sf::Color(0, 0, 0));
 					window.draw(text);
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
@@ -83,7 +101,7 @@ void whole_Game() {
 				sf::Font font;
 				if (!font.loadFromFile("arial.ttf")) {}
 				sf::Text text(message, font, 12);
-				text.setPosition(sf::Vector2f(viewX + (3*SCREEN_WIDTH/4), 0));
+				text.setPosition(sf::Vector2f(viewX + (3 * SCREEN_WIDTH / SCREEN_RESIZE), 0));
 				text.setFillColor(sf::Color(0, 0, 0));
 				window.draw(text);
 				window.display();
