@@ -84,7 +84,7 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
 			}
 		}
 		y += ySpeed;
-		if (y > SCREEN_WIDTH - 2*CELL_SIZE){
+		if (y >= SCREEN_HEIGHT - get_hit_box().height){
 			die(1);
 		}
     }
