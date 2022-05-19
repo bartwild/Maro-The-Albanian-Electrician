@@ -47,7 +47,7 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
         }
 		sf::FloatRect HitBox(x + xSpeed, y + ySpeed, CELL_SIZE, CELL_SIZE);
 		bool hit = 0;
-		for (std::shared_ptr<Roomba> roomba : aRoombas){ //const nie dziala???
+		for (std::shared_ptr<Roomba> roomba : aRoombas){
 			if (roomba != shared_from_this() && HitBox.intersects(roomba->get_hit_box()) == 1){
 				if (ySpeed > 0 || walkingOnRoomba == 1){
 					y = -roomba->get_hit_box().height + roomba->get_hit_box().top;

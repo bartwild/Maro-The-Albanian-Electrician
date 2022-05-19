@@ -154,26 +154,34 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 					}
 				}
 				else if (!underground) {
-						if (aMap[i][j - 1] == Cell::Pipe)
-						{
-							y = 1;
-						}
-						else
-						{
-							y = 0;
-						}
+					if (aMap[i][j - 3] == Cell::Pipe || aMap[i][j+1] != Cell::Pipe)
+					{
+						y = 3;
+					}
+					else if (aMap[i][j - 2] == Cell::Pipe)
+					{
+						y = 2;
+					}
+					else if (aMap[i][j - 1] == Cell::Pipe)
+					{
+						y = 1;
+					}
+					else
+					{
+						y = 0;
+					}
 
-						if (aMap[i - 1][j] == Cell::Pipe)
-						{
-							x = 1;
-						}
-						else
-						{
-							x = 0;
-						}
-						cellSpritePole.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
-						aWindow.draw(cellSpritePole);
-						return;
+					if (aMap[i - 1][j] == Cell::Pipe)
+					{
+						x = 1;
+					}
+					else
+					{
+						x = 0;
+					}
+					cellSpritePole.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+					aWindow.draw(cellSpritePole);
+					return;
 				}
 			}
 			else if (aMap[i][j] == Cell::Wall) {

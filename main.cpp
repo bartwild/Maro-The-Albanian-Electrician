@@ -37,7 +37,7 @@ void whole_Game() {
 					window.close();
 				}
 			}
-			if (CELL_SIZE * levelFinish <= maro.get_x()) {
+			if ((CELL_SIZE * levelFinish <= maro.get_x() && currentLevel == 0) || (currentLevel == 1 && CELL_SIZE * levelFinish <= maro.get_x() && maro.get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
 				currentLevel++;
 				roombas.clear();
 				maro.reset();
@@ -52,7 +52,7 @@ void whole_Game() {
 					roombas.erase(roombas.begin() + i);
 				}
 			}
-			for (std::shared_ptr<Roomba> roomba : roombas){
+			for (std::shared_ptr<Roomba> roomba : roombas) {
 				roomba->update(map, viewX, roombas);
 			}
 			if (FRAME_DURATION > lag) {
@@ -66,6 +66,19 @@ void whole_Game() {
 				maro.draw(window);
 				for (std::shared_ptr<Roomba> roomba : roombas){
 					roomba->draw(window);
+				}
+				if (currentLevel == 2) {
+					std::string message = "\t    You won.\n   Congratulations.\n press Enter to reset.";
+					sf::Font font;
+					if (!font.loadFromFile("arial.ttf")) {}
+					sf::Text text(message, font, 20);
+					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
+					text.setFillColor(sf::Color(0, 0, 0));
+					window.draw(text);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+						window.close();
+						whole_Game();
+					}
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
 					timer = 1;
