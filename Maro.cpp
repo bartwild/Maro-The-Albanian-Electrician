@@ -16,8 +16,8 @@ Maro::Maro() {
 	growthTimer = 0;
 	jumpTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
-	bigWalkAnimation = Animation(CELL_SIZE, "BigMarioWalk.png", MARO_WALK_ANIMATION_SPEED);
-	texture.loadFromFile("MarioIdle.png");
+	bigWalkAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "BigMaroWalk.png", MARO_WALK_ANIMATION_SPEED);
+	texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
 	sprite.setTexture(texture);
 }
 
@@ -29,30 +29,30 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 	sprite.setPosition(round(x), round(y));
 	if (dead) {
 		if (!big) {
-			texture.loadFromFile("MarioDeath.png");
+			texture.loadFromFile(TEXTURES_PATH + "MaroDeath.png");
 		}
 		else {
-			texture.loadFromFile("BigMarioDeath.png");
+			texture.loadFromFile(TEXTURES_PATH + "BigMaroDeath.png");
 		}
 	}
 	else if (big) {
 		if (!onGround) {
 			if (!drawBig) {
 				sprite.setPosition(round(x), CELL_SIZE + round(y));
-				texture.loadFromFile("MarioJump.png");
+				texture.loadFromFile(TEXTURES_PATH + "MaroJump.png");
 			}
 			else {
-				texture.loadFromFile("BigMarioJump.png");
+				texture.loadFromFile(TEXTURES_PATH + "BigMaroJump.png");
 			}
 		}
 		else {
 			if (!xSpeed) {
 				if (!drawBig) {
 					sprite.setPosition(round(x), CELL_SIZE + round(y));
-					texture.loadFromFile("MarioIdle.png");
+					texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
 				}
 				else {
-					texture.loadFromFile("BigMarioIdle.png");
+					texture.loadFromFile(TEXTURES_PATH + "BigMaroIdle.png");
 				}
 			}
 			else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
@@ -63,10 +63,10 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 				else flipped = 1;
 				if (!drawBig) {
 					sprite.setPosition(round(x), CELL_SIZE + round(y));
-					texture.loadFromFile("MarioBrake.png");
+					texture.loadFromFile(TEXTURES_PATH + "MaroBrake.png");
 				}
 				else {
-					texture.loadFromFile("BigMarioBrake.png");
+					texture.loadFromFile(TEXTURES_PATH + "BigMaroBrake.png");
 				}
 			}
 			else {
@@ -86,10 +86,10 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 	}
 	else if (invincible) {
 		if (!onGround) {
-			texture.loadFromFile("MarioJump.png");
+			texture.loadFromFile(TEXTURES_PATH + "MaroJump.png");
 		}
 		else if (!xSpeed) {
-			texture.loadFromFile("MarioIdle.png");
+			texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
 		}
 		else if (((xSpeed > 0 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
 			sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
@@ -97,7 +97,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 				sf::Keyboard::isKeyPressed(sf::Keyboard::Right)))) {
 			if (xSpeed > 0) flipped = 0;
 			else flipped = 1;
-			texture.loadFromFile("MarioBrake.png");
+			texture.loadFromFile(TEXTURES_PATH + "MaroBrake.png");
 		}
 		else {
 			drawSprite = 0;
@@ -372,7 +372,7 @@ void Maro::reset() {
 	deathTimer = MARO_DEATH_TIMER;
 	growthTimer = 0;
 	mushrooms.clear();
-	texture.loadFromFile("MarioIdle.png");
+	texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
 	sprite.setTexture(texture);
 	bigWalkAnimation.set_flipped(0);
 	walkAnimation.set_flipped(0);

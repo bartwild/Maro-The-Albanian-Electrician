@@ -8,6 +8,7 @@
 #include <chrono>
 #include <array>
 #include <chrono>
+#include <filesystem>
 #include <cmath>
 #include <algorithm>
 
@@ -33,8 +34,9 @@ const float ROOMBA_SPEED = 1;
 const float MUSHROOM_SPEED = 1;
 const float UPDATE_AREA = 64;
 const std::chrono::microseconds FRAME_DURATION(16667);
-const std::string MARO_WALK_TEXTURE = "MarioWalk.png";
-
+const std::string CURRENT_PATH = std::filesystem::current_path();
+const std::string TEXTURES_PATH = CURRENT_PATH + "/textures/";
+const std::string MARO_WALK_TEXTURE = TEXTURES_PATH + "MaroWalk.png";
 
 enum Cell {
 	Empty,

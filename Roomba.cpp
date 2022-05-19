@@ -6,7 +6,7 @@ Roomba::Roomba(){
 	y = 100;
 	ySpeed = 0;
 	xSpeed = ROOMBA_SPEED;
-	walkAnimation = Animation(CELL_SIZE, "GoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
+	walkAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "RoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	dead = 0;
 	texture = std::make_shared<sf::Texture>();
 	deathTimer = MARO_DEATH_TIMER/2;
@@ -22,7 +22,7 @@ void Roomba::draw(sf::RenderWindow& aWindow){
 	}
 	else{
 		sprite.setPosition(round(x), round(y));
-		texture->loadFromFile("GoombaDeath.png");
+		texture->loadFromFile(TEXTURES_PATH + "RoombaDeath.png");
 		sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture->getSize().x), texture->getSize().y));
 		aWindow.draw(sprite);
 	}
@@ -118,7 +118,7 @@ void Roomba::die(bool instant){
 	}
 	else{
 		dead = 1;
-		texture->loadFromFile("GoombaDeath.png");
+		texture->loadFromFile(TEXTURES_PATH + "RoombaDeath.png");
 		sprite.setTexture(*texture);
 	}
 }
