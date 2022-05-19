@@ -10,6 +10,7 @@ class LevelManager{
 	Animation questionBlockAnimation;
 	Animation coinAnimation;
 	sf::Image mapSketch;
+	sf::Texture pole;
 	std::vector<Object> questionBlockCoins;
 public:
 	LevelManager(sf::Image& aMapSketch);

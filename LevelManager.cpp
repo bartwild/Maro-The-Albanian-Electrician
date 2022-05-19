@@ -4,6 +4,7 @@
 LevelManager::LevelManager(sf::Image& aMapSketch) {
 	questionBlockAnimation = Animation(CELL_SIZE, "QuestionBlock.png", QUESTION_BLOCK_ANIMATION_SPEED);
 	coinAnimation = Animation(CELL_SIZE, "Coin.png", QUESTION_BLOCK_ANIMATION_SPEED/2);
+	pole.loadFromFile(TEXTURES_PATH + "PhonePole.png");
 	mapSketch = aMapSketch;
 }
 
@@ -84,7 +85,9 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 	if (aMap[i][j] != Cell::Empty) {
 		unsigned short x = 0;
 		unsigned short y = 0;
+		sf::Sprite cellSpritePole(pole);
 		cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
+		cellSpritePole.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 		if (aMap[i][j] == Cell::Coin) {
 			coinAnimation.set_position(CELL_SIZE * i, CELL_SIZE * j);
 			coinAnimation.draw(aWindow);
@@ -101,52 +104,76 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 				y++;
 			}
 			else if (aMap[i][j] == Cell::Pipe) {
-				if (mapSketch.getPixel(i, j) == sf::Color(0, 182, 0)) {
-					y = 1;
-					if (aMap[i - 1][j] == Cell::Pipe) {
-						x = 11;
-					}
-					else {
-						x = 10;
-					}
-				}
-				else if (mapSketch.getPixel(i, j) == (sf::Color(0, 146, 0))) {
-					y = 0;
-					if (mapSketch.getPixel(i - 1, j) ==  sf::Color(0, 146, 0)) {
-						x = 11;
-					}
-					else if (mapSketch.getPixel(i + 1, j) == sf::Color(0, 146, 0)) {
-						x = 10;
-					}
-					else {
-						x = 10;
-						if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 146, 0)) {
-							y = 3;
+				if (underground) {
+					if (mapSketch.getPixel(i, j) == sf::Color(0, 182, 0)) {
+						y = 1;
+						if (aMap[i - 1][j] == Cell::Pipe) {
+							x = 11;
 						}
 						else {
+							x = 10;
+						}
+					}
+					else if (mapSketch.getPixel(i, j) == (sf::Color(0, 146, 0))) {
+						y = 0;
+						if (mapSketch.getPixel(i - 1, j) == sf::Color(0, 146, 0)) {
+							x = 11;
+						}
+						else if (mapSketch.getPixel(i + 1, j) == sf::Color(0, 146, 0)) {
+							x = 10;
+						}
+						else {
+							x = 10;
+							if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 146, 0)) {
+								y = 3;
+							}
+							else {
+								y = 2;
+							}
+						}
+					}
+					else if (mapSketch.getPixel(i, j) == (sf::Color(0, 219, 0)))
+					{
+						if (mapSketch.getPixel(1 + i, j) == sf::Color(0, 182, 0))
+						{
+							x = 12;
+						}
+						else
+						{
+							x = 11;
+						}
+
+						if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 219, 0))
+						{
+							y = 3;
+						}
+						else
+						{
 							y = 2;
 						}
 					}
 				}
-				else if (mapSketch.getPixel(i, j) == (sf::Color(0, 219, 0)))
-				{
-					if (mapSketch.getPixel(1 + i, j) == sf::Color(0, 182, 0))
-					{
-						x = 12;
-					}
-					else
-					{
-						x = 11;
-					}
+				else if (!underground) {
+						if (aMap[i][j - 1] == Cell::Pipe)
+						{
+							y = 1;
+						}
+						else
+						{
+							y = 0;
+						}
 
-					if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 219, 0))
-					{
-						y = 3;
-					}
-					else
-					{
-						y = 2;
-					}
+						if (aMap[i - 1][j] == Cell::Pipe)
+						{
+							x = 1;
+						}
+						else
+						{
+							x = 0;
+						}
+						cellSpritePole.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
+						aWindow.draw(cellSpritePole);
+						return;
 				}
 			}
 			else if (aMap[i][j] == Cell::Wall) {
