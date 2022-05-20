@@ -3,6 +3,26 @@
 #include "Consts.h"
 #include "LevelManager.h"
 
+
+unsigned int high_score_load(unsigned int& points) {
+	std::ifstream currentHighScore(filename);
+	double current;
+	currentHighScore >> current;
+	if (int(current) > points) {
+		return int(current);
+	}
+	else {
+		return points;
+	}
+}
+
+
+void high_score_save(unsigned int& points) {
+	std::ofstream highScoreInfo(filename, std::ios::trunc);
+	highScoreInfo << points;
+}
+
+
 void whole_Game() {
 	Maro maro;
 	std::vector<std::shared_ptr<Roomba>> roombas;
@@ -17,6 +37,7 @@ void whole_Game() {
 	unsigned short timer = 0;
 	unsigned char levelFinish = 0;
 	unsigned char currentLevel = 0;
+	unsigned int high = high_score_load(count);
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
 	LevelManager levelManager(mapSketch);
@@ -82,7 +103,10 @@ void whole_Game() {
 					window.draw(text);
 					count += (360-timeInt) * 50;
 					timeInt = 360;
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+					if (count > high)
+						high_score_save(count);
+					else high_score_save(high);
+;					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
 						whole_Game();
 					}
@@ -121,10 +145,16 @@ void whole_Game() {
 					window.close();
 					whole_Game();
 				}
-				std::string time = "Time left:  " + std::to_string(int(360 - elapsed1.asSeconds()));
-				std::string message = "Points: " + std::to_string(count);
+				std::string message1 = "high score: " + std::to_string(high);
+				if (count > high)
+					message1 = "high score: " + std::to_string(count);
 				sf::Font font;
 				if (!font.loadFromFile("arial.ttf")) {}
+				sf::Text text1(message1, font, 12);
+				text1.setPosition(sf::Vector2f(viewX, 0));
+				text1.setFillColor(sf::Color(0, 0, 0));
+				std::string time = "Time left:  " + std::to_string(int(360 - elapsed1.asSeconds()));
+				std::string message = "Points: " + std::to_string(count);
 				sf::Text text(message, font, 12);
 				sf::Text timeText(time, font, 12);
 				timeText.setPosition(sf::Vector2f(viewX + (3 * SCREEN_WIDTH / SCREEN_RESIZE), 12));
@@ -132,6 +162,7 @@ void whole_Game() {
 				text.setFillColor(sf::Color(0, 0, 0));
 				timeText.setFillColor(sf::Color(0, 0, 0));
 				window.draw(text);
+				window.draw(text1);
 				window.draw(timeText);
 				window.display();
 			}

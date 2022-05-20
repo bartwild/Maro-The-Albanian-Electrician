@@ -268,12 +268,14 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 
 
 bool Maro::xMove(bool moving){
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
+		!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
 		moving = 1;
 		flipped = 0;
 		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 	}
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
+		!sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
 		moving = 1;
 		flipped = 1;
 		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
@@ -290,7 +292,8 @@ bool Maro::xMove(bool moving){
 }
 
 void Maro::yMove(unsigned char yCollision){
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)||
+		sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if (ySpeed == 0 && yCollision > 0) {
 			ySpeed = MARO_JUMP_SPEED;
 			jumpTimer = MARO_JUMP_TIMER;
