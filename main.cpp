@@ -8,12 +8,15 @@ void whole_Game() {
 	std::vector<std::shared_ptr<Roomba>> roombas;
 	unsigned viewX;
 	sf::Event event;
+	sf::Clock clock;
+	sf::Time elapsed1;
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
+	unsigned int timeInt;
 	unsigned int count = 0;
 	unsigned short timer = 0;
 	unsigned char levelFinish = 0;
-	unsigned char currentLevel = 0;
+	unsigned char currentLevel = 1;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
 	LevelManager levelManager(mapSketch);
@@ -64,6 +67,8 @@ void whole_Game() {
 				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
 				levelManager.update();
 				maro.draw(window);
+				elapsed1 = clock.getElapsedTime();
+				if (currentLevel !=2) timeInt = int(elapsed1.asSeconds());
 				for (std::shared_ptr<Roomba> roomba : roombas){
 					roomba->draw(window);
 				}
@@ -75,6 +80,8 @@ void whole_Game() {
 					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
 					text.setFillColor(sf::Color(0, 0, 0));
 					window.draw(text);
+					count += (360-timeInt) * 50;
+					timeInt = 360;
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
 						whole_Game();
@@ -97,12 +104,12 @@ void whole_Game() {
 						for( auto& element : keysNoEscAndEnt)
 							if (sf::Keyboard::isKeyPressed(element)) timer = 0;
 				}
-				if (!maro.get_death_timer()) {
+				if (!maro.get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
 					std::string message = "You lost, press\n enter to reset.";
 					sf::Font font;
 					if (!font.loadFromFile("arial.ttf")) {}
 					sf::Text text(message, font, 30);
-					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE), 0));
+					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 30, 0));
 					text.setFillColor(sf::Color(0, 0, 0));
 					window.draw(text);
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
@@ -110,13 +117,22 @@ void whole_Game() {
 						whole_Game();
 					}
 				}
+				if (currentLevel == 2 && (int(360 - elapsed1.asSeconds()) == 0)) {
+					window.close();
+					whole_Game();
+				}
+				std::string time = "Time left:  " + std::to_string(int(360 - elapsed1.asSeconds()));
 				std::string message = "Points: " + std::to_string(count);
 				sf::Font font;
 				if (!font.loadFromFile("arial.ttf")) {}
 				sf::Text text(message, font, 12);
+				sf::Text timeText(time, font, 12);
+				timeText.setPosition(sf::Vector2f(viewX + (3 * SCREEN_WIDTH / SCREEN_RESIZE), 12));
 				text.setPosition(sf::Vector2f(viewX + (3 * SCREEN_WIDTH / SCREEN_RESIZE), 0));
 				text.setFillColor(sf::Color(0, 0, 0));
+				timeText.setFillColor(sf::Color(0, 0, 0));
 				window.draw(text);
+				window.draw(timeText);
 				window.display();
 			}
 		}
