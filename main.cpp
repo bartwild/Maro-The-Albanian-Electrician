@@ -16,7 +16,7 @@ void whole_Game() {
 	unsigned int count = 0;
 	unsigned short timer = 0;
 	unsigned char levelFinish = 0;
-	unsigned char currentLevel = 1;
+	unsigned char currentLevel = 0;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
 	LevelManager levelManager(mapSketch);
