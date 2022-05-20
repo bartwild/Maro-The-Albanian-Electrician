@@ -162,7 +162,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
 					else {
 						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
-						count += 100;
+						count += 200;
 					}
 				}
 			}
@@ -216,7 +216,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
 					else {
 						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
-						count += 100;
+						count += 200;
 					}
 				}
 			}
@@ -409,8 +409,9 @@ void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, uns
 	for (Mushroom& mushroom : mushrooms){
 		if (get_hit_box().intersects(mushroom.get_hit_box())){
 			mushroom.die(1);
-			count += 200;
+			if (big) count += 1000;
 			if (!big){
+				count += 200;
 				growthTimer = MARO_GROWTH_DURATION;
 				become_big();
 				y -= CELL_SIZE;
