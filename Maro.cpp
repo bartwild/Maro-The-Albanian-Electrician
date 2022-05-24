@@ -136,44 +136,21 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 	unsigned char yCollision;
 	hit = 0;
 	if (!dead){
-		moving = xMove(moving);
+		moving = x_move(moving);
 		if (!big){
 			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
 			if (xCollision != 0){
-				moving = 0;
-				if (5 & ~xCollision && 10 & xCollision)
-				{
-					x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
-				}
-				else if (5 & xCollision && 10 & ~xCollision)
-				{
-					x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
-				}
-				xSpeed = 0;
+				set_x_after_collision(moving, xCollision);
 			}
 			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
-			yMove(yCollision);
+			y_move(yCollision);
 			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
 			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
-				for (const sf::Vector2i& cell : cells){
-					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
-						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
-					else {
-						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
-						count += 200;
-					}
-				}
+				question_block_interaction(cells, levelManager, aMap, count);
 			}
 			if (yCollision > 0) {
-				if (3 & yCollision && 12 & ~yCollision) {
-					y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
-				}
-				else if (3 & ~yCollision && 12 & yCollision) {
-					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-				}
-				ySpeed = 0;
+				set_y_after_collision(yCollision);
 			}
 			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
 			if (yCollision > 0) {
@@ -194,31 +171,14 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 		else{
 			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 1);
 			if (xCollision != 0) {
-				moving = 0;
-				if (5 & ~xCollision && 10 & xCollision)
-				{
-					x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
-				}
-				else if (5 & xCollision && 10 & ~xCollision)
-				{
-					x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
-				}
-				xSpeed = 0;
+				set_x_after_collision(moving, xCollision);
 			}
 			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
-			yMove(yCollision);
+			y_move(yCollision);
 			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 1);
 			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
-				for (const sf::Vector2i& cell : cells){
-					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-					if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
-						mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
-					else {
-						levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
-						count += 200;
-					}
-				}
+				question_block_interaction(cells, levelManager, aMap, count);
 			}
 			Collisions::get_collision_brick(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
@@ -227,13 +187,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				}
 			}
 			if (yCollision > 0) {
-				if (3 & yCollision && 12 & ~yCollision) {
-					y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
-				}
-				else if (3 & ~yCollision && 12 & yCollision) {
-					y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
-				}
-				ySpeed = 0;
+				set_y_after_collision(yCollision);
 			}
 			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
 			if (yCollision > 0) {
@@ -267,7 +221,45 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 }
 
 
-bool Maro::xMove(bool moving){
+void Maro::set_x_after_collision(bool& moving, unsigned char& xCollision) {
+	moving = 0;
+	if (5 & ~xCollision && 10 & xCollision)
+	{
+		x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
+	}
+	else if (5 & xCollision && 10 & ~xCollision)
+	{
+		x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
+	}
+	xSpeed = 0;
+}
+
+
+void Maro::set_y_after_collision(unsigned char& yCollision) {
+	if (3 & yCollision && 12 & ~yCollision) {
+		y = CELL_SIZE * (1 + floor((ySpeed + y) / CELL_SIZE));
+	}
+	else if (3 & ~yCollision && 12 & yCollision) {
+		y = CELL_SIZE * (ceil((ySpeed + y) / CELL_SIZE) - 1);
+	}
+	ySpeed = 0;
+}
+
+
+void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, LevelManager& levelManager, Map& aMap, unsigned int& count) {
+	for (const sf::Vector2i& cell : cells) {
+		levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
+		if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
+			mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+		else {
+			levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
+			count += 200;
+		}
+	}
+}
+
+
+bool Maro::x_move(bool moving){
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
 		!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
 		moving = 1;
@@ -291,7 +283,7 @@ bool Maro::xMove(bool moving){
 	return moving;
 }
 
-void Maro::yMove(unsigned char yCollision){
+void Maro::y_move(unsigned char yCollision){
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if (ySpeed == 0 && yCollision > 0) {
