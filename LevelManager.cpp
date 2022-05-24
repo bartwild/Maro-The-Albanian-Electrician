@@ -134,49 +134,37 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 					}
 					else if (mapSketch.getPixel(i, j) == (sf::Color(0, 219, 0)))
 					{
-						if (mapSketch.getPixel(1 + i, j) == sf::Color(0, 182, 0))
-						{
+						if (mapSketch.getPixel(1 + i, j) == sf::Color(0, 182, 0)) {
 							x = 12;
 						}
-						else
-						{
+						else {
 							x = 11;
 						}
-
-						if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 219, 0))
-						{
+						if (mapSketch.getPixel(i, j - 1) == sf::Color(0, 219, 0)) {
 							y = 3;
 						}
-						else
-						{
+						else {
 							y = 2;
 						}
 					}
 				}
 				else if (!underground) {
-					if (aMap[i][j - 3] == Cell::Pipe || aMap[i][j+1] != Cell::Pipe)
-					{
+					if (aMap[i][j - 3] == Cell::Pipe || aMap[i][j+1] != Cell::Pipe) {
 						y = 3;
 					}
-					else if (aMap[i][j - 2] == Cell::Pipe)
-					{
+					else if (aMap[i][j - 2] == Cell::Pipe) {
 						y = 2;
 					}
-					else if (aMap[i][j - 1] == Cell::Pipe)
-					{
+					else if (aMap[i][j - 1] == Cell::Pipe) {
 						y = 1;
 					}
-					else
-					{
+					else {
 						y = 0;
 					}
-
-					if (aMap[i - 1][j] == Cell::Pipe)
-					{
+					if (aMap[i - 1][j] == Cell::Pipe) {
 						x = 1;
 					}
-					else
-					{
+					else {
 						x = 0;
 					}
 					cellSpritePole.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
@@ -185,14 +173,12 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 				}
 			}
 			else if (aMap[i][j] == Cell::Wall) {
-
 				if (mapSketch.getPixel(i, j) == sf::Color(0, 0, 0)) { // Walls
 					x = 2;
 				}
 				else { // Solid blocks
 					x = 3;
 				}
-
 			}
 			cellSprite.setTextureRect(sf::IntRect(CELL_SIZE * x, CELL_SIZE * y, CELL_SIZE, CELL_SIZE));
 			aWindow.draw(cellSprite);
@@ -275,9 +261,8 @@ Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& b
 
 
 void LevelManager::update() {
-	for (Object& questionBlockCoin : questionBlockCoins){
+	for (Object& questionBlockCoin : questionBlockCoins) {
 		questionBlockCoin.ySpeed += GRAVITY;
-
 		questionBlockCoin.y += questionBlockCoin.ySpeed;
 	}
 	questionBlockCoins.erase(remove_if(questionBlockCoins.begin(), questionBlockCoins.end(), [](const Object& questionBlockCoin)
@@ -288,7 +273,7 @@ void LevelManager::update() {
 	coinAnimation.step(1);
 }
 
-void LevelManager::set_sketch(const sf::Image& sketch){
+void LevelManager::set_sketch(const sf::Image& sketch) {
 	mapSketch = sketch;
 }
 
@@ -303,6 +288,6 @@ sf::Color LevelManager::get_map_sketch_pixel(const unsigned short x, const unsig
 }
 
 
-void LevelManager::add_question_block_coin(const unsigned short x, const unsigned short y){
+void LevelManager::add_question_block_coin(const unsigned short x, const unsigned short y) {
 	questionBlockCoins.push_back(Object(x, y, 0, COIN_JUMP_SPEED));
 }
