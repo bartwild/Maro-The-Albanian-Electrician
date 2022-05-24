@@ -15,6 +15,7 @@ Maro::Maro() {
 	deathTimer = MARO_DEATH_TIMER;
 	growthTimer = 0;
 	jumpTimer = 0;
+	destroyTimer = 0;
 	walkAnimation = Animation(CELL_SIZE, MARO_WALK_TEXTURE, MARO_WALK_ANIMATION_SPEED);
 	bigWalkAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "BigMaroWalk.png", MARO_WALK_ANIMATION_SPEED);
 	texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
@@ -147,10 +148,14 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			Collisions::get_collision_brick(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells) {
-					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
+					if (destroyTimer == 0) {
+						levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
+					}
+					destroyTimer = MARO_DESTROY_TIMER;
 				}
 			}
 		}
+		if (destroyTimer > 0) destroyTimer -= 1;
 		yCollision = Collisions::map_collision(x, ySpeed + y, aMap, big);
 		Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap, big);
 		if (ySpeed <= 0) {
@@ -163,8 +168,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 		if (yCollision > 0) {
 			onGround = 1;
 		}
-		if (y >= SCREEN_HEIGHT - get_hit_box().height)
-		{
+		if (y >= SCREEN_HEIGHT - get_hit_box().height) {
 			die(1);
 		}
 		Collisions::coin_collision(cells, x, y, aMap, big, count);

@@ -31,6 +31,7 @@ const unsigned char MARO_JUMP_TIMER = 9;
 const unsigned char MARO_HIT_TIMER = 128;
 const unsigned char MARO_BLINK = 4;
 const unsigned char MARO_GROWTH_DURATION = 64;
+const unsigned char MARO_DESTROY_TIMER = 8;
 const float ROOMBA_SPEED = 1;
 const float MUSHROOM_SPEED = 1;
 const float UPDATE_AREA = 64;

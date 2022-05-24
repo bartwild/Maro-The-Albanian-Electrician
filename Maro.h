@@ -23,6 +23,7 @@ class Maro{
 	unsigned char deathTimer;
 	unsigned char growthTimer;
 	unsigned char jumpTimer;
+	unsigned char destroyTimer;
 	unsigned char hitTimer;
 	bool hit;
 	Animation walkAnimation;
