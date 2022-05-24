@@ -125,8 +125,8 @@ void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
 }
 
 
-void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count){
-	for (Mushroom& mushroom : mushrooms){
+void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count) {
+	for (Mushroom& mushroom : mushrooms) {
 		mushroom.move(aViewX, aMap);
 	}
 	bool moving = 0;
@@ -186,19 +186,19 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 		deathTimer = std::max(0, deathTimer - 1);
 	}
 	check_collision_with_Mushrooms(mushrooms, count);
-	if (big) { bigWalkAnimation.step(1); }
+	if (big) {
+		bigWalkAnimation.step(1);
+	}
 	walkAnimation.step(0);
 }
 
 
 void Maro::set_x_after_collision(bool& moving, unsigned char& xCollision) {
 	moving = 0;
-	if (5 & ~xCollision && 10 & xCollision)
-	{
+	if (5 & ~xCollision && 10 & xCollision) {
 		x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
 	}
-	else if (5 & xCollision && 10 & ~xCollision)
-	{
+	else if (5 & xCollision && 10 & ~xCollision) {
 		x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
 	}
 	xSpeed = 0;
@@ -219,8 +219,9 @@ void Maro::set_y_after_collision(unsigned char& yCollision) {
 void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, LevelManager& levelManager, Map& aMap, unsigned int& count) {
 	for (const sf::Vector2i& cell : cells) {
 		levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
-		if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85))
+		if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85)) {
 			mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+		}
 		else {
 			levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
 			count += 200;
@@ -229,31 +230,32 @@ void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, LevelMan
 }
 
 
-bool Maro::x_move(bool moving){
+bool Maro::x_move(bool moving) {
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+		!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 		moving = 1;
 		flipped = 0;
 		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 	}
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
+		!sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 		moving = 1;
 		flipped = 1;
 		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
 	}
-	if (moving == 0){
+	if (moving == 0) {
 		if (xSpeed > 0){
 			xSpeed = std::max<float>(0, xSpeed - MARO_ACCELERATION);
 		}
-		else if (xSpeed < 0){
+		else if (xSpeed < 0) {
 			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 		}
 	}
 	return moving;
 }
 
-void Maro::y_move(unsigned char yCollision){
+
+void Maro::y_move(unsigned char yCollision) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Space)||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 		if (ySpeed == 0 && yCollision > 0) {
@@ -275,32 +277,38 @@ void Maro::y_move(unsigned char yCollision){
 }
 
 
-float Maro::get_x() const { return x; }
+float Maro::get_x() const {
+	return x;
+}
 
 
-float Maro::get_y() const { return y; }
+float Maro::get_y() const {
+	return y;
+}
 
 
-void Maro::set_position(float newX, float newY){
+void Maro::set_position(float newX, float newY) {
 	x = newX;
 	y = newY;
 }
 
 
-void Maro::die(bool instant){
-	if (instant) { dead = 1; }
+void Maro::die(bool instant) {
+	if (instant) {
+		dead = 1;
+	}
 	else {
-		if (!big){
+		if (!big) {
 			dead = 1;
 		}
-		else{
+		else {
 			become_small();
 		}
 	}
 }
 
 
-sf::FloatRect Maro::get_hit_box() const{
+sf::FloatRect Maro::get_hit_box() const {
 	if (!big) {
 		return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
 	}
@@ -308,6 +316,7 @@ sf::FloatRect Maro::get_hit_box() const{
 		return sf::FloatRect(x, y, CELL_SIZE, 2 * CELL_SIZE);
 	}
 }
+
 
 char Maro::get_death_timer() {
 	return deathTimer;
@@ -344,35 +353,36 @@ void Maro::reset() {
 }
 
 
-void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count){
+void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count) {
 	std::shared_ptr<Roomba> hitRoomba = nullptr;
 	for (std::shared_ptr<Roomba> roomba : aRoombas) {
-		if (get_hit_box().intersects(roomba->get_hit_box()) == 1 && roomba->get_whether_dead() == 0){
+		if (get_hit_box().intersects(roomba->get_hit_box()) == 1 && roomba->get_whether_dead() == 0) {
 			hitRoomba = std::move(roomba);
 			hit = 1;
 			break;
 		}
 	}
-	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0 && hitTimer == 0){
+	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0 && hitTimer == 0) {
 		hitRoomba->die(0);
 		count += 200;;
 		ySpeed = MARO_VKILL;
 	}
-	else if (onGround == 1 && hit == 1 && hitTimer == 0 || ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0){
+	else if (onGround == 1 && hit == 1 && hitTimer == 0 || ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0) {
 		hitTimer = MARO_HIT_TIMER;
 		die(0);
 	}
-	if (hitTimer > 0){
+	if (hitTimer > 0) {
 		hitTimer = std::max(0, hitTimer-1);
 	}
 }
 
-void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, unsigned int& count){
-	for (Mushroom& mushroom : mushrooms){
-		if (get_hit_box().intersects(mushroom.get_hit_box())){
+
+void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, unsigned int& count) {
+	for (Mushroom& mushroom : mushrooms) {
+		if (get_hit_box().intersects(mushroom.get_hit_box())) {
 			mushroom.die(1);
 			if (big) count += 1000;
-			if (!big){
+			if (!big) {
 				count += 200;
 				growthTimer = MARO_GROWTH_DURATION;
 				become_big();
@@ -383,7 +393,7 @@ void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, uns
 	if (0 < growthTimer) {
 		growthTimer--;
 	}
-	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom){
+	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom) {
 		return i_mushroom.get_dead() == 1;
 	}), mushrooms.end());
 }
