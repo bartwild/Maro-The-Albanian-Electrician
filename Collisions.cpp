@@ -52,46 +52,41 @@ unsigned char Collisions::map_collision(float x, float y, const Map& aMap, bool 
 	return output;
 }
 
-
 void Collisions::coin_collision(std::vector<sf::Vector2i>& aCollisionCells, float x, float y, Map& aMap, bool isBig, unsigned int& count) {
-	{
-		float cellX = x / CELL_SIZE;
-		float cellY = y / CELL_SIZE;
-		aCollisionCells.clear();
-
-		for (unsigned char i = 0; i < 4; i++)
-		{
-			short x;
-			short y;
-			switch (i) {
-			case 0: {
-				x = floor(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 1: {
-				x = ceil(cellX);
-				y = floor(cellY);
-				break;
-			}
-			case 2: {
-				x = floor(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-				break;
-			}
-			case 3: {
-				x = ceil(cellX);
-				y = ceil(cellY);
-				if (isBig)	y = ceil(cellY + 1);
-			}
-			}
-			if (x >= 0 && x < aMap.size()) {
-				if (0 <= y && y < aMap[0].size()) {
-					if (aMap[x][y] == Cell::Coin) {
-						aCollisionCells.push_back(sf::Vector2i(x, y));
-						count += 100;
-					}
+	float cellX = x / CELL_SIZE;
+	float cellY = y / CELL_SIZE;
+	aCollisionCells.clear();
+	for (unsigned char i = 0; i < 4; i++) {
+		short x;
+		short y;
+		switch (i) {
+		case 0: {
+			x = floor(cellX);
+			y = floor(cellY);
+			break;
+		}
+		case 1: {
+			x = ceil(cellX);
+			y = floor(cellY);
+			break;
+		}
+		case 2: {
+			x = floor(cellX);
+			y = ceil(cellY);
+			if (isBig)	y = ceil(cellY + 1);
+			break;
+		}
+		case 3: {
+			x = ceil(cellX);
+			y = ceil(cellY);
+			if (isBig)	y = ceil(cellY + 1);
+		}
+		}
+		if (x >= 0 && x < aMap.size()) {
+			if (0 <= y && y < aMap[0].size()) {
+				if (aMap[x][y] == Cell::Coin) {
+					aCollisionCells.push_back(sf::Vector2i(x, y));
+					count += 100;
 				}
 			}
 		}
@@ -104,7 +99,7 @@ void Collisions::get_collision_brick(std::vector<sf::Vector2i>& aCollisionCells,
 	float cellX = x / CELL_SIZE;
 	float cellY = y / CELL_SIZE;
 	aCollisionCells.clear();
-	for (unsigned char i = 0; i < 4; i++){
+	for (unsigned char i = 0; i < 4; i++) {
 		get_x_y(x, y, i, cellX, cellY, 1);
 		if (x >= 0 && x < aMap.size()) {
 			if (0 <= y && y < aMap[0].size()) {
