@@ -152,7 +152,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 			}
 		}
 		yCollision = Collisions::map_collision(x, ySpeed + y, aMap, big);
-		Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
+		Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap, big);
 		if (ySpeed <= 0) {
 			question_block_interaction(cells, levelManager, aMap, count);
 		}
