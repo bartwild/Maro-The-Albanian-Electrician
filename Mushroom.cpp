@@ -13,10 +13,14 @@ Mushroom::Mushroom(const float aX, const float aY) {
 }
 
 
-bool Mushroom::get_dead() const { return dead; }
+bool Mushroom::get_dead() const {
+	return dead;
+}
 
 
-sf::FloatRect Mushroom::get_hit_box() const { return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE); }
+sf::FloatRect Mushroom::get_hit_box() const {
+	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
+}
 
 
 void Mushroom::draw(const unsigned aViewX, sf::RenderWindow& aWindow) {
@@ -28,20 +32,18 @@ void Mushroom::draw(const unsigned aViewX, sf::RenderWindow& aWindow) {
 }
 
 
-void Mushroom::die(const bool isDead) { dead = isDead; }
+void Mushroom::die(const bool isDead) {
+	dead = isDead;
+}
 
 
 void Mushroom::move(const unsigned aViewX, const Map& aMap) {
 	if (!dead) {
 		if (-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT) {
-			if (y > startY - CELL_SIZE)
-			{
+			if (y > startY - CELL_SIZE) {
 				y -= MUSHROOM_SPEED;
-
-				if (y <= startY - CELL_SIZE)
-				{
+				if (y <= startY - CELL_SIZE) {
 					y = startY - CELL_SIZE;
-
 					startY = 2 * SCREEN_HEIGHT;
 				}
 			}
@@ -51,12 +53,10 @@ void Mushroom::move(const unsigned aViewX, const Map& aMap) {
 				ySpeed = std::min(GRAVITY + ySpeed, MARO_VMAX);
 				xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
 				if (xCollision != 0) {
-					if (5 & ~xCollision && 10 & xCollision)
-					{
+					if (5 & ~xCollision && 10 & xCollision)	{
 						x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
 					}
-					else if (5 & xCollision && 10 & ~xCollision)
-					{
+					else if (5 & xCollision && 10 & ~xCollision) {
 						x = CELL_SIZE * (1 + floor((xSpeed + x) / CELL_SIZE));
 					}
 					xSpeed *= -1;
@@ -83,8 +83,7 @@ void Mushroom::move(const unsigned aViewX, const Map& aMap) {
 				}
 			}
 		}
-		if (SCREEN_HEIGHT <= y)
-		{
+		if (SCREEN_HEIGHT <= y) {
 			dead = 1;
 		}
 	}
