@@ -135,75 +135,45 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 	unsigned char xCollision;
 	unsigned char yCollision;
 	hit = 0;
-	if (!dead){
+	if (!dead) {
 		moving = x_move(moving);
-		if (!big){
-			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
-			if (xCollision != 0){
-				set_x_after_collision(moving, xCollision);
-			}
-			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
-			y_move(yCollision);
-			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 0);
-			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
-			if (ySpeed <= 0) {
-				question_block_interaction(cells, levelManager, aMap, count);
-			}
-			if (yCollision > 0) {
-				set_y_after_collision(yCollision);
-			}
-			yCollision = Collisions::map_collision(x, 1 + y, aMap, 0);
-			if (yCollision > 0) {
-				onGround = 1;
-			}
-			if (y >= SCREEN_HEIGHT - get_hit_box().height)
-			{
-				die(1);
-			}
-			Collisions::coin_collision(cells, x, y, aMap, big, count);
-			for (const sf::Vector2i& cell : cells) {
-				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
-			}
-			check_collision_with_Roombas(aRoombas, count);
-			x += xSpeed;
-			y += ySpeed;
+		xCollision = Collisions::map_collision(xSpeed + x, y, aMap, big);
+		if (xCollision != 0) {
+			set_x_after_collision(moving, xCollision);
 		}
-		else{
-			xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 1);
-			if (xCollision != 0) {
-				set_x_after_collision(moving, xCollision);
-			}
-			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
-			y_move(yCollision);
-			yCollision = Collisions::map_collision(x, ySpeed + y, aMap, 1);
-			Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
-			if (ySpeed <= 0) {
-				question_block_interaction(cells, levelManager, aMap, count);
-			}
+		yCollision = Collisions::map_collision(x, 1 + y, aMap, big);
+		y_move(yCollision);
+		if (big) {
 			Collisions::get_collision_brick(cells, x, y + ySpeed, aMap);
 			if (ySpeed <= 0) {
 				for (const sf::Vector2i& cell : cells) {
 					levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
 				}
 			}
-			if (yCollision > 0) {
-				set_y_after_collision(yCollision);
-			}
-			yCollision = Collisions::map_collision(x, 1 + y, aMap, 1);
-			if (yCollision > 0) {
-				onGround = 1;
-			}
-			if (y >= SCREEN_HEIGHT - get_hit_box().height){
-				die(1);
-			}
-			Collisions::coin_collision(cells, x, y, aMap, big, count);
-			for (const sf::Vector2i& cell : cells) {
-				levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
-			}
-			check_collision_with_Roombas(aRoombas, count);
-			x += xSpeed;
-			y += ySpeed;
 		}
+		yCollision = Collisions::map_collision(x, ySpeed + y, aMap, big);
+		Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap);
+		if (ySpeed <= 0) {
+			question_block_interaction(cells, levelManager, aMap, count);
+		}
+		if (yCollision > 0) {
+			set_y_after_collision(yCollision);
+		}
+		yCollision = Collisions::map_collision(x, 1 + y, aMap, big);
+		if (yCollision > 0) {
+			onGround = 1;
+		}
+		if (y >= SCREEN_HEIGHT - get_hit_box().height)
+		{
+			die(1);
+		}
+		Collisions::coin_collision(cells, x, y, aMap, big, count);
+		for (const sf::Vector2i& cell : cells) {
+			levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
+		}
+		check_collision_with_Roombas(aRoombas, count);
+		x += xSpeed;
+		y += ySpeed;
 	}
 	else {
 		if (deathTimer == 0){
