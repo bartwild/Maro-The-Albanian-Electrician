@@ -17,9 +17,13 @@ class Mushroom {
 	sf::Texture texture;
 public:
 	Mushroom(const float x, const float y);
-	bool get_dead() const;
 	void die(const bool isDead);
 	void draw(const unsigned aViewX, sf::RenderWindow& aWindow);
 	void move(const unsigned aViewX, const Map& aMap);
 	sf::FloatRect get_hit_box() const;
+	bool get_whether_dead() const;
+	float get_x() const;
+	float get_y() const;
+	float get_xSpeed() const;
+	float get_ySpeed() const;
 };

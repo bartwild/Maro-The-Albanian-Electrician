@@ -98,8 +98,7 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 		}
 		else {
 			y = 2 * underground;
-			if (Cell::ActivatedQuestionBlock == aMap[i][j])
-			{
+			if (Cell::ActivatedQuestionBlock == aMap[i][j]) {
 				x = 6;
 				y++;
 			}

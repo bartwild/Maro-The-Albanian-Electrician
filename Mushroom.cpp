@@ -13,16 +13,6 @@ Mushroom::Mushroom(const float aX, const float aY) {
 }
 
 
-bool Mushroom::get_dead() const {
-	return dead;
-}
-
-
-sf::FloatRect Mushroom::get_hit_box() const {
-	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
-}
-
-
 void Mushroom::draw(const unsigned aViewX, sf::RenderWindow& aWindow) {
 	if (-CELL_SIZE < round(y) && round(x) > static_cast<int>(aViewX) - CELL_SIZE && round(x) < SCREEN_WIDTH + aViewX && round(y) < SCREEN_HEIGHT) {
 		sprite.setPosition(round(x), round(y));
@@ -83,8 +73,37 @@ void Mushroom::move(const unsigned aViewX, const Map& aMap) {
 				}
 			}
 		}
-		if (SCREEN_HEIGHT <= y) {
+		if (y >= SCREEN_HEIGHT) {
 			dead = 1;
 		}
 	}
+}
+
+
+bool Mushroom::get_whether_dead() const {
+	return dead;
+}
+
+
+sf::FloatRect Mushroom::get_hit_box() const {
+	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
+}
+
+
+float Mushroom::get_x() const {
+	return x;
+}
+
+
+float Mushroom::get_y() const {
+	return y;
+}
+
+
+float Mushroom::get_xSpeed() const {
+	return xSpeed;
+}
+
+float Mushroom::get_ySpeed() const {
+	return ySpeed;
 }
