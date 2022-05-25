@@ -31,12 +31,12 @@ void Roomba::draw(sf::RenderWindow& aWindow) {
 
 void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::shared_ptr<Roomba>> aRoombas) {
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
-		&& (dead == 0)){
+		&& (dead == 0)) {
         bool moving = 0;
         unsigned char xCollision;
         unsigned char yCollision;
         xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
-        if (xCollision != 0){
+        if (xCollision != 0) {
             if (5 & ~xCollision && 10 & xCollision) {
                 x = CELL_SIZE * (ceil((xSpeed + x) / CELL_SIZE) - 1);
             }
@@ -60,11 +60,11 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
 				}
 				break;
 			}
-			else{
+			else {
 				walkingOnRoomba = 0;
 			}
 		}
-		if (hit == 0){
+		if (hit == 0) {
         	x += xSpeed;
 		}
 		if (walkingOnRoomba == 0) {

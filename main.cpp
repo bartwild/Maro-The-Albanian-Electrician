@@ -50,14 +50,14 @@ void whole_Game() {
 	previousTime = std::chrono::steady_clock::now();;
 	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 	mapTexture.loadFromFile("Map.png");
-	while (window.isOpen()){
+	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
 		lag += deltaTime;
 		previousTime += deltaTime;
 		while (FRAME_DURATION <= lag) {
 			lag -= FRAME_DURATION;
 			while (window.pollEvent(event)) {
-				if (event.type == sf::Event::Closed){
+				if (event.type == sf::Event::Closed) {
 					window.close();
 				}
 			}
@@ -90,7 +90,7 @@ void whole_Game() {
 				maro.draw(window);
 				elapsed1 = clock.getElapsedTime();
 				if (currentLevel !=2) timeInt = int(elapsed1.asSeconds());
-				for (std::shared_ptr<Roomba> roomba : roombas){
+				for (std::shared_ptr<Roomba> roomba : roombas) {
 					roomba->draw(window);
 				}
 				if (currentLevel == 2) {
@@ -103,9 +103,12 @@ void whole_Game() {
 					window.draw(text);
 					count += (360-timeInt) * 50;
 					timeInt = 360;
-					if (count > high)
+					if (count > high) {
 						high_score_save(count);
-					else high_score_save(high);
+					}
+					else {
+						high_score_save(high);
+					}
 ;					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
 						whole_Game();
@@ -124,9 +127,13 @@ void whole_Game() {
 						window.close();
 						whole_Game();
 					}
-					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-						for( auto& element : keysNoEscAndEnt)
-							if (sf::Keyboard::isKeyPressed(element)) timer = 0;
+					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+						for (auto& element : keysNoEscAndEnt) {
+							if (sf::Keyboard::isKeyPressed(element)) {
+								timer = 0;
+							}
+						}
+					}
 				}
 				if (!maro.get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
 					std::string message = "You lost, press\n enter to reset.";
@@ -146,8 +153,9 @@ void whole_Game() {
 					whole_Game();
 				}
 				std::string message1 = "high score: " + std::to_string(high);
-				if (count > high)
+				if (count > high) {
 					message1 = "high score: " + std::to_string(count);
+				}
 				sf::Font font;
 				if (!font.loadFromFile("arial.ttf")) {}
 				sf::Text text1(message1, font, 12);
