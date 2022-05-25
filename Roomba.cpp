@@ -142,3 +142,7 @@ unsigned char Roomba::get_death_timer() const {
 bool Roomba::get_walkingOnRoomba() const {
 	return walkingOnRoomba;
 }
+
+std::shared_ptr<Roomba> Roomba::getRoomba() {
+	 return shared_from_this();
+}

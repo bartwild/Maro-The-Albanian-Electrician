@@ -19,7 +19,7 @@ class Roomba : public std::enable_shared_from_this <Roomba>{
 	bool dead;
 	unsigned char deathTimer;
 	bool walkingOnRoomba;
-	std::shared_ptr<Roomba> getRoomba() { return shared_from_this(); }
+	std::shared_ptr<Roomba> getRoomba();
 public:
 	Roomba();
 	void draw(sf::RenderWindow& aWindow);
