@@ -38,7 +38,7 @@ public:
 	void become_big();
 	void draw(sf::RenderWindow& aWindow);
 	void update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count);
-	bool x_move(bool moving);
+	void x_move(bool& moving);
 	void y_move(unsigned char yCollision);
 	void set_position(float x, float y);
 	float get_x() const;
@@ -52,5 +52,8 @@ public:
 	void set_x_after_collision(bool& moving, unsigned char& xCollision);
 	void set_y_after_collision(unsigned char& yCollision);
 	void question_block_interaction(std::vector<sf::Vector2i>& cells, LevelManager& levelManager, Map& aMap, unsigned int& count);
+	bool get_flipped();
+	bool get_on_ground();
+	bool get_big();
 };
 

@@ -107,7 +107,7 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 			walkAnimation.draw(aWindow);
 		}
 	}
-	if (drawSprite && invincible || drawSprite && dead) {
+	if ((drawSprite && invincible) || (drawSprite && dead)) {
 		if (!flipped) {
 			sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(texture.getSize().x), texture.getSize().y));
 		}
@@ -137,7 +137,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 	unsigned char yCollision;
 	hit = 0;
 	if (!dead) {
-		moving = x_move(moving);
+		x_move(moving);
 		xCollision = Collisions::map_collision(xSpeed + x, y, aMap, big);
 		if (xCollision != 0) {
 			set_x_after_collision(moving, xCollision);
@@ -233,16 +233,28 @@ void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, LevelMan
 	}
 }
 
+bool Maro::get_flipped() {
+	return flipped;
+}
 
-bool Maro::x_move(bool moving) {
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ||
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+bool Maro::get_on_ground() {
+	return onGround;
+}
+
+bool Maro::get_big() {
+	return big;
+}
+
+
+void Maro::x_move(bool& moving) {
+	if ((!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) ||
+		(!sf::Keyboard::isKeyPressed(sf::Keyboard::A) && sf::Keyboard::isKeyPressed(sf::Keyboard::D))) {
 		moving = 1;
 		flipped = 0;
 		xSpeed = std::min(xSpeed + MARO_ACCELERATION, MARO_SPEED);
 	}
-	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
-		!sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+	if ((!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) ||
+		(!sf::Keyboard::isKeyPressed(sf::Keyboard::D) && sf::Keyboard::isKeyPressed(sf::Keyboard::A))) {
 		moving = 1;
 		flipped = 1;
 		xSpeed = std::max(xSpeed - MARO_ACCELERATION, -MARO_SPEED);
@@ -255,7 +267,6 @@ bool Maro::x_move(bool moving) {
 			xSpeed = std::min<float>(0, MARO_ACCELERATION + xSpeed);
 		}
 	}
-	return moving;
 }
 
 
@@ -360,13 +371,13 @@ void Maro::reset() {
 void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count) {
 	std::shared_ptr<Roomba> hitRoomba = nullptr;
 	for (std::shared_ptr<Roomba> roomba : aRoombas) {
-		if (get_hit_box().intersects(roomba->get_hit_box()) == 1 && roomba->get_whether_dead() == 0) {
+		if ((get_hit_box().intersects(roomba->get_hit_box()) == 1) && (roomba->get_whether_dead() == 0)) {
 			hitRoomba = std::move(roomba);
 			hit = 1;
 			break;
 		}
 	}
-	if (ySpeed > 0 && hit == 1 && hitRoomba->get_ySpeed() == 0 && hitTimer == 0) {
+	if (ySpeed > 0 && hit == 1 && (hitRoomba->get_ySpeed() == 0) && hitTimer == 0) {
 		hitRoomba->die(0);
 		count += 200;;
 		ySpeed = MARO_VKILL;
@@ -394,10 +405,11 @@ void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, uns
 			}
 		}
 	}
-	if (0 < growthTimer) {
+	if (growthTimer > 0) {
 		growthTimer--;
 	}
 	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom) {
 		return i_mushroom.get_dead() == 1;
 	}), mushrooms.end());
 }
+
