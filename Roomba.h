@@ -8,7 +8,7 @@
 #include "Animation.h"
 #include "Collisions.h"
 
-class Roomba : public std::enable_shared_from_this <Roomba>{
+class Roomba : public std::enable_shared_from_this <Roomba> {
 	float x;
 	float y;
 	float xSpeed;
@@ -32,5 +32,6 @@ public:
 	unsigned char get_death_timer() const;
 	bool get_whether_dead() const;
 	float get_ySpeed() const;
+	float get_xSpeed() const;
 	bool get_walkingOnRoomba() const;
 };

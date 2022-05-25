@@ -2,8 +2,6 @@
 
 
 Roomba::Roomba() {
-	x = 100;
-	y = 100;
 	ySpeed = 0;
 	xSpeed = ROOMBA_SPEED;
 	walkAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "RoombaWalk.png", QUESTION_BLOCK_ANIMATION_SPEED);
@@ -32,7 +30,6 @@ void Roomba::draw(sf::RenderWindow& aWindow) {
 void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::shared_ptr<Roomba>> aRoombas) {
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
 		&& (dead == 0)) {
-        bool moving = 0;
         unsigned char xCollision;
         unsigned char yCollision;
         xCollision = Collisions::map_collision(xSpeed + x, y, aMap, 0);
@@ -108,6 +105,10 @@ float Roomba::get_ySpeed() const {
 	return ySpeed;
 }
 
+
+float Roomba::get_xSpeed() const {
+	return xSpeed;
+}
 
 bool Roomba::get_whether_dead() const {
 	return dead;
