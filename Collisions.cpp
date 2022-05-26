@@ -40,7 +40,7 @@ unsigned char Collisions::map_collision(float x, float y, const Map& aMap, bool 
 				else {
 					if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y])) output += pow(2, i);
 					else {
-						if (y > 0) {
+						if (y > 0 && y < (aMap[0]).size() - 2) {
 							if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y + 1])) output += pow(2, i);
 						}
 					}
