@@ -12,17 +12,26 @@ LevelManager::LevelManager(sf::Image& aMapSketch) {
 void LevelManager::draw_background(const bool underground, unsigned short i, unsigned short j, unsigned short mapHeight, sf::Sprite& cellSprite, sf::Vector2u& mapSize, sf::RenderWindow& aWindow) {
 	unsigned short x = 0;
 	unsigned short y = 0;
-	sf::Color pixel = mapSketch.getPixel(i, j + 2 * mapHeight);
+	unsigned short background_j = j + 2 * mapHeight;
+	sf::Color pixel = mapSketch.getPixel(i, background_j);
 	sf::Color pixelDown = sf::Color(0, 0, 0, 0);
 	sf::Color pixelLeft = sf::Color(0, 0, 0, 0);
 	sf::Color pixelRight = sf::Color(0, 0, 0, 0);
 	sf::Color pixelUp = sf::Color(0, 0, 0, 0);
 	cellSprite.setPosition(CELL_SIZE * i, CELL_SIZE * j);
 	if (pixel.a == 255) {
-		if (i > 0) pixelLeft = mapSketch.getPixel(i - 1, j + 2 * mapHeight);
-		if (j > 0) pixelUp = mapSketch.getPixel(i, j + 2 * mapHeight - 1);
-		if (i < mapSize.x - 1) pixelRight = mapSketch.getPixel(i + 1, j + 2 * mapHeight);
-		if (j < mapHeight - 1) pixelDown = mapSketch.getPixel(i, j + 2 * mapHeight + 1);
+		if (i > 0) {
+			pixelLeft = mapSketch.getPixel(i - 1, background_j);
+		}
+		if (j > 0) {
+			pixelUp = mapSketch.getPixel(i, background_j - 1);
+		}
+		if (i < mapSize.x - 1) {
+			pixelRight = mapSketch.getPixel(i + 1, background_j);
+		}
+		if (j < mapHeight - 1) {
+			pixelDown = mapSketch.getPixel(i, background_j + 1);
+		}
 		if (pixel == sf::Color(255, 255, 255)) {
 			x = 8;
 			if (pixelUp == sf::Color(255, 255, 255)) {
@@ -271,6 +280,7 @@ void LevelManager::update() {
 	questionBlockAnimation.step(0);
 	coinAnimation.step(1);
 }
+
 
 void LevelManager::set_sketch(const sf::Image& sketch) {
 	mapSketch = sketch;
