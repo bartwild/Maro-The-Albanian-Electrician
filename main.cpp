@@ -85,8 +85,8 @@ void whole_game() {
 	unsigned int timeInt;
 	unsigned int count = 0;
 	unsigned short timer = 0;
-	unsigned char levelFinish = 0;
-	unsigned char currentLevel = 0;
+	unsigned short levelFinish = 0;
+	unsigned short currentLevel = 0;
 	unsigned int high = high_score_load(count);
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
@@ -112,27 +112,14 @@ void whole_game() {
 					window.close();
 				}
 			}
-			if ((CELL_SIZE * levelFinish <= maro->get_x() && currentLevel == 0) || (currentLevel == 1 && CELL_SIZE * levelFinish <= maro->get_x() && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
-				currentLevel++;
-				roombas.clear();
-				maro.reset();
-				mapSketch.loadFromFile("LevelSketch" + std::to_string(currentLevel) + ".png");
-				levelManager->set_sketch(mapSketch);
-				map = levelManager->sketch_to_map(*maro, levelFinish, backgroundColor, roombas);
+			gameManager.change_level(levelFinish, currentLevel, mapSketch, backgroundColor);
+			if (currentLevel != 2) {
+				viewX = std::clamp<int>(round(maro->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			}
-			viewX = std::clamp<int>(round(maro->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-			maro->update(*levelManager, viewX, map, roombas, mushrooms, count);
-			for (unsigned short i = 0; i < roombas.size(); i++) {
-				if (roombas[i]->get_death_timer() == 0) {
-					roombas.erase(roombas.begin() + i);
-				}
+			else {
+				viewX = std::clamp<int>(0, 0,  0.5f * (SCREEN_WIDTH - CELL_SIZE));
 			}
-			for (std::shared_ptr<Roomba> roomba : roombas) {
-				roomba->update(map, viewX, roombas);
-			}
-			for (std::shared_ptr<Mushroom> mushroom : mushrooms) {
-				mushroom->move(viewX, map);
-			}
+			gameManager.update_objects(viewX, count);
 			if (FRAME_DURATION > lag) {
 				gameManager.draw(window, viewX, view, backgroundColor, mapTexture);
 				elapsed1 = clock.getElapsedTime();

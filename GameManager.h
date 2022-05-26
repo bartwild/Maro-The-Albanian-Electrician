@@ -12,7 +12,8 @@ class GameManager{
     Map map;
     std::shared_ptr<LevelManager> levelManager;
 public:
-    GameManager(std::shared_ptr<Maro>& aMaro, Map& aMap, std::shared_ptr<LevelManager>& aLevelManager, std::vector<std::shared_ptr<Roomba>>& aRoombas, std::vector<std::shared_ptr<Mushroom>>& aMushrooms);
-    //void update_objects(unsigned int& aViewX, unsigned int& aCount);
+    GameManager(std::shared_ptr<Maro> aMaro, Map& aMap, std::shared_ptr<LevelManager> aLevelManager, std::vector<std::shared_ptr<Roomba>>& aRoombas, std::vector<std::shared_ptr<Mushroom>>& aMushrooms);
+    void update_objects(unsigned int& aViewX, unsigned int& aCount);
     void draw(sf::RenderWindow& aWindow, unsigned int& aViewX, sf::View& aView, sf::Color& aBackgroundColor, sf::Texture& aMapTexture);
+    void change_level(unsigned short& aLevelFinish, unsigned short& aCurrentLevel, sf::Image& aMapSketch, sf::Color& aBackgroundColor);
 };

@@ -23,7 +23,7 @@ class Roomba : public std::enable_shared_from_this <Roomba> {
 public:
 	Roomba();
 	void draw(sf::RenderWindow& aWindow);
-	void update(const Map& aMap, const unsigned aViewX, std::vector< std::shared_ptr<Roomba>> aRoombas);
+	void update(const Map& aMap, const unsigned aViewX, std::vector< std::shared_ptr<Roomba>>& aRoombas);
 	void set_position(float x, float y);
 	float get_x() const;
 	float get_y() const;

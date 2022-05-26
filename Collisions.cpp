@@ -33,7 +33,7 @@ unsigned char Collisions::map_collision(float x, float y, const Map& aMap, bool 
 	for (unsigned char i = 0; i < 4; i++) {
 		get_x_y(x, y, i, cellX, cellY, isBig);
 		if (x >= 0 && x < aMap.size()){
-			if (0 <= y && y < aMap[0].size()) {
+			if (0 < y && y < aMap[0].size()) {
 				if (!isBig) {
 					if (colisionCell.end() != std::find(colisionCell.begin(), colisionCell.end(), aMap[x][y])) output += pow(2, i);
 				}

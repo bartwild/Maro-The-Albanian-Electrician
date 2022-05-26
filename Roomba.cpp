@@ -27,7 +27,7 @@ void Roomba::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::shared_ptr<Roomba>> aRoombas) {
+void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::shared_ptr<Roomba>>& aRoombas) {
     if ((-CELL_SIZE < y && x >= static_cast<int>(aViewX) - CELL_SIZE - UPDATE_AREA && x < UPDATE_AREA + SCREEN_WIDTH + aViewX && y < SCREEN_HEIGHT)
 		&& (dead == 0)) {
         unsigned char xCollision;

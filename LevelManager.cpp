@@ -221,7 +221,7 @@ void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWin
 }
 
 
-Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& backgroundColor, std::vector<std::shared_ptr<Roomba>>& aRoombas) {
+Map LevelManager::sketch_to_map(Maro& aMaro, unsigned short& finish, sf::Color& backgroundColor, std::vector<std::shared_ptr<Roomba>>& aRoombas) {
 	sf::Vector2u mapSize = mapSketch.getSize();
 	Map finalMap(mapSize.x);
 	backgroundColor = mapSketch.getPixel(0, mapSize.y - 1);
