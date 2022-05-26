@@ -409,7 +409,7 @@ void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, uns
 		growthTimer--;
 	}
 	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom) {
-		return i_mushroom.get_dead() == 1;
+		return i_mushroom.get_whether_dead() == 1;
 	}), mushrooms.end());
 }
 
