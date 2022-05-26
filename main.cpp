@@ -2,6 +2,7 @@
 #include "Roomba.h"
 #include "Consts.h"
 #include "LevelManager.h"
+#include "GameManager.h"
 
 
 void whole_game();
@@ -72,7 +73,7 @@ void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
 
 
 void whole_game() {
-	Maro maro;
+	std::shared_ptr<Maro> maro = std::make_shared<Maro>();
 	std::vector<std::shared_ptr<Roomba>> roombas;
 	std::vector<std::shared_ptr<Mushroom>> mushrooms;
 	unsigned viewX;
@@ -89,7 +90,7 @@ void whole_game() {
 	unsigned int high = high_score_load(count);
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	mapSketch.loadFromFile("LevelSketch0.png");
-	LevelManager levelManager(mapSketch);
+	std::shared_ptr<LevelManager> levelManager = std::make_shared<LevelManager>(mapSketch);
 	std::chrono::microseconds lag(0);
 	std::chrono::steady_clock::time_point previousTime;
 	sf::View view(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -97,8 +98,9 @@ void whole_game() {
 	window.setPosition(sf::Vector2i(window.getPosition().x, window.getPosition().y - 90));
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	previousTime = std::chrono::steady_clock::now();;
-	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
+	Map map = levelManager->sketch_to_map(*maro, levelFinish, backgroundColor, roombas);
 	mapTexture.loadFromFile("Map.png");
+	GameManager gameManager(maro, map, levelManager, roombas, mushrooms);
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);
 		lag += deltaTime;
@@ -110,16 +112,16 @@ void whole_game() {
 					window.close();
 				}
 			}
-			if ((CELL_SIZE * levelFinish <= maro.get_x() && currentLevel == 0) || (currentLevel == 1 && CELL_SIZE * levelFinish <= maro.get_x() && maro.get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
+			if ((CELL_SIZE * levelFinish <= maro->get_x() && currentLevel == 0) || (currentLevel == 1 && CELL_SIZE * levelFinish <= maro->get_x() && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
 				currentLevel++;
 				roombas.clear();
 				maro.reset();
 				mapSketch.loadFromFile("LevelSketch" + std::to_string(currentLevel) + ".png");
-				levelManager.set_sketch(mapSketch);
-				map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
+				levelManager->set_sketch(mapSketch);
+				map = levelManager->sketch_to_map(*maro, levelFinish, backgroundColor, roombas);
 			}
-			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-			maro.update(levelManager, viewX, map, roombas, mushrooms, count);
+			viewX = std::clamp<int>(round(maro->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+			maro->update(*levelManager, viewX, map, roombas, mushrooms, count);
 			for (unsigned short i = 0; i < roombas.size(); i++) {
 				if (roombas[i]->get_death_timer() == 0) {
 					roombas.erase(roombas.begin() + i);
@@ -132,28 +134,18 @@ void whole_game() {
 				mushroom->move(viewX, map);
 			}
 			if (FRAME_DURATION > lag) {
-				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-				window.setView(view);
-				window.clear(backgroundColor);
-				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, map);
-				for (std::shared_ptr<Mushroom> mushroom : mushrooms) {
-					mushroom->draw(viewX, window);
-				}
-				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
-				levelManager.update();
-				maro.draw(window);
+				gameManager.draw(window, viewX, view, backgroundColor, mapTexture);
 				elapsed1 = clock.getElapsedTime();
-				if (currentLevel !=2) timeInt = int(elapsed1.asSeconds());
-				for (std::shared_ptr<Roomba> roomba : roombas) {
-					roomba->draw(window);
+				if (currentLevel != 2) {
+					timeInt = int(elapsed1.asSeconds());
 				}
-				if (currentLevel == 2) {
+				else if (currentLevel == 2) {
 					end_game(timeInt, viewX, window, count, high);
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
 					escape(timer, viewX, window);
 				}
-				if (!maro.get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
+				if (!maro->get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
 					std::string message = "You lost, press\n enter to reset.";
 					sf::Font font;
 					if (!font.loadFromFile("arial.ttf")) {}
