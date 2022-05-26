@@ -35,8 +35,27 @@ TEST_CASE("Testing Maro") {
 		REQUIRE(maro.get_big() == 0);
 		sf::FloatRect hitBox = sf::FloatRect(200, 200, CELL_SIZE, CELL_SIZE);
 		REQUIRE(maro.get_hit_box() == hitBox);
-
-
+		maro.reset();
+		hitBox = sf::FloatRect(0, 0, CELL_SIZE, CELL_SIZE);
+		REQUIRE(maro.get_x() == 0);
+		REQUIRE(maro.get_y() == 0);
+		REQUIRE(maro.get_flipped() == 0);
+		REQUIRE(maro.get_big() == 0);
+		REQUIRE(maro.get_hit_box() == hitBox);
+		/*Mushroom mushroom(0, 0);
+		std::vector<Mushroom> mushrooms;
+		mushrooms.push_back(mushroom);
+		unsigned int count = 0;
+		maro.add_mushroom(mushroom);
+		maro.check_collision_with_Mushrooms(mushrooms, count);
+		CHECK(count == 200);
+		CHECK(maro.get_big() == 1);
+		CHECK(mushrooms.size() == 0);
+		mushrooms.push_back(mushroom);
+		maro.check_collision_with_Mushrooms(mushrooms, count);
+		CHECK(count == 1200);
+		CHECK(maro.get_big() == 1);
+		*/
 	}
 }
 
@@ -61,6 +80,30 @@ TEST_CASE("Testing Roomba") {
         CHECK(roomba.get_x() == 10);
         CHECK(roomba.get_y() == 20);
     }
+
+
+	SECTION("testing update") {
+		Maro maro;
+		maro.set_position(600, 100);
+		sf::Image mapSketch;
+		sf::Texture mapTexture;
+		mapTexture.loadFromFile("Map.png");
+		mapSketch.loadFromFile("LevelSketch0.png");
+		LevelManager levelManager(mapSketch);
+		std::shared_ptr<Roomba> roomba1 = std::make_shared<Roomba>();
+		std::vector<std::shared_ptr<Roomba>> roombas;
+		roombas.push_back(roomba1);
+		sf::Color backgroundColor = sf::Color(0, 219, 255);
+		unsigned char levelFinish = 0;
+		Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
+		unsigned viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+		float xBeforeUpdate = roomba1->get_x();
+		float yBeforeUpdate = roomba1->get_y();
+		roomba1->update(map, viewX, roombas);
+		CHECK(roomba1->get_x() == xBeforeUpdate + 1);
+		CHECK(roomba1->get_y() == yBeforeUpdate);
+
+	}
 }
 
 
