@@ -88,7 +88,9 @@ void whole_Game() {
 				window.setView(view);
 				window.clear(backgroundColor);
 				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, map);
-				maro.draw_mushrooms(mushrooms, viewX, window);
+				for (std::shared_ptr<Mushroom> mushroom : mushrooms) {
+					mushroom->draw(viewX, window);
+				}
 				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
 				levelManager.update();
 				maro.draw(window);

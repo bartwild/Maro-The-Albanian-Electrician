@@ -44,7 +44,6 @@ public:
 	float get_y() const;
 	void die(bool instant);
 	char get_death_timer();
-	void draw_mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, const unsigned aViewX, sf::RenderWindow& aWindow);
 	sf::FloatRect get_hit_box() const;
 	void check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>>& aRoombas, unsigned int& count);
 	void check_collision_with_Mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count);

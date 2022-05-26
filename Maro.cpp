@@ -119,13 +119,6 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Maro::draw_mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, const unsigned aViewX, sf::RenderWindow& aWindow){
-	for (std::shared_ptr<Mushroom> mushroom : mushrooms){
-		mushroom->draw(aViewX, aWindow);
-	}
-}
-
-
 void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>>& aRoombas, std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count) {
 	bool moving = 0;
 	onGround = 0;
