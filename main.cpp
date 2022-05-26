@@ -4,6 +4,9 @@
 #include "LevelManager.h"
 
 
+void whole_game();
+
+
 unsigned int high_score_load(unsigned int& points) {
 	std::ifstream currentHighScore(filename);
 	double current;
@@ -23,7 +26,30 @@ void high_score_save(unsigned int& points) {
 }
 
 
-void whole_Game() {
+void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
+	timer = 1;
+	std::string message = "\t   Are you sure? \n    press enter if yes\npress anything else if no";
+	sf::Font font;
+	if (!font.loadFromFile("arial.ttf")) {}
+	sf::Text text(message, font, 20);
+	text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
+	text.setFillColor(sf::Color(0, 0, 0));
+	window.draw(text);
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		window.close();
+		whole_game();
+	}
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+		for (auto& element : keysNoEscAndEnt) {
+			if (sf::Keyboard::isKeyPressed(element)) {
+				timer = 0;
+			}
+		}
+	}
+}
+
+
+void whole_game() {
 	Maro maro;
 	std::vector<std::shared_ptr<Roomba>> roombas;
 	std::vector<std::shared_ptr<Mushroom>> mushrooms;
@@ -117,29 +143,11 @@ void whole_Game() {
 					}
 ;					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
-						whole_Game();
+						whole_game();
 					}
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
-					timer = 1;
-					std::string message = "\t   Are you sure? \n    press enter if yes\npress anything else if no";
-					sf::Font font;
-					if (!font.loadFromFile("arial.ttf")) {}
-					sf::Text text(message, font, 20);
-					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
-					text.setFillColor(sf::Color(0, 0, 0));
-					window.draw(text);
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-						window.close();
-						whole_Game();
-					}
-					if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-						for (auto& element : keysNoEscAndEnt) {
-							if (sf::Keyboard::isKeyPressed(element)) {
-								timer = 0;
-							}
-						}
-					}
+					escape(timer, viewX, window);
 				}
 				if (!maro.get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
 					std::string message = "You lost, press\n enter to reset.";
@@ -151,12 +159,12 @@ void whole_Game() {
 					window.draw(text);
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
-						whole_Game();
+						whole_game();
 					}
 				}
 				if (currentLevel == 2 && (int(360 - elapsed1.asSeconds()) == 0)) {
 					window.close();
-					whole_Game();
+					whole_game();
 				}
 				std::string message1 = "high score: " + std::to_string(high);
 				if (count > high) {
@@ -186,6 +194,6 @@ void whole_Game() {
 
 
 int main() {
-	whole_Game();
+	whole_game();
 	return 0;
 }
