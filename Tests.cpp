@@ -97,8 +97,11 @@ TEST_CASE("Testing Level Manager") {
         sf::Image mapSketch;
         mapSketch.loadFromFile("LevelSketch0.png");
         LevelManager levelManager(mapSketch);
-        sf::Color pixel = levelManager.get_map_sketch_pixel(17, 10);
-        CHECK(pixel == sf::Color(182, 73, 0));
+        sf::Color pixel = levelManager.get_map_sketch_pixel(16, 9);
+		std::cout << pixel.r << ',' << pixel.g << ',' << pixel.b;
+		CHECK(unsigned int(pixel.r) == 255);
+		CHECK(unsigned int(pixel.g) == 146);
+		CHECK(unsigned int(pixel.b) == 85);
     }
 }
 
