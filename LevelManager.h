@@ -13,6 +13,7 @@ class LevelManager{
 	sf::Texture pole;
 	std::vector<Object> questionBlockCoins;
 public:
+	LevelManager(){};
 	LevelManager(sf::Image& aMapSketch);
 	void update();
 	void set_sketch(const sf::Image& sketch);
