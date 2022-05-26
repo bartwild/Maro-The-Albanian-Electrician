@@ -26,6 +26,28 @@ void high_score_save(unsigned int& points) {
 }
 
 
+void end_game(unsigned int& timeInt, unsigned viewX, sf::RenderWindow& window, unsigned int& count, unsigned int& high) {
+	std::string message = "\t    You won.\n   Congratulations.\n press Enter to reset.";
+	sf::Font font;
+	if (!font.loadFromFile("arial.ttf")) {}
+	sf::Text text(message, font, 20);
+	text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
+	text.setFillColor(sf::Color(0, 0, 0));
+	window.draw(text);
+	count += (360 - timeInt) * 50;
+	timeInt = 360;
+	if (count > high) {
+		high_score_save(count);
+	}
+	else {
+		high_score_save(high);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+		window.close();
+		whole_game();
+	}
+}
+
 void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
 	timer = 1;
 	std::string message = "\t   Are you sure? \n    press enter if yes\npress anything else if no";
@@ -126,25 +148,7 @@ void whole_game() {
 					roomba->draw(window);
 				}
 				if (currentLevel == 2) {
-					std::string message = "\t    You won.\n   Congratulations.\n press Enter to reset.";
-					sf::Font font;
-					if (!font.loadFromFile("arial.ttf")) {}
-					sf::Text text(message, font, 20);
-					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 10, 0));
-					text.setFillColor(sf::Color(0, 0, 0));
-					window.draw(text);
-					count += (360-timeInt) * 50;
-					timeInt = 360;
-					if (count > high) {
-						high_score_save(count);
-					}
-					else {
-						high_score_save(high);
-					}
-;					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-						window.close();
-						whole_game();
-					}
+					end_game(timeInt, viewX, window, count, high);
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
 					escape(timer, viewX, window);
