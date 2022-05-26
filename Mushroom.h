@@ -12,7 +12,6 @@ class Mushroom {
 	float x;
 	float y;
 	float startY;
-	char direction;
 	sf::Sprite sprite;
 	sf::Texture texture;
 public:
@@ -26,4 +25,5 @@ public:
 	float get_y() const;
 	float get_xSpeed() const;
 	float get_ySpeed() const;
+	void set_x_y(float newX, float newY);
 };

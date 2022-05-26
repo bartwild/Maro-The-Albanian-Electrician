@@ -5,7 +5,6 @@ Mushroom::Mushroom(const float aX, const float aY) {
 	dead = 0;
 	x = aX;
 	y = aY;
-	direction = 1;
 	xSpeed = MUSHROOM_SPEED;
 	startY = y;
 	ySpeed = 0;
@@ -104,6 +103,13 @@ float Mushroom::get_xSpeed() const {
 	return xSpeed;
 }
 
+
 float Mushroom::get_ySpeed() const {
 	return ySpeed;
+}
+
+
+void Mushroom::set_x_y(float newX, float newY) {
+	x = newX;
+	y = newY;
 }
