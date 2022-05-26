@@ -119,17 +119,14 @@ void Maro::draw(sf::RenderWindow& aWindow) {
 }
 
 
-void Maro::draw_mushrooms(const unsigned aViewX, sf::RenderWindow& aWindow){
-	for (Mushroom& mushroom : mushrooms){
-		mushroom.draw(aViewX, aWindow);
+void Maro::draw_mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, const unsigned aViewX, sf::RenderWindow& aWindow){
+	for (std::shared_ptr<Mushroom> mushroom : mushrooms){
+		mushroom->draw(aViewX, aWindow);
 	}
 }
 
 
-void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count) {
-	for (Mushroom& mushroom : mushrooms) {
-		mushroom.move(aViewX, aMap);
-	}
+void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>>& aRoombas, std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count) {
 	bool moving = 0;
 	onGround = 0;
 	std::vector<sf::Vector2i> cells;
@@ -159,7 +156,7 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 		yCollision = Collisions::map_collision(x, ySpeed + y, aMap, big);
 		Collisions::get_collision_question_block(cells, x, y + ySpeed, aMap, big);
 		if (ySpeed <= 0) {
-			question_block_interaction(cells, levelManager, aMap, count);
+			question_block_interaction(cells, mushrooms, levelManager, aMap, count);
 		}
 		if (yCollision > 0) {
 			set_y_after_collision(yCollision);
@@ -220,11 +217,11 @@ void Maro::set_y_after_collision(unsigned char& yCollision) {
 }
 
 
-void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, LevelManager& levelManager, Map& aMap, unsigned int& count) {
+void Maro::question_block_interaction(std::vector<sf::Vector2i>& cells, std::vector<std::shared_ptr<Mushroom>>& mushrooms, LevelManager& levelManager, Map& aMap, unsigned int& count) {
 	for (const sf::Vector2i& cell : cells) {
 		levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::ActivatedQuestionBlock);
 		if (levelManager.get_map_sketch_pixel(cell.x, cell.y) == sf::Color(255, 73, 85)) {
-			mushrooms.push_back(Mushroom(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
+			mushrooms.push_back(std::make_shared<Mushroom>(CELL_SIZE * cell.x, CELL_SIZE * cell.y));
 		}
 		else {
 			levelManager.add_question_block_coin(CELL_SIZE * cell.x, CELL_SIZE * cell.y);
@@ -360,7 +357,6 @@ void Maro::reset() {
 	big = 0;
 	deathTimer = MARO_DEATH_TIMER;
 	growthTimer = 0;
-	mushrooms.clear();
 	texture.loadFromFile(TEXTURES_PATH + "MaroIdle.png");
 	sprite.setTexture(texture);
 	bigWalkAnimation.set_flipped(0);
@@ -368,7 +364,7 @@ void Maro::reset() {
 }
 
 
-void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRoombas, unsigned int& count) {
+void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>>& aRoombas, unsigned int& count) {
 	std::shared_ptr<Roomba> hitRoomba = nullptr;
 	for (std::shared_ptr<Roomba> roomba : aRoombas) {
 		if ((get_hit_box().intersects(roomba->get_hit_box()) == 1) && (roomba->get_whether_dead() == 0)) {
@@ -392,10 +388,10 @@ void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRo
 }
 
 
-void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, unsigned int& count) {
-	for (Mushroom& mushroom : mushrooms) {
-		if (get_hit_box().intersects(mushroom.get_hit_box())) {
-			mushroom.die(1);
+void Maro::check_collision_with_Mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count) {
+	for (std::shared_ptr<Mushroom> mushroom : mushrooms) {
+		if (get_hit_box().intersects(mushroom->get_hit_box())) {
+			mushroom->die(1);
 			if (big) count += 1000;
 			if (!big) {
 				count += 200;
@@ -408,8 +404,8 @@ void Maro::check_collision_with_Mushrooms(std::vector<Mushroom>& aMushrooms, uns
 	if (growthTimer > 0) {
 		growthTimer--;
 	}
-	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](const Mushroom& i_mushroom) {
-		return i_mushroom.get_whether_dead() == 1;
+	mushrooms.erase(remove_if(mushrooms.begin(), mushrooms.end(), [](std::shared_ptr<Mushroom> i_mushroom) {
+		return i_mushroom->get_whether_dead() == 1;
 	}), mushrooms.end());
 }
 

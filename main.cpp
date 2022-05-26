@@ -26,6 +26,7 @@ void high_score_save(unsigned int& points) {
 void whole_Game() {
 	Maro maro;
 	std::vector<std::shared_ptr<Roomba>> roombas;
+	std::vector<std::shared_ptr<Mushroom>> mushrooms;
 	unsigned viewX;
 	sf::Event event;
 	sf::Clock clock;
@@ -70,7 +71,7 @@ void whole_Game() {
 				map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 			}
 			viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-			maro.update(levelManager, viewX, map, roombas, count);
+			maro.update(levelManager, viewX, map, roombas, mushrooms, count);
 			for (unsigned short i = 0; i < roombas.size(); i++) {
 				if (roombas[i]->get_death_timer() == 0) {
 					roombas.erase(roombas.begin() + i);
@@ -79,12 +80,15 @@ void whole_Game() {
 			for (std::shared_ptr<Roomba> roomba : roombas) {
 				roomba->update(map, viewX, roombas);
 			}
+			for (std::shared_ptr<Mushroom> mushroom : mushrooms) {
+				mushroom->move(viewX, map);
+			}
 			if (FRAME_DURATION > lag) {
 				view.reset(sf::FloatRect(viewX, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 				window.setView(view);
 				window.clear(backgroundColor);
 				levelManager.draw_map(1, viewX, window, backgroundColor, mapTexture, map);
-				maro.draw_mushrooms(viewX, window);
+				maro.draw_mushrooms(mushrooms, viewX, window);
 				levelManager.draw_map(0, viewX, window, backgroundColor, mapTexture, map);
 				levelManager.update();
 				maro.draw(window);
