@@ -140,8 +140,7 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 							}
 						}
 					}
-					else if (mapSketch.getPixel(i, j) == (sf::Color(0, 219, 0)))
-					{
+					else if (mapSketch.getPixel(i, j) == (sf::Color(0, 219, 0))) {
 						if (mapSketch.getPixel(1 + i, j) == sf::Color(0, 182, 0)) {
 							x = 12;
 						}
@@ -247,7 +246,7 @@ Map LevelManager::sketch_to_map(Maro& aMaro, unsigned char& finish, sf::Color& b
 				}
 				else {
 					finalMap[i][j] = Cell::Empty;
-					if (sf::Color(0, 255, 255) == pixel){
+					if (sf::Color(0, 255, 255) == pixel) {
 						finish = i;
 					}
 				}
@@ -273,9 +272,8 @@ void LevelManager::update() {
 		questionBlockCoin.ySpeed += GRAVITY;
 		questionBlockCoin.y += questionBlockCoin.ySpeed;
 	}
-	questionBlockCoins.erase(remove_if(questionBlockCoins.begin(), questionBlockCoins.end(), [](const Object& questionBlockCoin)
-		{
-			return 0 <= questionBlockCoin.ySpeed;
+	questionBlockCoins.erase(remove_if(questionBlockCoins.begin(), questionBlockCoins.end(), [](const Object& questionBlockCoin) {
+			return questionBlockCoin.ySpeed >= 0;
 		}), questionBlockCoins.end());
 	questionBlockAnimation.step(0);
 	coinAnimation.step(1);

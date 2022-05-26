@@ -382,7 +382,7 @@ void Maro::check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>> aRo
 		count += 200;;
 		ySpeed = MARO_VKILL;
 	}
-	else if (onGround == 1 && hit == 1 && hitTimer == 0 || ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0) {
+	else if ((onGround == 1 && hit == 1 && hitTimer == 0) || (ySpeed <= 0 && hit == 1 && hitTimer == 0 && hitRoomba->get_ySpeed() > 0)) {
 		hitTimer = MARO_HIT_TIMER;
 		die(0);
 	}
