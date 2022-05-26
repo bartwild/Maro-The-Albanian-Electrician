@@ -94,7 +94,7 @@ TEST_CASE("Testing Roomba") {
 		std::vector<std::shared_ptr<Roomba>> roombas;
 		roombas.push_back(roomba1);
 		sf::Color backgroundColor = sf::Color(0, 219, 255);
-		unsigned char levelFinish = 0;
+		unsigned short levelFinish = 0;
 		Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
 		unsigned viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 		float xBeforeUpdate = roomba1->get_x();
@@ -152,7 +152,7 @@ TEST_CASE("Testing Level Manager") {
 TEST_CASE("Testing Collisions") {
 	// Some stuff needeed for tests
 	Maro maro;
-	unsigned char levelFinish = 0;
+	unsigned short levelFinish = 0;
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	sf::Image mapSketch;
 	sf::Image mapSketch2;
