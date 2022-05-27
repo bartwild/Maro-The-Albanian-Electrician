@@ -55,21 +55,26 @@ void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCu
 	}
 }
 
+
 std::vector<std::shared_ptr<Mushroom>> GameManager::get_mushrooms() {
 	return mushrooms;
 }
+
 
 std::vector<std::shared_ptr<Roomba>> GameManager::get_roombas() {
 	return roombas;
 }
 
+
 std::shared_ptr<Maro> GameManager::get_maro() {
 	return maro;
 }
 
+
 std::shared_ptr<LevelManager> GameManager::get_level_manager() {
 	return levelManager;
 }
+
 
 Map GameManager::get_map() {
 	return map;
