@@ -43,6 +43,10 @@ TEST_CASE("Testing Maro") {
 		REQUIRE(maro.get_flipped() == 0);
 		REQUIRE(maro.get_big() == 0);
 		REQUIRE(maro.get_hit_box() == hitBox);
+	}
+
+
+	SECTION("Testing Mechanics") {
 		std::shared_ptr<Mushroom> mushroom = std::make_shared<Mushroom>(32, 192);
 		std::shared_ptr<Mushroom> mushroom2 = std::make_shared<Mushroom>(100, 100);
 		std::vector<std::shared_ptr<Mushroom>> mushrooms;
@@ -66,10 +70,39 @@ TEST_CASE("Testing Maro") {
 		CHECK(count == 200);
 		CHECK(maroP->get_big() == 1);
 		CHECK(gameManager.get_mushrooms().size() == 1);
-		maroP->set_position(100,100);
+		maroP->set_position(100, 100);
 		gameManager.update_objects(viewX, count);
 		CHECK(count == 1200);
 		CHECK(maroP->get_big() == 1);
+		maroP->set_position(22 * CELL_SIZE, 11 * CELL_SIZE - 2);
+		gameManager.update_objects(viewX, count);
+		gameManager.update_objects(viewX, count);
+		CHECK(gameManager.get_roombas()[0]->get_whether_dead() == 1);
+		CHECK(gameManager.get_roombas().size() == 16);
+		CHECK(count == 1400);
+		unsigned int i = 0;
+		while (i < 32) {
+			gameManager.update_objects(viewX, count);
+			i += 1;
+		}
+		CHECK(gameManager.get_roombas().size() == 15);
+		CHECK(gameManager.get_roombas()[0]->get_whether_dead() == 0);
+		maroP->set_position(40 * CELL_SIZE, 11 * CELL_SIZE);
+		gameManager.update_objects(viewX, count);
+		CHECK(gameManager.get_roombas()[0]->get_whether_dead() == 0);
+		CHECK(maroP->get_big() == 0);
+		while (i < 256) {
+			gameManager.update_objects(viewX, count);
+			i += 1;
+		}
+		CHECK(maroP->get_death_timer() == 0);
+		CHECK(gameManager.get_roombas()[0]->get_whether_dead() == 0);
+		maroP->reset();
+		CHECK(maroP->get_death_timer() > 0);
+		CHECK(maroP->get_on_ground() == 0);
+		maroP->set_position(10 * CELL_SIZE, 12 * CELL_SIZE);
+		gameManager.update_objects(viewX, count);
+		CHECK(maroP->get_on_ground() == 1);
 	}
 }
 
