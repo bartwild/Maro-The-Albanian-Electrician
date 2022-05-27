@@ -75,6 +75,18 @@ TEST_CASE("Testing Maro") {
 
 
 TEST_CASE("Testing Roomba") {
+	Maro maro;
+	maro.set_position(600, 100);
+	sf::Image mapSketch;
+	sf::Texture mapTexture;
+	mapTexture.loadFromFile(MAP_PATH + "Map.png");
+	mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
+	LevelManager levelManager(mapSketch);
+	std::vector<std::shared_ptr<Roomba>> roombas;
+	sf::Color backgroundColor = sf::Color(0, 219, 255);
+	unsigned short levelFinish = 0;
+	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
+	unsigned viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 
 
     SECTION("testing constructor") {
@@ -97,26 +109,16 @@ TEST_CASE("Testing Roomba") {
 
 
 	SECTION("testing update") {
-		Maro maro;
-		maro.set_position(600, 100);
-		sf::Image mapSketch;
-		sf::Texture mapTexture;
-		mapTexture.loadFromFile(MAP_PATH + "Map.png");
-		mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
-		LevelManager levelManager(mapSketch);
-		std::shared_ptr<Roomba> roomba1 = std::make_shared<Roomba>();
-		std::vector<std::shared_ptr<Roomba>> roombas;
-		roombas.push_back(roomba1);
-		sf::Color backgroundColor = sf::Color(0, 219, 255);
-		unsigned short levelFinish = 0;
-		Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
-		unsigned viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-		float xBeforeUpdate = roomba1->get_x();
-		float yBeforeUpdate = roomba1->get_y();
-		roomba1->update(map, viewX, roombas);
-		CHECK(roomba1->get_x() == xBeforeUpdate + 1);
-		CHECK(roomba1->get_y() == yBeforeUpdate);
-
+		float xBeforeUpdate = roombas[1]->get_x();
+		float yBeforeUpdate = roombas[1]->get_y();
+		roombas[1]->update(map, viewX, roombas);
+		CHECK(roombas[1]->get_x() == xBeforeUpdate + 1);
+		CHECK(roombas[1]->get_y() == yBeforeUpdate);
+	}
+	SECTION ("testing Roomba interaction") {
+		roombas[2]->set_position(23, 27);
+		roombas[2]->update(map, viewX, roombas);
+		CHECK(roombas[2]->get_walkingOnRoomba() == 1);
 	}
 }
 
@@ -156,9 +158,9 @@ TEST_CASE("Testing Level Manager") {
         LevelManager levelManager(mapSketch);
         sf::Color pixel = levelManager.get_map_sketch_pixel(16, 9);
 		std::cout << pixel.r << ',' << pixel.g << ',' << pixel.b;
-		CHECK(unsigned int(pixel.r) == 255);
-		CHECK(unsigned int(pixel.g) == 146);
-		CHECK(unsigned int(pixel.b) == 85);
+		CHECK((unsigned int)pixel.r == 255);
+		CHECK((unsigned int)pixel.g == 146);
+		CHECK((unsigned int)pixel.b == 85);
     }
 }
 
