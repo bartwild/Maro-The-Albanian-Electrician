@@ -48,7 +48,7 @@ void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCu
 		aCurrentLevel++;
 		roombas.clear();
 		maro->reset();
-		aMapSketch.loadFromFile("LevelSketch" + std::to_string(aCurrentLevel) + ".png");
+		aMapSketch.loadFromFile(MAP_PATH + "LevelSketch" + std::to_string(aCurrentLevel) + ".png");
 		levelManager->set_sketch(aMapSketch);
 		map = levelManager->sketch_to_map(*maro, aLevelFinish, aBackgroundColor, roombas);
 	}

@@ -89,7 +89,7 @@ void whole_game() {
 	unsigned short currentLevel = 0;
 	unsigned int high = high_score_load(count);
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
-	mapSketch.loadFromFile("LevelSketch0.png");
+	mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
 	std::shared_ptr<LevelManager> levelManager = std::make_shared<LevelManager>(mapSketch);
 	std::chrono::microseconds lag(0);
 	std::chrono::steady_clock::time_point previousTime;
@@ -99,7 +99,7 @@ void whole_game() {
 	window.setView(sf::View(sf::FloatRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)));
 	previousTime = std::chrono::steady_clock::now();;
 	Map map = levelManager->sketch_to_map(*maro, levelFinish, backgroundColor, roombas);
-	mapTexture.loadFromFile("Map.png");
+	mapTexture.loadFromFile(MAP_PATH + "Map.png");
 	GameManager gameManager(maro, map, levelManager, roombas, mushrooms);
 	while (window.isOpen()) {
 		std::chrono::microseconds deltaTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - previousTime);

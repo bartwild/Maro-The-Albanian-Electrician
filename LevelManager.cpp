@@ -2,8 +2,8 @@
 
 
 LevelManager::LevelManager(sf::Image& aMapSketch) {
-	questionBlockAnimation = Animation(CELL_SIZE, "QuestionBlock.png", QUESTION_BLOCK_ANIMATION_SPEED);
-	coinAnimation = Animation(CELL_SIZE, "Coin.png", QUESTION_BLOCK_ANIMATION_SPEED/2);
+	questionBlockAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "QuestionBlock.png", QUESTION_BLOCK_ANIMATION_SPEED);
+	coinAnimation = Animation(CELL_SIZE, TEXTURES_PATH + "Coin.png", QUESTION_BLOCK_ANIMATION_SPEED/2);
 	pole.loadFromFile(TEXTURES_PATH + "PhonePole.png");
 	mapSketch = aMapSketch;
 }

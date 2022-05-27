@@ -8,7 +8,7 @@ Mushroom::Mushroom(const float aX, const float aY) {
 	xSpeed = MUSHROOM_SPEED;
 	startY = y;
 	ySpeed = 0;
-	texture.loadFromFile("Mushroom.png");
+	texture.loadFromFile(TEXTURES_PATH + "Mushroom.png");
 }
 
 
