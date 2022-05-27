@@ -47,9 +47,30 @@ void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCu
 	if ((CELL_SIZE * aLevelFinish <= maro->get_x() && aCurrentLevel == 0) || (aCurrentLevel == 1 && CELL_SIZE * aLevelFinish <= maro->get_x() && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
 		aCurrentLevel++;
 		roombas.clear();
+		mushrooms.clear();
 		maro->reset();
 		aMapSketch.loadFromFile(MAP_PATH + "LevelSketch" + std::to_string(aCurrentLevel) + ".png");
 		levelManager->set_sketch(aMapSketch);
 		map = levelManager->sketch_to_map(*maro, aLevelFinish, aBackgroundColor, roombas);
 	}
+}
+
+std::vector<std::shared_ptr<Mushroom>> GameManager::get_mushrooms() {
+	return mushrooms;
+}
+
+std::vector<std::shared_ptr<Roomba>> GameManager::get_roombas() {
+	return roombas;
+}
+
+std::shared_ptr<Maro> GameManager::get_maro() {
+	return maro;
+}
+
+std::shared_ptr<LevelManager> GameManager::get_level_manager() {
+	return levelManager;
+}
+
+Map GameManager::get_map() {
+	return map;
 }

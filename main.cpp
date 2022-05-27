@@ -113,6 +113,7 @@ void whole_game() {
 				}
 			}
 			gameManager.change_level(levelFinish, currentLevel, mapSketch, backgroundColor);
+			map = gameManager.get_map();
 			if (currentLevel != 2) {
 				viewX = std::clamp<int>(round(maro->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
 			}

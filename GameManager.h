@@ -16,4 +16,9 @@ public:
     void update_objects(unsigned int& aViewX, unsigned int& aCount);
     void draw(sf::RenderWindow& aWindow, unsigned int& aViewX, sf::View& aView, sf::Color& aBackgroundColor, sf::Texture& aMapTexture);
     void change_level(unsigned short& aLevelFinish, unsigned short& aCurrentLevel, sf::Image& aMapSketch, sf::Color& aBackgroundColor);
+    std::vector<std::shared_ptr<Mushroom>> get_mushrooms();
+    std::vector<std::shared_ptr<Roomba>> get_roombas();
+    std::shared_ptr<Maro> get_maro();
+    std::shared_ptr<LevelManager> get_level_manager();
+    Map get_map();
 };
