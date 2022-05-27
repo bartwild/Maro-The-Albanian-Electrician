@@ -7,6 +7,7 @@
 #include "Maro.h"
 #include "Mushroom.h"
 #include "Roomba.h"
+#include "GameManager.h"
 
 
 
@@ -42,20 +43,33 @@ TEST_CASE("Testing Maro") {
 		REQUIRE(maro.get_flipped() == 0);
 		REQUIRE(maro.get_big() == 0);
 		REQUIRE(maro.get_hit_box() == hitBox);
-		/*Mushroom mushroom(0, 0);
-		std::vector<Mushroom> mushrooms;
+		std::shared_ptr<Mushroom> mushroom = std::make_shared<Mushroom>(32, 192);
+		std::shared_ptr<Mushroom> mushroom2 = std::make_shared<Mushroom>(100, 100);
+		std::vector<std::shared_ptr<Mushroom>> mushrooms;
 		mushrooms.push_back(mushroom);
+		mushrooms.push_back(mushroom2);
 		unsigned int count = 0;
-		maro.add_mushroom(mushroom);
-		maro.check_collision_with_Mushrooms(mushrooms, count);
+		unsigned short levelFinish = 0;
+		sf::Color backgroundColor = sf::Color(0, 219, 255);
+		sf::Image mapSketch;
+		mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
+		sf::Texture mapTexture;
+		mapTexture.loadFromFile(MAP_PATH + "Map.png");
+		std::vector<std::shared_ptr<Roomba>> roombas;
+		std::shared_ptr<LevelManager> levelManager = std::make_shared<LevelManager>(mapSketch);
+		std::shared_ptr<Maro> maroP = std::make_shared<Maro>();
+		Map map = levelManager->sketch_to_map(*maroP, levelFinish, backgroundColor, roombas);
+		std::vector<sf::Vector2i> collisionCells;
+		GameManager gameManager(maroP, map, levelManager, roombas, mushrooms);
+		unsigned viewX = std::clamp<int>(round(maroP->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
+		gameManager.update_objects(viewX, count);
 		CHECK(count == 200);
-		CHECK(maro.get_big() == 1);
-		CHECK(mushrooms.size() == 0);
-		mushrooms.push_back(mushroom);
-		maro.check_collision_with_Mushrooms(mushrooms, count);
+		CHECK(maroP->get_big() == 1);
+		CHECK(gameManager.get_mushrooms().size() == 1);
+		maroP->set_position(100,100);
+		gameManager.update_objects(viewX, count);
 		CHECK(count == 1200);
-		CHECK(maro.get_big() == 1);
-		*/
+		CHECK(maroP->get_big() == 1);
 	}
 }
 
@@ -87,7 +101,7 @@ TEST_CASE("Testing Roomba") {
 		maro.set_position(600, 100);
 		sf::Image mapSketch;
 		sf::Texture mapTexture;
-		mapTexture.loadFromFile("Map.png");
+		mapTexture.loadFromFile(MAP_PATH + "Map.png");
 		mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
 		LevelManager levelManager(mapSketch);
 		std::shared_ptr<Roomba> roomba1 = std::make_shared<Roomba>();
