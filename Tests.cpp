@@ -88,7 +88,7 @@ TEST_CASE("Testing Roomba") {
 		sf::Image mapSketch;
 		sf::Texture mapTexture;
 		mapTexture.loadFromFile("Map.png");
-		mapSketch.loadFromFile("LevelSketch0.png");
+		mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
 		LevelManager levelManager(mapSketch);
 		std::shared_ptr<Roomba> roomba1 = std::make_shared<Roomba>();
 		std::vector<std::shared_ptr<Roomba>> roombas;
@@ -138,7 +138,7 @@ TEST_CASE("Testing Level Manager") {
         std::vector<Roomba> roombas = { roomba1, roomba2 };
         sf::Color backgroundColor = sf::Color(0, 219, 255);
         sf::Image mapSketch;
-        mapSketch.loadFromFile("LevelSketch0.png");
+        mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
         LevelManager levelManager(mapSketch);
         sf::Color pixel = levelManager.get_map_sketch_pixel(16, 9);
 		std::cout << pixel.r << ',' << pixel.g << ',' << pixel.b;
@@ -156,10 +156,10 @@ TEST_CASE("Testing Collisions") {
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	sf::Image mapSketch;
 	sf::Image mapSketch2;
-	mapSketch.loadFromFile("LevelSketch0.png");
-	mapSketch2.loadFromFile("LevelSketch1.png");
+	mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
+	mapSketch2.loadFromFile(MAP_PATH + "LevelSketch1.png");
 	sf::Texture mapTexture;
-	mapTexture.loadFromFile("Map.png");
+	mapTexture.loadFromFile(MAP_PATH + "Map.png");
 	std::vector<std::shared_ptr<Roomba>> roombas;
 	LevelManager levelManager(mapSketch);
 	LevelManager levelManager2(mapSketch2);
