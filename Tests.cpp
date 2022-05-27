@@ -147,6 +147,8 @@ TEST_CASE("Testing Roomba") {
 		CHECK(roombas[1]->get_x() == xBeforeUpdate + 1);
 		CHECK(roombas[1]->get_y() == yBeforeUpdate);
 	}
+
+
 	SECTION ("testing Roomba interaction") {
 		roombas[2]->set_position(40*CELL_SIZE, 11*CELL_SIZE-0.2);
 		for (std::shared_ptr<Roomba> roomba : roombas) {
@@ -181,11 +183,9 @@ TEST_CASE("Testing mushroom") {
     }
 }
 
+
 TEST_CASE("Testing Level Manager") {
-
-
-    SECTION("testing level 1") {
-        Maro maro;
+	 Maro maro;
         Roomba roomba1;
         Roomba roomba2;
         std::vector<Roomba> roombas = { roomba1, roomba2 };
@@ -193,11 +193,21 @@ TEST_CASE("Testing Level Manager") {
         sf::Image mapSketch;
         mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
         LevelManager levelManager(mapSketch);
+
+
+    SECTION("testing sketch to map level 0") {
         sf::Color pixel = levelManager.get_map_sketch_pixel(16, 9);
-		std::cout << pixel.r << ',' << pixel.g << ',' << pixel.b;
 		CHECK((unsigned int)pixel.r == 255);
 		CHECK((unsigned int)pixel.g == 146);
 		CHECK((unsigned int)pixel.b == 85);
+		sf::Color pixel = levelManager.get_map_sketch_pixel(57, 10);
+		CHECK((unsigned int)pixel.r == 0);
+		CHECK((unsigned int)pixel.g == 182 || (unsigned int)pixel.g == 146 || (unsigned int)pixel.g == 219);
+		CHECK((unsigned int)pixel.b == 0);
+		sf::Color pixel = levelManager.get_map_sketch_pixel(100, 9);
+		CHECK((unsigned int)pixel.r == 182);
+		CHECK((unsigned int)pixel.g == 73);
+		CHECK((unsigned int)pixel.b == 0);
     }
 }
 
