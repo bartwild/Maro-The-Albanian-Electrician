@@ -140,6 +140,8 @@ void Maro::update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, st
 				for (const sf::Vector2i& cell : cells) {
 					if (destroyTimer == 0) {
 						levelManager.set_map_cell(aMap, cell.x, cell.y, Cell::Empty);
+						jumpTimer = 0;
+						ySpeed += 1.5;
 					}
 					destroyTimer = MARO_DESTROY_TIMER;
 				}
