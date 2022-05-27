@@ -49,6 +49,7 @@ void end_game(unsigned int& timeInt, unsigned viewX, sf::RenderWindow& window, u
 	}
 }
 
+
 void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
 	timer = 1;
 	std::string message = "\t   Are you sure? \n    press enter if yes\npress anything else if no";

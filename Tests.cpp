@@ -200,8 +200,8 @@ TEST_CASE("Testing mushroom") {
 		mushrooms.push_back(mushroom);
 		unsigned viewX = 600;
 		mushroom->move(viewX, map);
-		CHECK(mushroom->get_x() == 600+3*CELL_SIZE + 1);
-		CHECK(mushroom->get_y() == 100);
+		CHECK(mushroom->get_x() == 600 + 3 * CELL_SIZE);
+		CHECK(mushroom->get_y() == 99);
 	}
 }
 
@@ -222,11 +222,11 @@ TEST_CASE("Testing Level Manager") {
 		CHECK((unsigned int)pixel.r == 255);
 		CHECK((unsigned int)pixel.g == 146);
 		CHECK((unsigned int)pixel.b == 85);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(57, 10);
+		pixel = levelManager.get_map_sketch_pixel(58, 10);
 		CHECK((unsigned int)pixel.r == 0);
-		CHECK((unsigned int)pixel.g == 182 || (unsigned int)pixel.g == 146 || (unsigned int)pixel.g == 219);
+		CHECK((unsigned int)pixel.g == 182);
 		CHECK((unsigned int)pixel.b == 0);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(100, 9);
+		pixel = levelManager.get_map_sketch_pixel(101, 9);
 		CHECK((unsigned int)pixel.r == 182);
 		CHECK((unsigned int)pixel.g == 73);
 		CHECK((unsigned int)pixel.b == 0);
@@ -234,34 +234,34 @@ TEST_CASE("Testing Level Manager") {
 
 
 	SECTION("testing sketch to map level 1") {
-        sf::Color pixel = levelManager.get_map_sketch_pixel(13, 9);
+		mapSketch.loadFromFile(MAP_PATH + "LevelSketch1.png");
+		levelManager.set_sketch(mapSketch);
+        sf::Color pixel = levelManager.get_map_sketch_pixel(10, 9);
 		CHECK((unsigned int)pixel.r == 255);
-		CHECK((unsigned int)pixel.g == 146);
-		CHECK((unsigned int)pixel.b == 85);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(104, 11);
-		CHECK((unsigned int)pixel.r == 0);
-		CHECK((unsigned int)pixel.g == 182 || (unsigned int)pixel.g == 146 || (unsigned int)pixel.g == 219);
-		CHECK((unsigned int)pixel.b == 0);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(39, 7);
-		CHECK((unsigned int)pixel.r == 182);
 		CHECK((unsigned int)pixel.g == 73);
+		CHECK((unsigned int)pixel.b == 85);
+		pixel = levelManager.get_map_sketch_pixel(104, 12);
+		CHECK((unsigned int)pixel.r == 0);
+		CHECK((unsigned int)pixel.g == 182);
+		CHECK((unsigned int)pixel.b == 0);
+		pixel = levelManager.get_map_sketch_pixel(40, 8);
+		CHECK((unsigned int)pixel.r == 255);
+		CHECK((unsigned int)pixel.g == 255);
 		CHECK((unsigned int)pixel.b == 0);
     }
 
 
 	SECTION("testing sketch to map level 2") {
-        sf::Color pixel = levelManager.get_map_sketch_pixel(5, 8);
+		mapSketch.loadFromFile(MAP_PATH + "LevelSketch2.png");
+		levelManager.set_sketch(mapSketch);
+        sf::Color pixel = levelManager.get_map_sketch_pixel(6, 8);
+		CHECK((unsigned int)pixel.r == 146);
+		CHECK((unsigned int)pixel.g == 73);
+		CHECK((unsigned int)pixel.b == 0);
+		pixel = levelManager.get_map_sketch_pixel(5, 8);
 		CHECK((unsigned int)pixel.r == 255);
 		CHECK((unsigned int)pixel.g == 146);
 		CHECK((unsigned int)pixel.b == 85);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(14, 11);
-		CHECK((unsigned int)pixel.r == 0);
-		CHECK((unsigned int)pixel.g == 182 || (unsigned int)pixel.g == 146 || (unsigned int)pixel.g == 219);
-		CHECK((unsigned int)pixel.b == 0);
-		sf::Color pixel = levelManager.get_map_sketch_pixel(4, 8);
-		CHECK((unsigned int)pixel.r == 182);
-		CHECK((unsigned int)pixel.g == 73);
-		CHECK((unsigned int)pixel.b == 0);
     }
 }
 
