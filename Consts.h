@@ -10,6 +10,7 @@
 #include <chrono>
 #include <fstream>
 #include <iostream>
+#include <cmath>
 
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
