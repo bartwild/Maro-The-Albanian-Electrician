@@ -86,8 +86,7 @@ TEST_CASE("Testing Roomba") {
 	sf::Color backgroundColor = sf::Color(0, 219, 255);
 	unsigned short levelFinish = 0;
 	Map map = levelManager.sketch_to_map(maro, levelFinish, backgroundColor, roombas);
-	unsigned viewX = std::clamp<int>(round(maro.get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
-
+	unsigned viewX = 600;
 
     SECTION("testing constructor") {
         Roomba roomba;
@@ -116,8 +115,13 @@ TEST_CASE("Testing Roomba") {
 		CHECK(roombas[1]->get_y() == yBeforeUpdate);
 	}
 	SECTION ("testing Roomba interaction") {
-		roombas[2]->set_position(23, 27);
-		roombas[2]->update(map, viewX, roombas);
+		roombas[2]->set_position(40*CELL_SIZE, 11*CELL_SIZE-0.2);
+		for (std::shared_ptr<Roomba> roomba : roombas) {
+			roomba->update(map, viewX, roombas);
+		}
+		for (std::shared_ptr<Roomba> roomba : roombas) {
+			roomba->update(map, viewX, roombas);
+		}
 		CHECK(roombas[2]->get_walkingOnRoomba() == 1);
 	}
 }
