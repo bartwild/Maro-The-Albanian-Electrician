@@ -44,7 +44,7 @@ void GameManager::draw(sf::RenderWindow& aWindow, unsigned int& aViewX, sf::View
 
 
 void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCurrentLevel, sf::Image& aMapSketch, sf::Color& aBackgroundColor) {
-	if ((CELL_SIZE * aLevelFinish <= maro->get_x() && aCurrentLevel == 0) || (aCurrentLevel == 1 && CELL_SIZE * aLevelFinish <= maro->get_x() && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
+	if ((maro->get_x() >= CELL_SIZE * aLevelFinish && aCurrentLevel == 0) || (aCurrentLevel == 1 &&  maro->get_x() >= CELL_SIZE * aLevelFinish && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
 		aCurrentLevel++;
 		roombas.clear();
 		mushrooms.clear();
