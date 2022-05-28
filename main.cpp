@@ -163,7 +163,8 @@ void whole_game(bool loadFromSave) {
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timeresc != 0) {
 					escape(timeresc, viewX, window);
 				}
-				if (!maro->get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
+				if (!maro->get_death_timer() || (int(360 - elapsed1.asSeconds()) <= 0)) {
+					maro->die(1);
 					std::string message = "You lost, press\n enter to reset.";
 					sf::Font font;
 					if (!font.loadFromFile("arial.ttf")) {}
