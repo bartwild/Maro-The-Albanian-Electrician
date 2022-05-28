@@ -27,13 +27,13 @@ void high_score_save(unsigned int& points) {
 }
 
 
-void level_save(unsigned int lastLevelPoints, unsigned short currentLevel, sf::Time elapsed1) {
+void level_save(unsigned int lastLevelPoints, unsigned short currentLevel, float lastLevelTime) {
 	std::ofstream saveInfo(save, std::ios::trunc);
 	saveInfo << lastLevelPoints;
 	saveInfo << "\n";
 	saveInfo << currentLevel;
 	saveInfo << "\n";
-	saveInfo << elapsed1.asSeconds();
+	saveInfo << lastLevelTime;
 }
 
 
@@ -136,7 +136,9 @@ void whole_game(bool loadFromSave) {
 			lag -= FRAME_DURATION;
 			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed) {
-					level_save(lastLevelPoints, currentLevel, elapsed1);
+					if (currentLevel != 0) {
+						level_save(lastLevelPoints, currentLevel, lastLevelTime);
+					}
 					window.close();
 				}
 			}
