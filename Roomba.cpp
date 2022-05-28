@@ -91,39 +91,10 @@ void Roomba::update(const Map& aMap, const unsigned aViewX, std::vector<std::sha
 }
 
 
-float Roomba::get_x() const {
-	return x;
-}
-
-
-float Roomba::get_y() const {
-	return y;
-}
-
-
-float Roomba::get_ySpeed() const {
-	return ySpeed;
-}
-
-
-float Roomba::get_xSpeed() const {
-	return xSpeed;
-}
-
 bool Roomba::get_whether_dead() const {
 	return dead;
 }
 
-
-void Roomba::set_position(float newX, float newY) {
-	x = newX;
-	y = newY;
-}
-
-
-sf::FloatRect Roomba::get_hit_box() const {
-	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
-}
 
 void Roomba::die(bool instant) {
 	if (instant == 1) {

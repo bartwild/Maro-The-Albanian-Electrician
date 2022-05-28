@@ -46,6 +46,6 @@ void Animation::step(bool isBig) {
 }
 
 
-void Animation::set_position(const short x, const short y) {
+void Animation::set_position(float x, float y) {
 	sprite.setPosition(x, y);
 }

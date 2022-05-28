@@ -195,9 +195,9 @@ void LevelManager::draw_objects(const bool underground, unsigned short i, unsign
 
 
 void LevelManager::draw_map(const bool background, unsigned viewX, sf::RenderWindow& aWindow, sf::Color& backgroundColor, const sf::Texture& aMapTexture, const Map& aMap) {
-	unsigned short mapEnd = ceil((viewX + SCREEN_WIDTH) / static_cast<float>(CELL_SIZE));
-	unsigned short mapHeight = floor(mapSketch.getSize().y / 3.f);
-	unsigned short mapStart = floor(viewX / static_cast<float>(CELL_SIZE));
+	float mapEnd = ceil((viewX + SCREEN_WIDTH) / static_cast<float>(CELL_SIZE));
+	float mapHeight = floor(mapSketch.getSize().y / 3.f);
+	float mapStart = floor(viewX / static_cast<float>(CELL_SIZE));
 	bool underground = 1;
 	if (backgroundColor == sf::Color(0, 219, 255)) {
 		underground = 0;

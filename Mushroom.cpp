@@ -82,34 +82,3 @@ void Mushroom::move(const unsigned aViewX, const Map& aMap) {
 bool Mushroom::get_whether_dead() const {
 	return dead;
 }
-
-
-sf::FloatRect Mushroom::get_hit_box() const {
-	return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
-}
-
-
-float Mushroom::get_x() const {
-	return x;
-}
-
-
-float Mushroom::get_y() const {
-	return y;
-}
-
-
-float Mushroom::get_xSpeed() const {
-	return xSpeed;
-}
-
-
-float Mushroom::get_ySpeed() const {
-	return ySpeed;
-}
-
-
-void Mushroom::set_x_y(float newX, float newY) {
-	x = newX;
-	y = newY;
-}

@@ -6,20 +6,16 @@
 #include "Mushroom.h"
 #include "LevelManager.h"
 #include "Roomba.h"
+#include "Character.h"
 
 class Mushroom;
 class LevelManager;
 class Collisions;
 
-class Maro{
+class Maro: public Character {
 	bool flipped;
 	bool onGround;
-	bool dead;
 	bool big;
-	float x;
-	float y;
-	float xSpeed;
-	float ySpeed;
 	unsigned char deathTimer;
 	unsigned char growthTimer;
 	unsigned char jumpTimer;
@@ -28,8 +24,6 @@ class Maro{
 	bool hit;
 	Animation walkAnimation;
 	Animation bigWalkAnimation;
-	sf::Sprite sprite;
-	sf::Texture texture;
 public:
 	Maro();
 	void reset();
@@ -39,12 +33,9 @@ public:
 	void update(LevelManager& levelManager, unsigned int aViewX, Map& aMap, std::vector<std::shared_ptr<Roomba>>& aRoombas, std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count);
 	void x_move(bool& moving);
 	void y_move(unsigned char yCollision);
-	void set_position(float x, float y);
-	float get_x() const;
-	float get_y() const;
 	void die(bool instant);
 	char get_death_timer();
-	sf::FloatRect get_hit_box() const;
+	sf::FloatRect get_hit_box();
 	void check_collision_with_Roombas(std::vector<std::shared_ptr<Roomba>>& aRoombas, unsigned int& count);
 	void check_collision_with_Mushrooms(std::vector<std::shared_ptr<Mushroom>>& mushrooms, unsigned int& count);
 	void set_x_after_collision(bool& moving, unsigned char& xCollision);

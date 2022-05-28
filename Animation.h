@@ -16,6 +16,6 @@ public:
 	void draw(sf::RenderWindow& window);
 	void set_flipped(bool value);
 	void step(bool isBig);
-	void set_position(const short i_x, const short i_y);
+	void set_position(float i_x, float i_y);
 };
 

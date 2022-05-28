@@ -177,7 +177,7 @@ TEST_CASE("Testing mushroom") {
 
     SECTION("testing setters") {
         Mushroom mushroom(0, 0);
-        mushroom.set_x_y(15, 20);
+        mushroom.set_position(15, 20);
         CHECK(mushroom.get_x() == 15);
         CHECK(mushroom.get_y() == 20);
     }

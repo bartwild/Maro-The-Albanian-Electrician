@@ -284,22 +284,6 @@ void Maro::y_move(unsigned char yCollision) {
 }
 
 
-float Maro::get_x() const {
-	return x;
-}
-
-
-float Maro::get_y() const {
-	return y;
-}
-
-
-void Maro::set_position(float newX, float newY) {
-	x = newX;
-	y = newY;
-}
-
-
 void Maro::die(bool instant) {
 	if (instant) {
 		dead = 1;
@@ -315,7 +299,7 @@ void Maro::die(bool instant) {
 }
 
 
-sf::FloatRect Maro::get_hit_box() const {
+sf::FloatRect Maro::get_hit_box() {
 	if (!big) {
 		return sf::FloatRect(x, y, CELL_SIZE, CELL_SIZE);
 	}
