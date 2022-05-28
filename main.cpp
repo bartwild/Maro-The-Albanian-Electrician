@@ -172,6 +172,7 @@ void whole_game(bool loadFromSave) {
 					text.setFillColor(sf::Color(0, 0, 0));
 					window.draw(text);
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+						level_save(0, 0, 0);
 						window.close();
 						whole_game(0);
 					}
