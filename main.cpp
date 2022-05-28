@@ -5,7 +5,7 @@
 #include "GameManager.h"
 
 
-void whole_game();
+void whole_game(bool loadFromSave);
 
 
 unsigned int high_score_load(unsigned int& points) {
@@ -27,6 +27,24 @@ void high_score_save(unsigned int& points) {
 }
 
 
+void level_save(unsigned int lastLevelPoints, unsigned short currentLevel, sf::Time elapsed1) {
+	std::ofstream saveInfo(save, std::ios::trunc);
+	saveInfo << lastLevelPoints;
+	saveInfo << "\n";
+	saveInfo << currentLevel;
+	saveInfo << "\n";
+	saveInfo << elapsed1.asSeconds();
+}
+
+
+void level_load(unsigned int& lastLevelPoints, unsigned short& currentLevel, float& savedTime) {
+	std::ifstream saveInfo(save);
+	saveInfo >> lastLevelPoints;
+	saveInfo >> currentLevel;
+	saveInfo >> savedTime;
+}
+
+
 void end_game(unsigned int& timeInt, unsigned viewX, sf::RenderWindow& window, unsigned int& count, unsigned int& high) {
 	std::string message = "\t    You won.\n   Congratulations.\n press Enter to reset.";
 	sf::Font font;
@@ -45,7 +63,7 @@ void end_game(unsigned int& timeInt, unsigned viewX, sf::RenderWindow& window, u
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 		window.close();
-		whole_game();
+		whole_game(0);
 	}
 }
 
@@ -61,7 +79,7 @@ void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
 	window.draw(text);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 		window.close();
-		whole_game();
+		whole_game(0);
 	}
 	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
 		for (auto& element : keysNoEscAndEnt) {
@@ -73,7 +91,7 @@ void escape(unsigned short& timer, unsigned viewX, sf::RenderWindow& window) {
 }
 
 
-void whole_game() {
+void whole_game(bool loadFromSave) {
 	std::shared_ptr<Maro> maro = std::make_shared<Maro>();
 	std::vector<std::shared_ptr<Roomba>> roombas;
 	std::vector<std::shared_ptr<Mushroom>> mushrooms;
@@ -83,14 +101,22 @@ void whole_game() {
 	sf::Time elapsed1;
 	sf::Image mapSketch;
 	sf::Texture mapTexture;
-	unsigned int timeInt;
-	unsigned int count = 0;
-	unsigned short timer = 0;
-	unsigned short levelFinish = 0;
 	unsigned short currentLevel = 0;
-	unsigned int high = high_score_load(count);
-	sf::Color backgroundColor = sf::Color(0, 219, 255);
+	unsigned int count = 0;
+	float lastLevelTime;
+	float timeSaved = 0;
 	mapSketch.loadFromFile(MAP_PATH + "LevelSketch0.png");
+	sf::Color backgroundColor = sf::Color(0, 219, 255);
+	if (loadFromSave == 1) {
+		level_load(count, currentLevel, timeSaved);
+		mapSketch.loadFromFile(MAP_PATH + "LevelSketch" + std::to_string(currentLevel) + ".png");
+	}
+	unsigned int lastLevelPoints = 0;
+	unsigned int timeInt;
+	unsigned short timeresc = 0;
+	unsigned short timerld = 0;
+	unsigned short levelFinish = 0;
+	unsigned int high = high_score_load(count);
 	std::shared_ptr<LevelManager> levelManager = std::make_shared<LevelManager>(mapSketch);
 	std::chrono::microseconds lag(0);
 	std::chrono::steady_clock::time_point previousTime;
@@ -110,10 +136,11 @@ void whole_game() {
 			lag -= FRAME_DURATION;
 			while (window.pollEvent(event)) {
 				if (event.type == sf::Event::Closed) {
+					level_save(lastLevelPoints, currentLevel, elapsed1);
 					window.close();
 				}
 			}
-			gameManager.change_level(levelFinish, currentLevel, mapSketch, backgroundColor);
+			gameManager.change_level(levelFinish, currentLevel, mapSketch, backgroundColor, count, lastLevelPoints, elapsed1, lastLevelTime);
 			map = gameManager.get_map();
 			if (currentLevel != 2) {
 				viewX = std::clamp<int>(round(maro->get_x()) - 0.5f * (SCREEN_WIDTH - CELL_SIZE), 0, CELL_SIZE * map.size() - SCREEN_WIDTH);
@@ -124,15 +151,15 @@ void whole_game() {
 			gameManager.update_objects(viewX, count);
 			if (FRAME_DURATION > lag) {
 				gameManager.draw(window, viewX, view, backgroundColor, mapTexture);
-				elapsed1 = clock.getElapsedTime();
+				elapsed1 = clock.getElapsedTime() + sf::seconds(timeSaved);
 				if (currentLevel != 2) {
 					timeInt = int(elapsed1.asSeconds());
 				}
 				else if (currentLevel == 2) {
 					end_game(timeInt, viewX, window, count, high);
 				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timer != 0) {
-					escape(timer, viewX, window);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || timeresc != 0) {
+					escape(timeresc, viewX, window);
 				}
 				if (!maro->get_death_timer() || (int(360 - elapsed1.asSeconds()) == 0)) {
 					std::string message = "You lost, press\n enter to reset.";
@@ -144,12 +171,27 @@ void whole_game() {
 					window.draw(text);
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 						window.close();
-						whole_game();
+						whole_game(0);
 					}
 				}
 				if (currentLevel == 2 && (int(360 - elapsed1.asSeconds()) == 0)) {
 					window.close();
-					whole_game();
+					whole_game(0);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Home) || timerld == 1) {
+					timerld = 1;
+					std::string saveMessage = "	  Are you sure you \n     want to load save?\n	  press backspace.";
+					sf::Font font;
+					if (!font.loadFromFile("arial.ttf")) {}
+					sf::Text text(saveMessage, font, 20);
+					text.setPosition(sf::Vector2f(viewX + (SCREEN_WIDTH / SCREEN_RESIZE) - 30, 20));
+					text.setFillColor(sf::Color(0, 0, 0));
+					window.draw(text);
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) {
+						timerld = 0;
+						window.close();
+						whole_game(1);
+					}
 				}
 				std::string message1 = "high score: " + std::to_string(high);
 				if (count > high) {
@@ -179,6 +221,6 @@ void whole_game() {
 
 
 int main() {
-	whole_game();
+	whole_game(0);
 	return 0;
 }

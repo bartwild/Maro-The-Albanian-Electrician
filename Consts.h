@@ -12,6 +12,7 @@
 #include <iostream>
 #include <cmath>
 
+
 const int SCREEN_WIDTH = 320;
 const int SCREEN_HEIGHT = 240;
 const char MARO_DEATH_TIMER = 64;
@@ -36,6 +37,7 @@ const float MUSHROOM_SPEED = 1;
 const float UPDATE_AREA = 64;
 const std::chrono::microseconds FRAME_DURATION(16667);
 const std::string filename = "highScore.txt";
+const std::string save = "saveScore.txt";
 const std::string TEXTURES_PATH = "textures/";
 const std::string MAP_PATH = "map/";
 const std::string MARO_WALK_TEXTURE = TEXTURES_PATH + "MaroWalk.png";

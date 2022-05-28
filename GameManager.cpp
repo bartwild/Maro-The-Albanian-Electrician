@@ -43,7 +43,7 @@ void GameManager::draw(sf::RenderWindow& aWindow, unsigned int& aViewX, sf::View
 
 
 
-void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCurrentLevel, sf::Image& aMapSketch, sf::Color& aBackgroundColor) {
+void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCurrentLevel, sf::Image& aMapSketch, sf::Color& aBackgroundColor, unsigned int& aCount, unsigned int& aLastLevelPoints, sf::Time elapsed1, float& aLastLevelTime) {
 	if ((maro->get_x() >= CELL_SIZE * aLevelFinish && aCurrentLevel == 0) || (aCurrentLevel == 1 &&  maro->get_x() >= CELL_SIZE * aLevelFinish && maro->get_y() >= SCREEN_HEIGHT - 6 * CELL_SIZE)) {
 		aCurrentLevel++;
 		roombas.clear();
@@ -52,6 +52,8 @@ void GameManager::change_level(unsigned short& aLevelFinish, unsigned short& aCu
 		aMapSketch.loadFromFile(MAP_PATH + "LevelSketch" + std::to_string(aCurrentLevel) + ".png");
 		levelManager->set_sketch(aMapSketch);
 		map = levelManager->sketch_to_map(*maro, aLevelFinish, aBackgroundColor, roombas);
+		aLastLevelPoints = aCount;
+		aLastLevelTime = elapsed1.asSeconds();
 	}
 }
 
