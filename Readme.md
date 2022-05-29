@@ -76,7 +76,7 @@ błędów i można w nią bezproblemowo grać. W naszej opinii
 wykonaliśmy projekt na poziomie zadowalającym, szczególnie
 biorąc pod uwagę ramy czasowe jakie na niego mieliśmy
 wyznaczone.
-Struktura klas
+## Struktura klas
 W naszym projekcie nie była potrzebna zaawansowana struktura
 klas, zatem najważniejsze elementy to:
 1. `GameManager` zarządza wszystkimi obiektami w czasie
