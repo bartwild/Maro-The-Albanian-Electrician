@@ -65,7 +65,9 @@ zapisany jest w pliku highScore.txt
 Nasza praca z założenia była znacznie bardziej ambitna. Wiele
 mechanizmów rozgrywki musieliśmy wyciąć ze względu na
 ograniczenia czasowe, jednakże w planach mamy dalszy rozwój gry,
-jako otwarty projekt, w który będzie mógł zagrać każdy. W czasie
+jako otwarty projekt, w który będzie mógł zagrać każdy. W ramach tej
+rozbudowy gry planujemy np. dodać nowych przeciwników, ale także zmienić
+system kolizji, ponieważ obecny ma ograniczenia. W czasie
 pracy nad projektem napotkaliśmy wiele problemów, jak chociażby
 błędne wskazywanie kolizji, błędy z teksturami, błędne interakcje w
 obrębie obiektów. Ze wszystkimi problemami udało nam się uporać,
