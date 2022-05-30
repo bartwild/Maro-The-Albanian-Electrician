@@ -22,6 +22,8 @@ TEST_CASE("Testing Maro") {
 		REQUIRE(maro.get_flipped() == 0);
 		REQUIRE(maro.get_big() == 0);
 		REQUIRE(maro.get_hit_box() == hitBox);
+		REQUIRE(maro.get_xSpeed() == 0);
+		REQUIRE(maro.get_ySpeed() == 0);
 	}
 
 
@@ -30,6 +32,8 @@ TEST_CASE("Testing Maro") {
 		maro.set_position(200, 200);
 		REQUIRE(maro.get_x() == 200);
 		REQUIRE(maro.get_y() == 200);
+		REQUIRE(maro.get_xSpeed() == 0);
+		REQUIRE(maro.get_ySpeed() == 0);
 		maro.become_big();
 		REQUIRE(maro.get_big() == 1);
 		maro.become_small();
@@ -305,23 +309,47 @@ TEST_CASE("Testing Collisions") {
 
 
 	SECTION("coin collision") {
+		REQUIRE(collisionCells.size() == 0);
 		Collisions::coin_collision(collisionCells, 43 * CELL_SIZE, 5 * CELL_SIZE, map2, 0, count);
-		REQUIRE(collisionCells[1].x == 43);
-		REQUIRE(collisionCells[1].y == 5);
+		REQUIRE(collisionCells[0].x == 43);
+		REQUIRE(collisionCells[0].y == 5);
+		REQUIRE(collisionCells[1].x == collisionCells[0].x);
+		REQUIRE(collisionCells[1].y == collisionCells[0].y);
+		REQUIRE(collisionCells[2].x == collisionCells[0].x);
+		REQUIRE(collisionCells[2].y == collisionCells[0].y);
+		REQUIRE(collisionCells[3].x == collisionCells[0].x);
+		REQUIRE(collisionCells[3].y == collisionCells[0].y);
+		REQUIRE(collisionCells.size() == 4);
 	}
 
 
 	SECTION("question block collision") {
+		REQUIRE(collisionCells.size() == 0);
 		Collisions::get_collision_question_block(collisionCells, 12 * CELL_SIZE, 9 * CELL_SIZE, map2, 0);
 		REQUIRE(collisionCells[0].x == 12);
 		REQUIRE(collisionCells[0].y == 9);
+		REQUIRE(collisionCells[1].x == collisionCells[0].x);
+		REQUIRE(collisionCells[1].y == collisionCells[0].y);
+		REQUIRE(collisionCells[2].x == collisionCells[0].x);
+		REQUIRE(collisionCells[2].y == collisionCells[0].y);
+		REQUIRE(collisionCells[3].x == collisionCells[0].x);
+		REQUIRE(collisionCells[3].y == collisionCells[0].y);
+		REQUIRE(collisionCells.size() == 4);
 	}
 
 
 	SECTION("brick collision") {
+		REQUIRE(collisionCells.size() == 0);
 		Collisions::get_collision_brick(collisionCells, 29 * CELL_SIZE, 8 * CELL_SIZE, map2);
 		REQUIRE(collisionCells[0].x == 29);
 		REQUIRE(collisionCells[0].y == 8);
+		REQUIRE(collisionCells[1].x == collisionCells[0].x);
+		REQUIRE(collisionCells[1].y == collisionCells[0].y);
+		REQUIRE(collisionCells[2].x == collisionCells[0].x);
+		REQUIRE(collisionCells[2].y == collisionCells[0].y);
+		REQUIRE(collisionCells[3].x == collisionCells[0].x);
+		REQUIRE(collisionCells[3].y == collisionCells[0].y);
+		REQUIRE(collisionCells.size() == 4);
 	}
 
 }
