@@ -42,6 +42,7 @@ plików .png złożonych z kilku sąsiadujących obrazków – dla nas
 będących pojedynczymi klatkami
 - `Character` – Klasa, która zawiera wszelakie gettery i atrybuty,
 które łączą klasy Maro, Roomba i Mushroom.
+
 Dodatkowo w projekcie znajduje się plik Consts.h przechowujący
 zmienne globalne, biblioteki, typy wyliczeniowe oraz typedef i
 struct. W pliku main.cpp mamy zaimplementowany klasyczny
