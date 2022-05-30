@@ -58,6 +58,7 @@ przedstawiamy nowy system balansu:
 - Grzyb – 200pkt
 - Roomba – 200pkt
 - Grzyb w czasie posiadania wzmocnienia – 1000pkt
+
 Gracze po naniesionych przez nas zmianach, mieli większą
 satysfakcję z gry i możliwości pobijania rekordu. Próba
 doświadczalna liczyła 42 osoby. Aktualny najwyższy wynik
