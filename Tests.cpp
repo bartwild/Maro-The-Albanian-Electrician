@@ -137,6 +137,10 @@ TEST_CASE("Testing Roomba") {
         roomba.set_position(10, 20);
         CHECK(roomba.get_x() == 10);
         CHECK(roomba.get_y() == 20);
+		roomba.die(0);
+		CHECK(roomba.get_whether_dead() == 1);
+		roomba.die(1);
+		CHECK(roomba.get_death_timer() == 0);
     }
 
 
@@ -180,7 +184,10 @@ TEST_CASE("Testing mushroom") {
         mushroom.set_position(15, 20);
         CHECK(mushroom.get_x() == 15);
         CHECK(mushroom.get_y() == 20);
+		mushroom.die(1);
+		CHECK(mushroom.get_whether_dead() == 1);
     }
+
 
 	SECTION("testing mushroom move") {
 		std::shared_ptr<Maro> maro = std::make_shared<Maro>();;
